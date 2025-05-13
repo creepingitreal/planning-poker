@@ -8,28 +8,18 @@
   </div>
 
   <div v-else>
-    <h2>Room: {{ roomId }}</h2>
-    <h3>Welcome to your Planning Poker</h3>
-
-    <div class="players">
-      <h2>Players</h2>
-      <ul>
-        <li v-for="player in players" :key="player.id">{{ player.name }} - {{ player.vote ?? "No vote yet" }}</li>
-      </ul>
-    </div>
-    <div class="game-board">
-      <!-- Game board goes here -->
-    </div>
+    <Room :room-id="roomId" :name="name" :players="players"/>  
   </div>
 </template>
 
 <script setup>
-
 import { ref } from 'vue';
 import { io } from 'socket.io-client';
+import Room from './Room.vue';
 
-const socket = io('http://localhost:8000', {
-  autoConnect: false,
+const socket = io('http://localhost:5173');
+socket.on('connect', () => {
+  console.log('Connected to server');
 });
 
 const joined = ref(false);
