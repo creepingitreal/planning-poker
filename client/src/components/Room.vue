@@ -3,7 +3,7 @@
        <h1>Room: {{ roomId }}</h1>
        <h2>Welcome, {{ name }}!</h2>
        <div class="players">
-         <h2>Players</h2>
+         <h2>Players:</h2>
          <ul>
            <li v-for="player in players" :key="player.id">{{ player.user }}</li>
            <pre>{{ players }}</pre>

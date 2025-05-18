@@ -17,7 +17,7 @@ import { ref } from 'vue';
 import { io } from 'socket.io-client';
 import Room from './Room.vue';
 
-const socket = io('http://localhost:5173');
+const socket = io('http://localhost:8000');
 socket.on('connect', () => {
   console.log('Connected to server');
 });
@@ -25,33 +25,34 @@ socket.on('connect', () => {
 const joined = ref(false);
 const name = ref('');
 const roomId = ref('');
-const players = ref([]);
+const players = ref({});
 
 const joinRoom = () => {
   if(!name.value || !roomId.value) {
     if(!name.value) { 
-      alert("Please enter a room number and your name")
+      alert("Please enter a room number and your name"); return;
     } else {
-      alert("Please enter a room number")
-    }; 
-    return;
+      alert("Please enter a room number"); return;
+    }
   }
   socket.emit('joinRoom', { roomId: roomId.value, user: name.value });
+  
   joined.value = true;
 }
 
 const createRoom = () => {
-  if(!name.value || !roomId.value) {
-    if(!name.value) { 
-      alert("Please enter your name")
-    } return
+  if(!name.value) { 
+    alert("Please enter your name"); return;
   }
   roomId.value = Math.random().toString(36).substring(2, 6).toUpperCase();
-  socket.emit('createRoom', { roomId: roomId.value, user: name.value });
+
+  socket.emit('joinRoom', { roomId: roomId.value, user: name.value });
+  
   joined.value = true;
 }
 
-socket.on('roomData', ({ data }) => {
+socket.on('updateRoom', (data) => {
+  console.log('Room updated:', data);
   players.value = data;
 });
 
