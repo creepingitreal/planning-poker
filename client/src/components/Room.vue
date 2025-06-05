@@ -2,16 +2,9 @@
   <div class="room">
       <h1>Room: {{ roomId }}</h1>
       <h2>Welcome, {{ name }}!</h2>
-      <div class="players">
-        <h2>Players:</h2>
-        <ul>
-          <li v-for="(player, id) in players" :key="id">{{ player.user }}  VOTE: {{ player.vote }}</li>
-        </ul>
-      </div>
       <div class="game-board">
-      <pre>{{ players }}</pre>
-
-        <div v-for="(player, id) in players || {}" :key="id">
+        <div class="players" v-for="(player, id) in players || {}" :key="id">
+          <h2>Players:</h2>
           <h3>{{ player.user }}'s Vote:  {{ player.vote }}</h3>
         </div>
       </div>
@@ -43,19 +36,12 @@ const props = defineProps({
         required: true
     }
 });
-// const players = ref({});
 const voteOptions = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, '?'];
 
 const castVote = (roomId, value) => {
   console.log("VOTED", roomId, value);
   socket.emit('castVote', { roomId: roomId, vote: value });
 }
-
-// onMounted(() => {
-//   socket.on('updateRoom', (data) => {
-//     players.value = data;
-//   });
-// });
 
 </script>
    
