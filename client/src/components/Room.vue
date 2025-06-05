@@ -3,8 +3,8 @@
       <h1>Room: {{ roomId }}</h1>
       <h2>Welcome, {{ name }}!</h2>
       <div class="game-board">
+        <h2>Players:</h2> 
         <div class="players" v-for="(player, id) in players || {}" :key="id">
-          <h2>Players:</h2>
           <h3>{{ player.user }}'s Vote:  {{ player.vote }}</h3>
         </div>
       </div>
