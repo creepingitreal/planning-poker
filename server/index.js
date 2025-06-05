@@ -34,12 +34,11 @@ io.on('connection', (socket) => {
 
     socket.on('castVote', ({ roomId, vote }) => {
         if (rooms[roomId] && rooms[roomId][socket.id]) {
-
             rooms[roomId][socket.id].vote = vote;
-    
             console.log('Vote updated', rooms[roomId][socket.id]);
         }
         io.to(roomId).emit('updateRoom', rooms[roomId]);
+        console.log('📢 Vote cast, roomUpdate:', rooms[roomId]);
     });
     
 

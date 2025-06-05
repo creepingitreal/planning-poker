@@ -9,7 +9,9 @@
         </ul>
       </div>
       <div class="game-board">
-        <div v-for="(player, id) in players" :key="id">
+      <pre>{{ players }}</pre>
+
+        <div v-for="(player, id) in players || {}" :key="id">
           <h3>{{ player.user }}'s Vote:  {{ player.vote }}</h3>
         </div>
       </div>
@@ -24,8 +26,8 @@
 </template>
 
 <script setup>
-import  socket  from '../socket.js';  
-import { defineProps } from 'vue';
+import socket from '../socket.js';  
+import { defineProps, onMounted, ref } from 'vue';
 
 const props = defineProps({
     roomId: {
@@ -41,12 +43,19 @@ const props = defineProps({
         required: true
     }
 });
+// const players = ref({});
 const voteOptions = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, '?'];
 
 const castVote = (roomId, value) => {
-  console.log("CLICK", roomId, value);
+  console.log("VOTED", roomId, value);
   socket.emit('castVote', { roomId: roomId, vote: value });
 }
+
+// onMounted(() => {
+//   socket.on('updateRoom', (data) => {
+//     players.value = data;
+//   });
+// });
 
 </script>
    

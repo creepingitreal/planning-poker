@@ -14,7 +14,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import  socket  from '../socket.js'; 
+import socket from '../socket.js'; 
 import Room from './Room.vue';
 
 const joined = ref(false);
