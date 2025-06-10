@@ -1,7 +1,6 @@
-// server/server.js (converted to ES Module syntax)
 import express from 'express';
 import http from 'http';
-import Server from 'socket.io';
+import { Server } from 'socket.io';
 import cors from 'cors';
 
 const app = express();
@@ -40,7 +39,7 @@ io.on('connection', (socket) => {
         io.to(roomId).emit('updateRoom', rooms[roomId]);
         console.log('📢 Vote cast, roomUpdate:', rooms[roomId]);
     });
-    
+
 
     socket.on('revealVotes', (roomId) => {
         io.to(roomId).emit('revealVotes');
@@ -51,7 +50,7 @@ io.on('connection', (socket) => {
             rooms[roomId][userId].vote = null;
         });
         io.to(roomId).emit('updateRoom', rooms[roomId]);
-    }); 
+    });
 
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
