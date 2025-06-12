@@ -28,10 +28,7 @@ socket.on('connect', () => {
 
 const joinRoom = () => {
   if(!name.value || !roomId.value) {
-    if(!name.value) { 
-      alert("Please enter a room ID and your name"); return;
-    } else {
-    }
+    alert("Please enter a room ID and your name"); return;
   }
   socket.emit('joinRoom', { roomId: roomId.value, user: name.value });
   
