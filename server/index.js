@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
         rooms[roomId][socket.id] = { user, vote: null };
 
         io.to(roomId).emit('updateRoom', rooms[roomId]);
-        console.log('📢 Joining room, roomUpdate:', rooms[roomId])
+        console.log('📢 Room joined, roomUpdate:', rooms[roomId])
     });
 
     socket.on('castVote', ({ roomId, vote }) => {
@@ -47,9 +47,12 @@ io.on('connection', (socket) => {
     });
 
     socket.on('resetVotes', (roomId) => {
-        Object.keys(rooms[roomId] || {}).forEach((userId) => {
-            rooms[roomId][userId].vote = null;
+        console.log(rooms[roomId]);
+
+        Object.keys(rooms[roomId] || {}).forEach((user) => {
+            rooms[roomId][user].vote = null;
         });
+        console.log('Votes reset for room:', roomId);
         io.to(roomId).emit('updateRoom', rooms[roomId]);
     }); 
 

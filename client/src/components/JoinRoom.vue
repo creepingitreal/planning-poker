@@ -1,7 +1,7 @@
 <template>
-  <div v-if="!joined" class="join-room">
+  <div v-if="!joined" class="max-w-40px m-auto pt-100px text-center">
     <h1>Join a Room</h1>
-    <input v-model="roomId" placeholder="Room ID" />
+    <input clasv-model="roomId" placeholder="Room ID" />
     <input v-model="name" placeholder="Username" />
     <button @click="joinRoom">Join</button>
     <button @click="createRoom">Create Room</button>  
@@ -14,8 +14,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import socket from '../socket.js'; 
+import socket from '../../socket.js'; 
 import Room from './Room.vue';
+import '../css/join-room.css';
 
 const joined = ref(false);
 const name = ref('');
@@ -33,6 +34,7 @@ const joinRoom = () => {
   socket.emit('joinRoom', { roomId: roomId.value, user: name.value });
   
   joined.value = true;
+  console.log('Joining room:', roomId.value, 'as', name.value);
 }
 
 const createRoom = () => {
@@ -47,7 +49,6 @@ const createRoom = () => {
 }
 
 socket.on('updateRoom', (data) => {
-  console.log('Room Joined:', data);
   players.value = data;
   console.log('Local players now:', players.value);
 });
@@ -57,12 +58,6 @@ socket.on('updateRoom', (data) => {
 
 
 <style scoped>
-.join-room {
-  max-width: 400px;
-  margin: auto;
-  padding-top: 100px;
-  text-align: center;
-}
 
 input {
   display: block;
