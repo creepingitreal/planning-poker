@@ -10,7 +10,7 @@
         <button class="reveal-votes" @click="revealVotes">{{ votesVisible ? "Hide Votes" : "Reveal Votes"}}</button>
         <button class="clear-votes" @click="clearVotes">Clear Votes</button>
       </div>
-      <button
+      <button class="card"
         v-for="value in voteOptions"
         :key="value"
         @click="castVote(roomId, value)"
@@ -22,7 +22,7 @@
 
 <script setup>
 import socket from '../../socket.js';  
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 import Vote from './Vote.vue';
 import '../css/Room.css';
 
@@ -57,9 +57,4 @@ const clearVotes = (roomId) => {
   socket.emit('resetVotes', { roomId: roomId });
   console.log("Clearing votes:", roomId);
 }
-
 </script>
-   
-   <style scoped>
-   
-   </style>

@@ -1,10 +1,22 @@
 <template>
   <div v-if="!joined" class="max-w-40px m-auto pt-100px text-center">
     <h1>Join a Room</h1>
-    <input clasv-model="roomId" placeholder="Room ID" />
-    <input v-model="name" placeholder="Username" />
-    <button @click="joinRoom">Join</button>
-    <button @click="createRoom">Create Room</button>  
+    <input
+        class="block my-2.5 mx-auto px-4 py-2"
+        v-model="roomId"
+        placeholder="Room ID"
+    />
+    <input class="block my-2.5 mx-auto px-4 py-2"
+           v-model="name"
+           placeholder="Username"
+    />
+    <button class="m-2 px-5 py-2 text-white border-none rounded cursor-pointer hover:bg-[#cccdcf6e]"
+    @click="joinRoom"
+    >Join</button>
+    <button class="m-2 px-5 py-2 text-white border-none rounded cursor-pointer hover:bg-[#cccdcf6e]"
+    @click="createRoom"
+    >Create Room
+    </button>
   </div>
 
   <div v-else>
@@ -55,27 +67,3 @@ socket.on('updateRoom', (data) => {
 
 
 </script>
-
-
-<style scoped>
-
-input {
-  display: block;
-  margin: 10px auto;
-}
-
-button {
-  margin: 10px;
-  padding: 10px 20px;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #cccdcf6e;
-
-}
-</style>
-  
