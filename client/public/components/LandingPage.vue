@@ -28,7 +28,8 @@
 import { ref } from 'vue';
 import socket from '../../socket.js'; 
 import Room from './Room.vue';
-import '../css/join-room.css';
+import '../../src/css/join-room.css';
+import { randomNameGenerator } from '../js/nameGenerator.js';
 
 const joined = ref(false);
 const name = ref('');
@@ -53,8 +54,7 @@ const createRoom = () => {
   if(!name.value) { 
     alert("Please enter your name"); return;
   }
-  roomId.value = Math.random().toString(36).substring(2, 6).toUpperCase();
-
+  roomId.value = randomNameGenerator();
   socket.emit('joinRoom', { roomId: roomId.value, user: name.value });
   
   joined.value = true;

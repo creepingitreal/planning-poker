@@ -3,9 +3,9 @@
       <h1>Room: {{ roomId }}</h1>
       <h2>Welcome, {{ name }}!</h2>
       <div class="game-board">
-        <h2>Players:</h2> 
+        <h2>Players:</h2>
         <div class="players" v-for="(player, id) in players || {}" :key="id">
-          <h3>{{ player.user }}'s Vote:  </h3> <Vote :vote="player.vote" :visible="votesVisible"/> 
+          <h3>{{ player.user }}'s Vote:  </h3> <Vote :vote="player.vote" :visible="votesVisible"/>
         </div>
         <button class="reveal-votes" @click="revealVotes">{{ votesVisible ? "Hide Votes" : "Reveal Votes"}}</button>
         <button class="clear-votes" @click="clearVotes">Clear Votes</button>
@@ -13,7 +13,7 @@
       <button class="card"
         v-for="value in voteOptions"
         :key="value"
-        @click="castVote(roomId, value)"
+        @click="castVote(value)"
       >
         {{ value }}
       </button>
@@ -24,7 +24,7 @@
 import socket from '../../socket.js';  
 import { ref } from 'vue';
 import Vote from './Vote.vue';
-import '../css/Room.css';
+import '../../src/css/room.css';
 
 const props = defineProps({
     roomId: {
@@ -43,18 +43,18 @@ const props = defineProps({
 const voteOptions = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, '?'];
 const votesVisible = ref(false);
 
-const revealVotes = (roomId) => {
+const revealVotes = () => {
   votesVisible.value = !votesVisible.value;
-  socket.emit('revealVotes', { roomId: roomId });
+  socket.emit('revealVotes', { roomId: props.roomId });
 } 
 
-const castVote = (roomId, value) => {
-  console.log("VOTED", roomId, value);
-  socket.emit('castVote', { roomId: roomId, vote: value });
+const castVote = (value) => {
+  console.log("VOTED", props.roomId, value);
+  socket.emit('castVote', { roomId: props.roomId, vote: value });
 }
 
-const clearVotes = (roomId) => {
-  socket.emit('resetVotes', { roomId: roomId });
-  console.log("Clearing votes:", roomId);
+const clearVotes = () => {
+  // console.log("Clearing votes:", props.roomId);
+  socket.emit('resetVotes', { roomId: props.roomId });
 }
 </script>
