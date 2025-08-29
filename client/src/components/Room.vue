@@ -1,30 +1,42 @@
 <template>
-  <div class="room">
-      <h1>Room: {{ roomId }}</h1>
-      <h2>Welcome, {{ name }}!</h2>
-      <div class="game-board">
-        <h2>Players:</h2>
-        <div class="players" v-for="(player, id) in players || {}" :key="id">
-          <h3>{{ player.user }}'s Vote:  </h3> <Vote :vote="player.vote" :visible="votesVisible"/>
+  <section class="room">
+    <div class="section-title">
+      <h1>Room Name: <strong>{{ roomId }}</strong></h1>
+      <br>
+      <h2>Welcome, {{ name }}</h2>
+    </div>
+
+    <div class="game-board">
+      <span class="players">
+        <h3><strong>Players:</strong></h3>
+        <div v-for="(player, id) in players || {}" :key="id">
+          <h4>{{ player.user }}'s Vote:  </h4>
+          <Vote :vote="player.vote" :visible="votesVisible"/>
         </div>
+      </span>
+      <span>
         <button class="reveal-votes" @click="revealVotes">{{ votesVisible ? "Hide Votes" : "Reveal Votes"}}</button>
         <button class="clear-votes" @click="clearVotes">Clear Votes</button>
-      </div>
+      </span>
+    </div>
+
+    <span>
       <button class="card"
-        v-for="value in voteOptions"
-        :key="value"
-        @click="castVote(value)"
+              v-for="value in voteOptions"
+              :key="value"
+              @click="castVote(value)"
       >
         {{ value }}
       </button>
-</div>
+    </span>
+</section>
 </template>
 
 <script setup>
-import socket from '../../socket.js';  
+import socket from '../socket.js';
 import { ref } from 'vue';
 import Vote from './Vote.vue';
-import '../../src/css/room.css';
+import '../css/room.css';
 
 const props = defineProps({
     roomId: {
@@ -54,7 +66,7 @@ const castVote = (value) => {
 }
 
 const clearVotes = () => {
-  // console.log("Clearing votes:", props.roomId);
-  socket.emit('resetVotes', { roomId: props.roomId });
+  console.log("Clearing votes:", props.roomId);
+  socket.emit('clearVotes', {roomId: props.roomId});
 }
 </script>
