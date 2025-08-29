@@ -1,9 +1,9 @@
 <template>
-  <JoinRoom/>
+  <LandingPage/>
 </template>
 
 <script setup>
-import JoinRoom from './components/JoinRoom.vue';
+import LandingPage from './components/LandingPage.vue';
 </script>
 
 <style scoped>
