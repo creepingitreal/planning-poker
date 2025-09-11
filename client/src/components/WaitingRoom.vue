@@ -4,7 +4,7 @@
     <input
         class="block my-2.5 mx-auto px-4 py-2"
         v-model="roomId"
-        placeholder="Room ID"
+        placeholder="Room Name"
     />
     <input class="block my-2.5 mx-auto px-4 py-2"
            v-model="name"
@@ -26,10 +26,10 @@
 
 <script setup>
 import { ref } from 'vue';
-import socket from '../../socket.js'; 
+import socket from '../../socket.js';
 import Room from './Room.vue';
-import '../../src/css/join-room.css';
-import { randomNameGenerator } from '../js/nameGenerator.js';
+import '../css/join-room.css';
+import { randomNameGenerator } from "../js/nameGenerator.js";
 
 const joined = ref(false);
 const name = ref('');
@@ -48,9 +48,10 @@ const joinRoom = () => {
   
   joined.value = true;
   console.log('Joining room:', roomId.value, 'as', name.value);
-}
+};
 
 const createRoom = () => {
+  console.log('create room');
   if(!name.value) { 
     alert("Please enter your name"); return;
   }
@@ -64,6 +65,4 @@ socket.on('updateRoom', (data) => {
   players.value = data;
   console.log('Local players now:', players.value);
 });
-
-
 </script>

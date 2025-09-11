@@ -10,7 +10,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:5173',
+        origin: 'http://localhost:5174',
         methods: ['GET', 'POST'],
     },
 });
@@ -19,6 +19,9 @@ const rooms = {};
 
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
+    socket.onAny((event, payload) => {
+        console.log('Received event', event, 'with payload', payload)
+    });
 
     socket.on('joinRoom', ({ roomId, user }) => {
         socket.join(roomId);
@@ -40,19 +43,24 @@ io.on('connection', (socket) => {
         console.log('📢 Vote cast, roomUpdate:', rooms[roomId]);
     });
 
-
-    socket.on('revealVotes', (roomId) => {
-        io.to(roomId).emit('revealVotes');
+    socket.on('revealVotes', ({roomId, visibility}) => {
+        console.log('hit');
+        if (rooms[roomId]) {
+            io.to(roomId).emit('toggleVisibility', visibility)
+            console.log('visibility updated', rooms[roomId][socket.id]);
+        }
     });
 
-    socket.on('resetVotes', (roomId) => {
-        console.log(rooms[roomId]);
-
-        Object.keys(rooms[roomId] || {}).forEach((user) => {
-            rooms[roomId][user].vote = null;
-        });
-        console.log('Votes reset for room:', roomId);
+    socket.on('clearVotes', ({ roomId }) => {
+        console.log('Clear')
+        if (rooms[roomId]) {
+            Object.keys(rooms[roomId][socket.id]).forEach(user => {
+                rooms[roomId][user].vote = null;
+            })
+        }
         io.to(roomId).emit('updateRoom', rooms[roomId]);
+        io.to(roomId).emit('toggleVisibility',  false);
+        console.log('Votes reset for room:', roomId);
     });
 
     socket.on('disconnect', () => {

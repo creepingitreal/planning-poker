@@ -1,9 +1,9 @@
 <template>
-  <LandingPage/>
+  <WaitingRoom/>
 </template>
 
 <script setup>
-import LandingPage from './components/LandingPage.vue';
+import WaitingRoom from './components/WaitingRoom.vue';
 </script>
 
 <style scoped>
