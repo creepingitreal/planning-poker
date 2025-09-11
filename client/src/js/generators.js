@@ -49,3 +49,19 @@ export function randomNameGenerator() {
 }
 
 console.log(randomNameGenerator());
+
+
+export function generateRoomId() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let rawId = '';
+
+    for (let i = 0; i < 8; i++) {
+        rawId += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    // Insert hyphens every 2 characters
+    return rawId.match(/.{1,2}/g).join('-'); // e.g., "aB-3d-X9-zQ"
+}
+
+const roomId = generateRoomId();
+console.log(roomId);

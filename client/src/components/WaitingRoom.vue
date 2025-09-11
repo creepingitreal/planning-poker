@@ -29,7 +29,7 @@ import { ref } from 'vue';
 import socket from '../../socket.js';
 import Room from './Room.vue';
 import '../css/join-room.css';
-import { randomNameGenerator } from "../js/nameGenerator.js";
+import { randomNameGenerator } from "../js/generators.js";
 
 const joined = ref(false);
 const name = ref('');
