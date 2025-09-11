@@ -1,27 +1,29 @@
 <template>
-  <div v-if="!joined" class="max-w-40px m-auto pt-100px text-center">
-    <h1>Join a Room</h1>
-    <input
-        class="block my-2.5 mx-auto px-4 py-2"
-        v-model="roomId"
-        placeholder="Room Name"
-    />
-    <input class="block my-2.5 mx-auto px-4 py-2"
-           v-model="name"
-           placeholder="Username"
-    />
-    <button class="m-2 px-5 py-2 text-white border-none rounded cursor-pointer hover:bg-[#cccdcf6e]"
-    @click="joinRoom"
-    >Join</button>
-    <button class="m-2 px-5 py-2 text-white border-none rounded cursor-pointer hover:bg-[#cccdcf6e]"
-    @click="createRoom"
-    >Create Room
-    </button>
-  </div>
+  <section>
+    <div v-if="!joined" class="max-w-40px m-auto pt-100px text-center">
+      <h1>Join a Room</h1>
+      <input
+          class="block my-2.5 mx-auto px-4 py-2"
+          v-model="roomId"
+          placeholder="Room Name"
+      />
+      <input class="block my-2.5 mx-auto px-4 py-2"
+             v-model="name"
+             placeholder="Username"
+      />
+      <button class="m-2 px-5 py-2 text-white border-none rounded cursor-pointer hover:bg-[#cccdcf6e]"
+              @click="joinRoom"
+      >Join</button>
+      <button class="m-2 px-5 py-2 text-white border-none rounded cursor-pointer hover:bg-[#cccdcf6e]"
+              @click="createRoom"
+      >Create Room
+      </button>
+    </div>
 
-  <div v-else>
-    <Room :room-id="roomId" :name="name" :players="players"/>  
-  </div>
+    <div v-else>
+      <Room :room-id="roomId" :name="name" :players="players"/>
+    </div>
+  </section>
 </template>
 
 <script setup>
