@@ -1,13 +1,6 @@
 <template>
-  <div class="game-board">
-    <div class="players">
-      <h3><strong>Players:</strong></h3>
-      <div v-for="(player, id) in players || {}" :key="id">
-        <h4>{{ player.user }}'s Vote:  </h4>
-        <Vote :vote="player.vote" :is-visible="isVisible"/>
-      </div>
-    </div>
-    <span>
+  <section class="game-board">
+    <span class="margin-top">
         <button class="reveal-votes"
                 @click="revealVotes(!isVisible)"
                 :disabled="!hasVotes"
@@ -18,10 +11,21 @@
         >Clear Votes
         </button>
       </span>
-  </div>
+    <div class="players-container">
+      <h3><strong>Players:</strong></h3>
+      <div class="player" v-for="(player, id) in players || {}"
+           :key="id"
+      >
+        <h4>{{ player.user }}'s Vote:  </h4>
+        <Vote :vote="player.vote" :is-visible="isVisible"/>
+      </div>
+    </div>
+
+
+  </section>
 
   <span>
-      <button class="card"
+      <button class="vote-option"
               v-for="value in voteOptions"
               :key="value"
               @click="castVote(value)"
@@ -35,7 +39,7 @@
 import Vote from "./Vote.vue";
 import socket from "../../socket.js";
 import {computed, ref} from "vue";
-import '../css/room.css';
+import '../css/game-board.css';
 
 const voteOptions = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, '?'];
 const isVisible = ref(false);

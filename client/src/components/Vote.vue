@@ -1,5 +1,6 @@
 <template>
-    <div class="card selected"
+    <div class="vote"
+        :class='isVisible ? "visible" : ""'
          v-if="vote !== null"
     >
         <p v-if="isVisible" >{{ vote }}</p>
@@ -7,6 +8,7 @@
 </template>
 
 <script setup>
+import '../css/vote.css'
 const props = defineProps({
     vote: {
         type: [Number, null],
