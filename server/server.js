@@ -10,7 +10,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:5174',
+        origin: 'http://localhost:5173',
         methods: ['GET', 'POST'],
     },
 });
@@ -52,15 +52,13 @@ io.on('connection', (socket) => {
     });
 
     socket.on('clearVotes', ({ roomId }) => {
-        console.log('Clear')
-        if (rooms[roomId]) {
-            Object.keys(rooms[roomId][socket.id]).forEach(user => {
-                rooms[roomId][socket.id].vote = null;
-            })
-            io.to(rooms[roomId]).emit('updateRoom', rooms[roomId])
-        }
+        console.log("Clear m'lady")
+        console.log( Object.keys(rooms[roomId]))
+      Object.keys(rooms[roomId]).forEach(user =>{
+          rooms[roomId][user].vote = null;
+      })
         io.to(roomId).emit('updateRoom', rooms[roomId]);
-        io.to(roomId).emit('toggleVisibility',  false);
+        // io.to(roomId).emit('toggleVisibility',  false);
         console.log('Votes reset for room:', roomId);
     });
 
