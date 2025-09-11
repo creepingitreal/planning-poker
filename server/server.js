@@ -52,13 +52,11 @@ io.on('connection', (socket) => {
     });
 
     socket.on('clearVotes', ({ roomId }) => {
-        console.log("Clear m'lady")
-        console.log( Object.keys(rooms[roomId]))
       Object.keys(rooms[roomId]).forEach(user =>{
           rooms[roomId][user].vote = null;
       })
         io.to(roomId).emit('updateRoom', rooms[roomId]);
-        // io.to(roomId).emit('toggleVisibility',  false);
+        io.to(roomId).emit('toggleVisibility',  false);
         console.log('Votes reset for room:', roomId);
     });
 
