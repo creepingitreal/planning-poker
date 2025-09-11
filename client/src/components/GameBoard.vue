@@ -4,7 +4,7 @@
       <h3><strong>Players:</strong></h3>
       <div v-for="(player, id) in players || {}" :key="id">
         <h4>{{ player.user }}'s Vote:  </h4>
-        <Vote :vote="player.vote" :is-visible="!isVisible"/>
+        <Vote :vote="player.vote" :is-visible="isVisible"/>
       </div>
     </div>
     <span>

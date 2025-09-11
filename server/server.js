@@ -55,8 +55,9 @@ io.on('connection', (socket) => {
         console.log('Clear')
         if (rooms[roomId]) {
             Object.keys(rooms[roomId][socket.id]).forEach(user => {
-                rooms[roomId][user].vote = null;
+                rooms[roomId][socket.id].vote = null;
             })
+            io.to(rooms[roomId]).emit('updateRoom', rooms[roomId])
         }
         io.to(roomId).emit('updateRoom', rooms[roomId]);
         io.to(roomId).emit('toggleVisibility',  false);
