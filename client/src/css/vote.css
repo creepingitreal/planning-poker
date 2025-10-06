@@ -4,6 +4,7 @@
     justify-content: center;
     align-items: center;
     background-color: #2859c5;
+    outline: 8px auto -webkit-focus-ring-color;
     padding: unset;
     width: 35px;
     height:45px;
@@ -11,8 +12,12 @@
     color: white;
 
     &.visible {
-        border: 2px solid #122C91;
+        /*border: 2px solid #122C91;*/
+        /*!*background-color: #2a6fdb;*!*/
+        /*color: #122C91;*/
+        /*background-color: #fff;*/
         background-color: #2a6fdb;
+        outline: 8px auto -webkit-focus-ring-color;
 
         @media screen and (min-width: 640px){
             font-weight: 600;
