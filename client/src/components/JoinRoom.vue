@@ -4,7 +4,7 @@
       <h1>Join a Room</h1>
       <input
           class="block my-2.5 mx-auto px-4 py-2"
-          v-model="roomId"
+          v-model="room.roomId"
           placeholder="Room Name"
       />
       <input class="block my-2.5 mx-auto px-4 py-2"
@@ -21,50 +21,61 @@
     </div>
 
     <div v-else>
-      <Room :room-id="roomId" :name="name" :players="players"/>
+      <Room :room="room" :name="name" :players="players" :share-url="shareUrl"/>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import socket from '../../socket.js';
-import Room from './Room.vue';
 import '../css/join-room.css';
-import { randomNameGenerator } from "../js/generators.js";
+import Room from './Room.vue';
+import {onMounted, ref} from 'vue';
+import {generateRoomId, randomNameGenerator} from "../js/generators.js";
+import {useRoute} from "vue-router";
 
+const route = useRoute(false);
+const shareUrl = ref('');
 const joined = ref(false);
 const name = ref('');
-const roomId = ref('');
+const room = ref({
+  roomId: '',
+  roomName: ''
+});
 const players = ref({});
+
+onMounted(() => {
+  if (route.params.roomId) {
+    room.value.roomId = route.params.roomId;
+  }
+})
 
 socket.on('connect', () => {
   console.log('Connected to server');
 });
 
 const joinRoom = () => {
-  if(!name.value || !roomId.value) {
+  if(!name.value || !room.value.roomId) {
     alert("Please enter a room ID and your name"); return;
   }
-  socket.emit('joinRoom', { roomId: roomId.value, user: name.value });
+  socket.emit('joinRoom', { room: room.value, user: name.value });
   
   joined.value = true;
-  console.log('Joining room:', roomId.value, 'as', name.value);
 };
 
 const createRoom = () => {
-  console.log('create room');
-  if(!name.value) { 
+  if(!name.value) {
     alert("Please enter your name"); return;
   }
-  roomId.value = randomNameGenerator();
-  socket.emit('joinRoom', { roomId: roomId.value, user: name.value });
-  
+  room.value.roomName = randomNameGenerator();
+  room.value.roomId = generateRoomId();
+  socket.emit('joinRoom', { room: room.value, user: name.value });
+
   joined.value = true;
 }
 
 socket.on('updateRoom', (data) => {
   players.value = data;
-  console.log('Local players now:', players.value);
+  if (url) shareUrl.value = url;
 });
 </script>

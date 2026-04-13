@@ -48,7 +48,7 @@ export function randomNameGenerator() {
     return `${part1} ${part2} ${part3}`;
 }
 
-console.log(randomNameGenerator());
+// console.log(randomNameGenerator());
 
 
 export function generateRoomId() {
@@ -63,5 +63,5 @@ export function generateRoomId() {
     return rawId.match(/.{1,2}/g).join('-'); // e.g., "aB-3d-X9-zQ"
 }
 
-const roomId = generateRoomId();
-console.log(roomId);
+// const roomId = generateRoomId();
+// console.log(roomId);

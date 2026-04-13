@@ -23,49 +23,49 @@ io.on('connection', (socket) => {
         console.log('Received event', event, 'with payload', payload)
     });
 
-    socket.on('joinRoom', ({ roomId, user }) => {
-        socket.join(roomId);
+    const broadcastRoom = (roomId) => {
+        const shareUrl = `${process.env.PUBLIC_BASE_URL ?? 'http://localhost:5173'}/room/${roomId}`;
+        io.to(roomId).emit('updateRoom', { players: rooms[roomId], shareUrl });
+    };
 
-        if (!rooms[roomId]) rooms[roomId] = {};
+    socket.on('joinRoom', ({ room, user }) => {
+        socket.join(room.roomId);
 
-        rooms[roomId][socket.id] = { user, vote: null };
+        if (!rooms[room.roomId]) rooms[room.roomId] = {};
 
-        io.to(roomId).emit('updateRoom', rooms[roomId]);
-        console.log('📢 Room joined, roomUpdate:', rooms[roomId])
+        rooms[room.roomId][socket.id] = { user, vote: null };
+
+        broadcastRoom(room.roomId)
     });
 
     socket.on('castVote', ({ roomId, vote }) => {
-        if (rooms[roomId] && rooms[roomId][socket.id]) {
+        if (rooms[roomId]?.[socket.id]) {
             rooms[roomId][socket.id].vote = vote;
-            console.log('Vote updated', rooms[roomId][socket.id]);
         }
-        io.to(roomId).emit('updateRoom', rooms[roomId]);
-        console.log('📢 Vote cast, roomUpdate:', rooms[roomId]);
+        broadcastRoom(roomId)
     });
 
     socket.on('revealVotes', ({roomId, visibility}) => {
-        console.log('hit');
         if (rooms[roomId]) {
             io.to(roomId).emit('toggleVisibility', visibility)
-            console.log('visibility updated', rooms[roomId][socket.id]);
         }
     });
 
     socket.on('clearVotes', ({ roomId }) => {
-      Object.keys(rooms[roomId]).forEach(user =>{
+        Object.keys(rooms[roomId]).forEach(user =>{
           rooms[roomId][user].vote = null;
-      })
-        io.to(roomId).emit('updateRoom', rooms[roomId]);
+        })
+
+        broadcastRoom(roomId)
+
         io.to(roomId).emit('toggleVisibility',  false);
-        console.log('Votes reset for room:', roomId);
     });
 
     socket.on('disconnect', () => {
-        console.log('User disconnected:', socket.id);
         for (const roomId in rooms) {
             if (rooms[roomId][socket.id]) {
                 delete rooms[roomId][socket.id];
-                io.to(roomId).emit('updateRoom', rooms[roomId]);
+                broadcastRoom(roomId)
             }
         }
     });

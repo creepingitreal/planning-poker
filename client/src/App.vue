@@ -1,9 +1,9 @@
 <template>
   <img id="procodenundrum-logo" src="./svg/procodenundrum.svg" alt="procode-nundrum logo">
-  <WaitingRoom/>
+  <JoinRoom/>
 </template>
 
 <script setup>
-import WaitingRoom from './components/WaitingRoom.vue';
+import JoinRoom from './components/JoinRoom.vue';
 import './style.css';
 </script>
