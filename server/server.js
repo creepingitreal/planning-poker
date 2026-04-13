@@ -16,32 +16,65 @@ const io = new Server(server, {
 });
 
 const rooms = {};
+const roomNames = {};
+const lockedRooms = new Set();
 
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
-    socket.onAny((event, payload) => {
-        console.log('Received event', event, 'with payload', payload)
-    });
 
     const broadcastRoom = (roomId) => {
         const shareUrl = `${process.env.PUBLIC_BASE_URL ?? 'http://localhost:5173'}/room/${roomId}`;
         io.to(roomId).emit('updateRoom', { players: rooms[roomId], shareUrl });
     };
 
-    socket.on('joinRoom', ({ room, user }) => {
-        socket.join(room.roomId);
+    socket.onAny((event, payload) => {
+        // console.log('Received event:', event, payload); // 👈 uncomment/add this
+        console.log('locked rooms: ',lockedRooms);
+    });
 
-        if (!rooms[room.roomId]) rooms[room.roomId] = {};
+    socket.on('createRoom', ({ room, user }) => {
+        if (rooms[room.roomId]) {
+            socket.emit('roomError', { message: `Room "${room.roomName}" already exists.` });
+            return;
+        }
+
+        rooms[room.roomId] = {};
+        roomNames[room.roomId] = room.roomName;
+
+        if (room.locked) {
+            lockedRooms.add(room.roomId);
+        }
 
         rooms[room.roomId][socket.id] = { user, vote: null };
 
-        broadcastRoom(room.roomId)
+        socket.join(room.roomId);
+
+        broadcastRoom(room.roomId);
+    });
+
+    socket.on('joinRoom', ({ room, user, fromLink = false }) => {
+        if (!rooms[room.roomId]) {
+            socket.emit('roomError', { message: 'Room not found.' });
+            return;
+        }
+
+        if (lockedRooms.has(room.roomId) && !fromLink) {
+            socket.emit('roomError', { message: 'This room is invite-only.' });
+            return;
+        }
+
+        socket.join(room.roomId);
+
+        rooms[room.roomId][socket.id] = { user, vote: null };
+
+        broadcastRoom(room.roomId);
     });
 
     socket.on('castVote', ({ roomId, vote }) => {
         if (rooms[roomId]?.[socket.id]) {
             rooms[roomId][socket.id].vote = vote;
         }
+
         broadcastRoom(roomId)
     });
 

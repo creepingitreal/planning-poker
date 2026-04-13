@@ -1,6 +1,10 @@
 <template>
-  <img id="procodenundrum-logo" src="./svg/procodenundrum.svg" alt="procode-nundrum logo">
-  <JoinRoom/>
+  <img
+      id="procodenundrum-logo"
+      src="./svg/procodenundrum.svg"
+      alt="procode-nundrum logo"
+  >
+  <RouterView />
 </template>
 
 <script setup>
