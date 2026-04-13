@@ -89,27 +89,23 @@ const saveSession = (room, name) => {
 
 const joinRoom = () => {
   errorMsg.value = '';
-
-  if (!name.value) {
-    alert('Please enter your name');
-    return;
-  }
+  if (!name.value) { alert('Please enter your name'); return; }
 
   if (route.params.roomId) {
-    room.value.roomId = route.params.roomId;
 
-    saveSession(room.value, name.value);
-
-    socket.emit('joinRoom', {room: room.value, user: name.value, fromLink: true});
-
-    joined.value = true;
+    socket.emit('joinRoom', {
+      room: { roomId: route.params.roomId, roomName: '' },
+      user: name.value,
+      fromLink: true
+    });
   } else {
-    if (!roomNameInput.value) {
-      alert('Please enter a room name');
-      return;
-    }
 
-    socket.emit('resolveRoom', roomNameInput.value);
+    if (!roomNameInput.value) { alert('Please enter a room name'); return; }
+    socket.emit('joinRoom', {
+      room: { roomId: '', roomName: roomNameInput.value },
+      user: name.value,
+      fromLink: false
+    });
   }
 };
 
@@ -126,23 +122,15 @@ const createRoom = () => {
   room.value.roomId = generateRoomId();
 
   socket.emit('createRoom', {room: {...room.value, locked: locked.value}, user: name.value});
-  router.push(`/room/${room.value.roomId}`);
 
   joined.value = true;
 };
 
-socket.on('roomResolved', ({roomId, error}) => {
-  if (error) {
-    errorMsg.value = error;
-    return;
-  }
-
+socket.on('roomJoined', ({ roomId, roomName }) => {
   room.value.roomId = roomId;
-  room.value.roomName = roomNameInput.value;
+  room.value.roomName = roomName;
 
   saveSession(room.value, name.value);
-
-  socket.emit('joinRoom', {room: room.value, user: name.value, fromLink: false});
 
   router.push(`/room/${roomId}`);
 
@@ -153,26 +141,18 @@ socket.on('roomError', ({message}) => {
   alert(message)
 });
 
-const handleUpdateRoom = ({players: data, shareUrl: url}) => {
+const handleUpdateRoom = ({players: data, shareUrl: url, roomName: roomName}) => {
   players.value = data;
 
   if (url) shareUrl.value = url;
-
-
-  if (!joined.value && room.value.roomId) {
-    saveSession(room.value, name.value);
-
-    router.push(`/room/${room.value.roomId}`);
-
-    joined.value = true;
-  }
+  if (roomName) room.value.roomName = roomName;
 };
 
 socket.on('updateRoom', handleUpdateRoom);
 
 onUnmounted(() => {
   socket.off('updateRoom', handleUpdateRoom);
-  socket.off('roomResolved');
+  socket.off('roomJoined');
   socket.off('roomError');
 });
 </script>

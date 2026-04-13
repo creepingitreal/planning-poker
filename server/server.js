@@ -24,12 +24,15 @@ io.on('connection', (socket) => {
 
     const broadcastRoom = (roomId) => {
         const shareUrl = `${process.env.PUBLIC_BASE_URL ?? 'http://localhost:5173'}/room/${roomId}`;
-        io.to(roomId).emit('updateRoom', { players: rooms[roomId], shareUrl });
+        io.to(roomId).emit('updateRoom', {
+            players: rooms[roomId],
+            shareUrl,
+            roomName: roomNames[roomId]
+        });
     };
 
     socket.onAny((event, payload) => {
         // console.log('Received event:', event, payload); // 👈 uncomment/add this
-        console.log('locked rooms: ',lockedRooms);
     });
 
     socket.on('createRoom', ({ room, user }) => {
@@ -39,7 +42,7 @@ io.on('connection', (socket) => {
         }
 
         rooms[room.roomId] = {};
-        roomNames[room.roomId] = room.roomName;
+        roomNames[room.roomName] = room.roomId;
 
         if (room.locked) {
             lockedRooms.add(room.roomId);
@@ -49,25 +52,38 @@ io.on('connection', (socket) => {
 
         socket.join(room.roomId);
 
+        socket.emit('roomJoined', { roomId: room.roomId, roomName: room.roomName });
+
         broadcastRoom(room.roomId);
     });
 
     socket.on('joinRoom', ({ room, user, fromLink = false }) => {
-        if (!rooms[room.roomId]) {
+        let roomId = room.roomId;
+
+        if (!roomId && room.roomName) {
+            roomId = roomNames[room.roomName];
+            if (!roomId) {
+                socket.emit('roomError', { message: 'Room not found.' });
+                return;
+            }
+        }
+
+        if (!rooms[roomId]) {
             socket.emit('roomError', { message: 'Room not found.' });
             return;
         }
 
-        if (lockedRooms.has(room.roomId) && !fromLink) {
+        if (lockedRooms.has(roomId) && !fromLink) {
             socket.emit('roomError', { message: 'This room is invite-only.' });
             return;
         }
 
-        socket.join(room.roomId);
+        socket.join(roomId);
+        rooms[roomId][socket.id] = { user, vote: null };
 
-        rooms[room.roomId][socket.id] = { user, vote: null };
+        socket.emit('roomJoined', { roomId, roomName: roomNames[roomId] ?? roomId });
 
-        broadcastRoom(room.roomId);
+        broadcastRoom(roomId);
     });
 
     socket.on('castVote', ({ roomId, vote }) => {
