@@ -4,14 +4,27 @@
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
+
+    .button-section {
+        align-self: center;
+    }
+}
+
+.share-btn {
+    align-self: flex-end;
+    margin-bottom: 10px;
+}
+
+.poker {
+
 }
 
 .players-container {
+    width: 100%;
     text-align: start;
     background-color: var(--secondary-white);
     border-radius: 18px;
     padding: 25px  30px;
-    margin: 10px 0;
     height: 60%;
     h3 {
         margin-bottom: 20px;
@@ -41,23 +54,27 @@
     border-radius: 5px;
 }
 
+.vote-card-section {
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
 .vote-option {
     background-color: var(--accent-blue);
     padding: unset;
-    width: 55px;
-    height:70px;
+    min-width: 55px;
+    max-width: 55px;
+    min-height:70px;
+    max-height:70px;
     border-radius: 5px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 5px 8px;
     &:hover {
-        border: 2px solid var(--primary-blue);
-        background-color: var(--secondary-blue);
+        background-color: #058f8c;
         transition: ease-in-out .35s;
     }
     &:focus, &:focus-visible {
         background-color: var(--secondary-blue);
     }
-}
-
-.reveal-votes, .clear-votes {
-    width: 138px;
 }

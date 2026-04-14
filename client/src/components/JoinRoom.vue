@@ -1,12 +1,13 @@
 <template>
   <section>
     <div class="room" v-if="!joined">
-      <h1 v-if="!route.params.roomId" class="title">Join a Room</h1>
-      <div v-if="!route.params.roomId">
-        <input v-model="roomNameInput" placeholder="Room Name" class="input"/>
+      <div class="section-title">
+        <h1 v-if="!route.params.roomId" class="title">Join a Room</h1>
+        <div v-if="!route.params.roomId">
+          <input v-model="roomNameInput" placeholder="Room Name" class="input"/>
+        </div>
+        <h1 v-else class="title">Joining room: {{ route.params.roomId }}</h1>
       </div>
-      <h1 v-else class="title">Joining room: {{ route.params.roomId }}</h1>
-
       <input v-model="name" type="text" placeholder="Username" class="input"/>
 
       <div class="button-section">
@@ -57,8 +58,13 @@ const roomNameInput = ref('');
 const locked = ref(false);
 const errorMsg = ref('');
 const players = ref({});
+const jiraIssue = ref('');
 
 onMounted(() => {
+  const params = new URLSearchParams(window.location.search);
+  const issue = params.get('issue');
+  if (issue) jiraIssue.value = issue;
+
   if (route.params.roomId) {
     room.value.roomId = route.params.roomId;
 

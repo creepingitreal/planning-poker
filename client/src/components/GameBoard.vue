@@ -1,30 +1,26 @@
 <template>
-  <section class="game-board">
-    <span class="margin-top">
-        <button class="reveal-votes"
-                @click="revealVotes(!isVisible)"
-                :disabled="!hasVotes"
-        >{{ isVisible ? "Hide Votes" : "Reveal Votes"}}
-        </button>
-        <button class="clear-votes"
-                @click="clearVotes"
-        >Clear Votes
-        </button>
-      </span>
+  <section class="game-board  section-layout">
     <div class="players-container">
       <h3><strong>Players:</strong></h3>
       <div class="player" v-for="(player, id) in players || {}"
            :key="id"
       >
-        <h4>{{ player.user }}'s Vote:  </h4>
+        <h4>{{ player.user }}'s Vote: </h4>
+
         <Vote :vote="player.vote" :is-visible="isVisible"/>
       </div>
     </div>
 
+    <div class="button-section">
+      <button @click="revealVotes(!isVisible)" :disabled="!hasVotes">
+        {{ isVisible ? "Hide Votes" : "Reveal Votes" }}
+      </button>
+      <button @click="clearVotes">
+        Clear Votes
+      </button>
+    </div>
 
-  </section>
-
-  <span>
+    <div class="vote-card-section">
       <button class="vote-option"
               v-for="value in voteOptions"
               :key="value"
@@ -32,7 +28,8 @@
       >
         {{ value }}
       </button>
-    </span>
+    </div>
+  </section>
 </template>
 
 <script setup>
@@ -60,7 +57,7 @@ const hasVotes = computed(() => {
 })
 
 const castVote = (value) => {
-  socket.emit('castVote', { roomId: props.room.roomId, vote: value });
+  socket.emit('castVote', {roomId: props.room.roomId, vote: value});
 };
 
 const revealVotes = (visibility) => {
@@ -74,7 +71,4 @@ const clearVotes = () => {
 socket.on('toggleVisibility', (visibility) => {
   isVisible.value = visibility;
 });
-
-
-
 </script>

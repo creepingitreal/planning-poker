@@ -1,17 +1,25 @@
 <template>
-  <section class="room">
+  <section class="room ">
+    <button class="outline small share-btn" @click="copyLink">
+      {{ copied ? '✓ Copied!' : '🔗 Share Invite Link' }}
+    </button>
+
     <div class="section-title">
-      <h1>Room Name: </h1>
-      <h1><strong>{{ room.roomName }}</strong></h1>
-      <br>
-      <h2>Welcome, {{ name }}</h2>
-      <button class="share-btn" @click="copyLink">
-        {{ copied ? '✓ Copied!' : '🔗 Copy Invite Link' }}
-      </button>
+      <div>
+        <h1>Welcome to the
+          <br>
+          <strong class="no-wrap">{{ room.roomName }}</strong>
+          <br>
+          Room, {{name}}!
+        </h1>
+      </div>
+      <div v-if="jiraIssue">
+        <h1>Jira Ticket: </h1>
+        <h1><strong>{{ jiraIssue }}</strong></h1>
+      </div>
     </div>
-    <div>
-      <game-board :room="room" :players="players"></game-board>
-    </div>
+
+    <game-board :room="room" :players="players"></game-board>
 </section>
 </template>
 
@@ -35,6 +43,10 @@ const props = defineProps({
   shareUrl: {
       type: String,
     default: ''
+  },
+  jiraIssue: {
+      type: String,
+      required: false
   }
 });
 
@@ -44,6 +56,6 @@ const copyLink = async () => {
   const url = props.shareUrl || window.location.href;
   await navigator.clipboard.writeText(url);
   copied.value = true;
-  setTimeout(() => { copied.value = false; }, 2000);
+  setTimeout(() => { copied.value = false; }, 3000);
 };
 </script>

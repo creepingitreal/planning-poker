@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/*–––––––––––––– Global Styling ––––––––––––––*/
 :root {
     @font-face {
         font-family: "Gilroy";
@@ -13,7 +14,7 @@
     --dark-blue: #0e216d;
     --primary-blue: #122C91;
     --secondary-blue: #2a6fdb;
-    --accent-blue: #48D6D2;
+    --accent-blue: #03b4b0;
     --border-blue: rgb(14 33 109 / 0.07);
 
     --primary-black: #171717;
@@ -35,33 +36,14 @@ body {
 
 
 nav {
-    padding: 50px 300px;
+    padding: 50px;
     margin-bottom: 50px;
     background-color: var(--dark-blue);
     align-items: center;
 }
 
-.room {
-    max-width: 840px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-}
-
-.logo {
-    max-width: fit-content;
-    align-self: center;
-
-    img {
-        width: 100%;
-        max-width: 400px;
-    }
-}
-
-.max-w-40px {
-    padding: 50px;
+main {
+    padding: 0 50px;
 }
 
 h1 {
@@ -96,16 +78,67 @@ h4 {
     }
 }
 
+.section-layout {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.section-title {
+    text-align: center;
+    max-width: 400px;
+    @media screen and (min-width: 800px) {
+        max-width: 600px;
+    }
+}
+
 .text-small {
     font-size: 0.8rem;
     color: var(--warning)
 }
 
+.no-wrap {
+    white-space: nowrap;
+}
+.margin-top {
+    margin-top: 20px;
+}
+
+
+.room {
+    max-width: 840px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    position: relative;
+    left: 10vw;
+    max-width: fit-content;
+    align-self: center;
+
+    img {
+        width: 100%;
+        max-width: 400px;
+    }
+}
+
+.max-w-40px {
+    padding: 50px;
+}
+
+
+
+/*–––––––––––––– Button Styling ––––––––––––––*/
 button {
-    border-radius: 999px;
+    border-radius: 10px;
     border: 1px solid transparent;
     padding: 10px 20px;
-    font-size: 1em;
+    font-size: 1rem;
     font-weight: 500;
     font-family: inherit;
     background-color: var(--primary-blue);
@@ -117,25 +150,50 @@ button {
     max-height: 50px;
     max-width: fit-content;
     min-width: 150px;
+
+    &:hover {
+        background-color: var(--dark-blue);
+        transition: ease-in-out .3s;
+    }
+
+    &:focus,
+    &:focus-visible {
+        outline: 8px auto -webkit-focus-ring-color;
+    }
+
+    &.outline {
+        color: var(--primary-blue);
+        border-color: var(--primary-blue);
+        background-color: var(--secondary-white);
+        &:hover {
+            background-color: white;
+        }
+    }
+
+    &.small {
+        min-height: 40px;
+        max-height: 40px;
+        font-size: 0.9rem;
+        padding: 4px 8px;
+    }
 }
 
-button:hover {
-    background-color: var(--dark-blue);
-    transition: ease-in-out .3s;
+.button-section {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    align-items: end;
+    gap: 50px;
 }
 
-button:focus,
-button:focus-visible {
-    outline: 8px auto -webkit-focus-ring-color;
-}
 
+/*–––––––––––––– Input Styling ––––––––––––––*/
 .input {
     width: 400px;
     padding: 10px 15px;
     border: rgb(14 33 109 / 0.07) solid 1px;
     border-radius: 5px;
 }
-
 
 input[type='checkbox'] {
     appearance: none;
@@ -217,8 +275,4 @@ input[type='checkbox'] {
 label {
     font-weight: 500;
     margin-bottom: 8px;
-}
-
-.margin-top {
-    margin-top: 20px;
 }
