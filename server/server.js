@@ -31,10 +31,6 @@ io.on('connection', (socket) => {
         });
     };
 
-    socket.onAny((event, payload) => {
-        // console.log('Received event:', event, payload); // 👈 uncomment/add this
-    });
-
     socket.on('createRoom', ({ room, user }) => {
         if (rooms[room.roomId]) {
             socket.emit('roomError', { message: `Room "${room.roomName}" already exists.` });

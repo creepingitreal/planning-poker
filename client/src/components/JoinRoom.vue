@@ -45,7 +45,7 @@
 import socket from '../../socket.js';
 import '../css/join-room.css';
 import Room from './Room.vue';
-import {onMounted, onUnmounted, ref} from 'vue';
+import {onMounted, onUnmounted, ref, watch} from 'vue';
 import {generateRoomId, randomNameGenerator} from "../js/generators.js";
 import {useRoute, useRouter} from "vue-router";
 
@@ -67,24 +67,32 @@ const players = ref({});
 onMounted(() => {
   if (route.params.roomId) {
     room.value.roomId = route.params.roomId;
-  }
 
-  const saved = sessionStorage.getItem(`poker_session_${route.params.roomId}`);
+    const saved = sessionStorage.getItem(`poker_session_${route.params.roomId}`);
+    if (saved) {
+      const session = JSON.parse(saved);
+      const twentyFourHours = 24 * 60 * 60 * 1000;
 
-  if (saved && route.params.roomId) {
-    const session = JSON.parse(saved);
+      if (Date.now() - session.savedAt < twentyFourHours) {
+        room.value = session.room;
+        name.value = session.name;
 
-    room.value = session.room;
-    name.value = session.name;
+        socket.emit('joinRoom', { room: session.room, user: session.name, fromLink: true });
 
-    socket.emit('joinRoom', {room: session.room, user: session.name, fromLink: true});
-
-    joined.value = true;
+        joined.value = true;
+      } else {
+        sessionStorage.removeItem(`poker_session_${route.params.roomId}`);
+      }
+    }
   }
 });
 
 const saveSession = (room, name) => {
-  sessionStorage.setItem(`poker_session_${room.roomId}`, JSON.stringify({room: room, name: name}));
+  sessionStorage.setItem(`poker_session_${room.roomId}`, JSON.stringify({
+    room,
+    name,
+    savedAt: Date.now()
+  }));
 };
 
 const joinRoom = () => {
@@ -154,5 +162,15 @@ onUnmounted(() => {
   socket.off('updateRoom', handleUpdateRoom);
   socket.off('roomJoined');
   socket.off('roomError');
+});
+
+
+watch(() => route.path, (newPath) => {
+  if (newPath === '/') {
+    joined.value = false;
+    room.value = { roomId: '', roomName: '' };
+    name.value = '';
+    players.value = {};
+  }
 });
 </script>
