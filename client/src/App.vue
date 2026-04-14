@@ -1,15 +1,20 @@
 <template>
-  <RouterLink to="/">
-    <img
-        id="procodenundrum-logo"
-        src="./svg/procodenundrum.svg"
-        alt="procode-nundrum logo"
-    >
-  </RouterLink>
-  <RouterView />
+  <nav>
+    <RouterLink to="/">
+      <div class="logo">
+        <img
+            id="logo"
+            src="./svg/logo-white.svg"
+            alt="procode-nundrum logo"
+        >
+      </div>
+    </RouterLink>
+  </nav>
+  <main>
+    <RouterView />
+  </main>
 </template>
 
 <script setup>
-import JoinRoom from './components/JoinRoom.vue';
 import './style.css';
 </script>

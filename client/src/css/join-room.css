@@ -1,14 +1,20 @@
-/*@import "tailwindcss";*/
+.button-section {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    align-items: end;
+    gap: 50px;
+}
 
-/*.join-room {*/
-/*    max-width: 400px;*/
-/*    margin: auto;*/
-/*    padding-top: 100px;*/
-/*    text-align: center;*/
-/*  }*/
-/*  */
-/*  input {*/
-/*    display: block;*/
-/*    margin: 10px auto;*/
-/*  }*/
-/*  */
+.container-create-btn {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+
+    label {
+        margin-left: 8px;
+    }
+    .text-small {
+        margin-bottom: 8px;
+    }
+}

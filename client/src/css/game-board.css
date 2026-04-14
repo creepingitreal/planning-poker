@@ -8,7 +8,7 @@
 
 .players-container {
     text-align: start;
-    background-color: #F5F5F5;
+    background-color: var(--secondary-white);
     border-radius: 18px;
     padding: 25px  30px;
     margin: 10px 0;
@@ -42,20 +42,19 @@
 }
 
 .vote-option {
-    background-color: #48D6D2;
+    background-color: var(--accent-blue);
     padding: unset;
     width: 55px;
     height:70px;
     border-radius: 5px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;
     &:hover {
-        border: 2px solid #122C91;
-        background-color: #2859c5;
+        border: 2px solid var(--primary-blue);
+        background-color: var(--secondary-blue);
         transition: ease-in-out .35s;
     }
     &:focus, &:focus-visible {
-        background-color: #2a6fdb;
-
+        background-color: var(--secondary-blue);
     }
 }
 

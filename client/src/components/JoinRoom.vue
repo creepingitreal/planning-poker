@@ -1,42 +1,36 @@
 <template>
   <section>
-    <div v-if="!joined" class="max-w-40px m-auto pt-100px text-center">
+    <div class="room" v-if="!joined">
+      <h1 v-if="!route.params.roomId" class="title">Join a Room</h1>
       <div v-if="!route.params.roomId">
-        <h1>Join a Room</h1>
-        <input
-            class="block my-2.5 mx-auto px-4 py-2"
-            v-model="roomNameInput"
-            placeholder="Room Name"
-        />
+        <input v-model="roomNameInput" placeholder="Room Name" class="input"/>
       </div>
-      <h1 v-else>Joining room: {{ route.params.roomId }}</h1>
+      <h1 v-else class="title">Joining room: {{ route.params.roomId }}</h1>
 
-      <input class="block my-2.5 mx-auto px-4 py-2"
-             v-model="name"
-             placeholder="Username"
-      />
+      <input v-model="name" type="text" placeholder="Username" class="input"/>
 
-      <button class="m-2 px-5 py-2 text-white border-none rounded cursor-pointer hover:bg-[#cccdcf6e]"
-              @click="joinRoom"
-      >
-        {{ route.params.roomId ? 'Join room now' : 'Join' }}
-      </button>
-
-      <div v-if="!route.params.roomId">
-        <label>
-          <input type="checkbox" v-model="locked"/> Create Invite-only room
-        </label>
-        <button
-            class="m-2 px-5 py-2 text-white border-none rounded cursor-pointer hover:bg-[#cccdcf6e]"
-            @click="createRoom"
-        >
-          Create Room
+      <div class="button-section">
+        <button @click="joinRoom">
+          {{ route.params.roomId ? 'Join room now' : 'Join' }}
         </button>
+
+        <div v-if="!route.params.roomId" class="container-create-btn">
+            <input id="invite-only" type="checkbox" v-model="locked" class="checkbox"/>
+            <label for="invite-only">
+              Invite-only
+            </label>
+            <p v-if="locked" class="text-small">
+              By checking this box, only users with the share link will be able to join the room
+            </p>
+          <button @click="createRoom">
+            Create Room
+          </button>
+        </div>
       </div>
     </div>
 
     <div v-else>
-      <Room :room="room" :name="name" :players="players" :share-url="shareUrl"/>
+      <Room :room="room" :name="name" :players="players" :share-url="shareUrl" :jira-issue="jiraIssue"/>
     </div>
   </section>
 </template>

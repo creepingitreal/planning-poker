@@ -1,56 +1,62 @@
 @import "tailwindcss";
 
-#app {
-    margin: 0 auto;
-    text-align: center;
-    line-height: 1.1;
-}
-
 :root {
     @font-face {
-        font-family: "Gordita", "sans-serif";
+        font-family: "Gilroy";
         font-weight: 400;
     }
-
-
-    /*color-scheme: light dark;*/
-    /*color: rgba(255, 255, 255, 0.87);*/
-    /*background-color: #242424;*/
-
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    --dark-blue: #0e216d;
+    --primary-blue: #122C91;
+    --secondary-blue: #2a6fdb;
+    --accent-blue: #48D6D2;
+    --border-blue: rgb(14 33 109 / 0.07);
+
+    --primary-black: #171717;
+
+    --secondary-white: #F5F5F5;
+
+    --warning: #ad5000;
 }
-
-
-/*a {*/
-/*  font-weight: 500;*/
-/*  color: #646cff;*/
-/*  text-decoration: inherit;*/
-/*}*/
-/*a:hover {*/
-/*  color: #535bf2;*/
-/*}*/
 
 body {
-    margin: 0;
-    display: flex;
-    place-items: center;
-    min-width: 320px;
-    min-height: 100vh;
+    width: 100%;
+    height: 100vh;
 }
 
-#procodenundrum-logo {
-    /*background-color: #48D6D2;*/
-    position: relative;
+#app {
     margin: 0 auto;
-    /*top: 20%;*/
-    /*left: 50%;*/
-    /*transform: translateX(-50%);*/
-    padding: 50px;
-    @media screen and (min-width: 640px) {
-        scale: 1.3;
+    height: 100%;
+}
+
+
+nav {
+    padding: 50px 300px;
+    margin-bottom: 50px;
+    background-color: var(--dark-blue);
+    align-items: center;
+}
+
+.room {
+    max-width: 840px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    max-width: fit-content;
+    align-self: center;
+
+    img {
+        width: 100%;
+        max-width: 400px;
     }
 }
 
@@ -90,24 +96,31 @@ h4 {
     }
 }
 
+.text-small {
+    font-size: 0.8rem;
+    color: var(--warning)
+}
 
 button {
     border-radius: 999px;
     border: 1px solid transparent;
-    margin: 10px;
     padding: 10px 20px;
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: #122C91;
+    background-color: var(--primary-blue);
     color: #fff;
     cursor: pointer;
     transition: ease-in-out .3s;
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    min-height: 50px;
+    max-height: 50px;
+    max-width: fit-content;
+    min-width: 150px;
 }
 
 button:hover {
-    background-color: #0e216d;
+    background-color: var(--dark-blue);
     transition: ease-in-out .3s;
 }
 
@@ -116,28 +129,96 @@ button:focus-visible {
     outline: 8px auto -webkit-focus-ring-color;
 }
 
-.room {
-    padding:16px;
-    /*height: 80vh;*/
-    display: flex;
-    flex-direction: column;
+.input {
+    width: 400px;
+    padding: 10px 15px;
+    border: rgb(14 33 109 / 0.07) solid 1px;
+    border-radius: 5px;
+}
+
+
+input[type='checkbox'] {
+    appearance: none;
+    -webkit-appearance: none;
+    & + label {
+        position: relative;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+
+        &::before {
+            border: solid 1px var(--border-blue);
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            border-radius: 5px;
+            content: ' ';
+            display: inline-block;
+            background-color: white;
+        }
+    }
+
+    &:hover {
+        & + label {
+            &::before {
+                background-color: var(--secondary-white);
+            }
+        }
+    }
+
+    &:checked {
+        & + label {
+            &::after {
+                position: absolute;
+                content: '';
+                background-color: var(--secondary-blue);
+                background-image: url('img/tick-icon-white.svg');
+                background-repeat: no-repeat;
+                background-position: center;
+                border: none;
+                background-size: 48%;
+                height: 20px;
+                width: 20px;
+                border-radius: 5px;
+            }
+        }
+
+        &:hover {
+            & + label {
+                &::after {
+                    transition: ease-in-out .3s;
+                    background-color: var(--primary-blue);
+                }
+            }
+        }
+    }
+
+    &:disabled {
+        & + label {
+            pointer-events: none;
+            cursor: not-allowed;
+
+            &::before {
+                border-color: grey;
+            }
+        }
+
+        &:checked {
+            & + label {
+                &::after {
+                    background-color: dimgrey;
+                }
+            }
+        }
+    }
+}
+
+label {
+    font-weight: 500;
+    margin-bottom: 8px;
 }
 
 .margin-top {
     margin-top: 20px;
-}
-
-@media (prefers-color-scheme: light) {
-    :root {
-        color: #213547;
-        background-color: #ffffff;
-    }
-
-    a:hover {
-        color: #747bff;
-    }
-
-    button {
-        background-color: #f9f9f9;
-    }
 }
