@@ -1,21 +1,21 @@
 <template>
   <section class="game-board  section-layout">
     <div class="players-container">
-      <h3><strong>Players:</strong></h3>
+<!--      <h2 class="title-small"><strong>Players:</strong></h2>-->
       <div class="player" v-for="(player, id) in players || {}"
            :key="id"
       >
-        <h4>{{ player.user }}'s Vote: </h4>
+        <p>{{ player.user }}</p>
 
         <Vote :vote="player.vote" :is-visible="isVisible"/>
       </div>
     </div>
 
     <div class="button-section">
-      <button @click="revealVotes(!isVisible)" :disabled="!hasVotes">
+      <button @click="revealVotes(!isVisible)" :disabled="!hasVotes" class="reveal-btn">
         {{ isVisible ? "Hide Votes" : "Reveal Votes" }}
       </button>
-      <button @click="clearVotes">
+      <button @click="clearVotes" class="secondary-blue">
         Clear Votes
       </button>
     </div>

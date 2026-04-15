@@ -14,13 +14,16 @@
     --dark-blue: #0e216d;
     --primary-blue: #122C91;
     --secondary-blue: #2a6fdb;
-    --accent-blue: #03b4b0;
+    --accent-blue: #48D6D1;
     --border-blue: rgb(14 33 109 / 0.07);
 
-    --primary-black: #171717;
+    --primary-black: #111111;
+    --white: #ffffff;
+    --lightest-grey: #F5F5F5;
+    --medium-grey: #ADADAD;
+    --dark-grey: #5E6266;
 
-    --secondary-white: #F5F5F5;
-
+    --soft-yellow: #faf9e4;
     --warning: #ad5000;
 }
 
@@ -35,22 +38,47 @@ body {
 }
 
 
+
 nav {
-    padding: 50px;
-    margin-bottom: 50px;
     background-color: var(--dark-blue);
-    align-items: center;
+    padding: 30px;
+    margin-bottom: 20px;
+    align-items: start;
+    @media screen and(min-width: 640px) {
+        padding: 50px;
+        margin-bottom: 50px;
+        align-items: center;
+    }
+}
+
+.logo {
+    position: relative;
+    align-self: center;
+    width: fit-content;
+    img {
+        width: 100%;
+        max-width: 250px;
+    }
+    @media screen and (min-width: 640px) {
+        left: 10vw;
+        img {
+            max-width: 400px;
+        }
+    }
 }
 
 main {
-    padding: 0 50px;
+    padding: 0 20px;
+    @media screen and (min-width: 640px){
+        padding: 0 50px;
+    }
 }
 
 h1 {
     font-size: 1.5rem;
 
     @media screen and (min-width: 640px) {
-        font-size: 1.8rem;
+        font-size: 1.625rem;
     }
 }
 
@@ -58,7 +86,7 @@ h2 {
     font-size: 1.25rem;
 
     @media screen and (min-width: 640px) {
-        font-size: 1.75rem;
+        font-size: 1.45rem;
     }
 }
 
@@ -66,7 +94,7 @@ h3 {
     font-size: 1rem;
 
     @media screen and (min-width: 640px) {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
     }
 }
 
@@ -78,6 +106,10 @@ h4 {
     }
 }
 
+p {
+    font-size: 1rem;
+}
+
 .section-layout {
     width: 100%;
     display: flex;
@@ -86,25 +118,35 @@ h4 {
 }
 
 .section-title {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     max-width: 400px;
-    @media screen and (min-width: 800px) {
-        max-width: 600px;
+    @media screen and (min-width: 640px) {
+        text-align: center;
+        max-width: 100%;
     }
+}
+
+.title-small {
+    font-size: 1rem;
 }
 
 .text-small {
     font-size: 0.8rem;
-    color: var(--warning)
 }
 
+.confirmation-text {
+    color: var(--dark-grey);
+}
 .no-wrap {
     white-space: nowrap;
 }
+
+
 .margin-top {
     margin-top: 20px;
 }
-
 
 .room {
     max-width: 840px;
@@ -115,41 +157,37 @@ h4 {
     gap: 20px;
 }
 
-.logo {
-    position: relative;
-    left: 10vw;
-    max-width: fit-content;
-    align-self: center;
-
-    img {
-        width: 100%;
-        max-width: 400px;
-    }
-}
-
 .max-w-40px {
     padding: 50px;
 }
 
+.secondary-blue {
+    background-color: var(--secondary-blue);
+}
 
 
 /*–––––––––––––– Button Styling ––––––––––––––*/
 button {
-    border-radius: 10px;
+    border-radius: 999px;
     border: 1px solid transparent;
-    padding: 10px 20px;
-    font-size: 1rem;
+    padding: 16px 50px;
+    line-height: 1rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     font-family: inherit;
     background-color: var(--primary-blue);
     color: #fff;
     cursor: pointer;
     transition: ease-in-out .3s;
-    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    box-shadow: rgba(60, 64, 67, 0.15) 0px 1px 2px 0px, rgba(60, 64, 67, 0.1) 0px 2px 6px 2px;
     min-height: 50px;
     max-height: 50px;
     max-width: fit-content;
     min-width: 150px;
+
+    @media screen and (min-width: 640px) {
+        font-size: 0.938rem;
+    }
 
     &:hover {
         background-color: var(--dark-blue);
@@ -158,41 +196,69 @@ button {
 
     &:focus,
     &:focus-visible {
-        outline: 8px auto -webkit-focus-ring-color;
+        /*outline: 8px auto -webkit-focus-ring-color;*/
     }
 
     &.outline {
-        color: var(--primary-blue);
-        border-color: var(--primary-blue);
-        background-color: var(--secondary-white);
+        color: var(--primary-black);
+        border-color: var(--medium-grey);
+        background-color: var(--white);
         &:hover {
             background-color: white;
         }
+    }
+
+    &.black {
+        background-color: var(--primary-black);
+        border-color: var(--primary-black);
+        color: var(--white);
     }
 
     &.small {
         min-height: 40px;
         max-height: 40px;
         font-size: 0.9rem;
-        padding: 4px 8px;
+        padding: 5px 15px;
     }
 }
 
 .button-section {
-    width: 100%;
-    max-width: 400px;
+    width: fit-content;
     display: flex;
+    flex-direction: column;
     align-items: end;
-    gap: 50px;
+    gap:10px;
+    @media screen and (min-width: 640px) {
+        flex-direction: row;
+        gap: 30px;
+    }
 }
 
 
 /*–––––––––––––– Input Styling ––––––––––––––*/
-.input {
+label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+
+input:not([type="checkbox"]):not([type="radio"]) {
     width: 400px;
-    padding: 10px 15px;
-    border: rgb(14 33 109 / 0.07) solid 1px;
-    border-radius: 5px;
+    max-width: 400px;
+    background-color: var(--lightest-grey);
+    min-height: 50%;
+    padding: 14px 15px;
+    font-size: 0.8125rem;
+    line-height: 1.15;
+    font-weight: 400;
+    letter-spacing: 5%;
+    border-radius: 8px;
+}
+
+input::placeholder {
+    font-size: 0.8125rem;
+    color: var(--medium-grey);
 }
 
 input[type='checkbox'] {
@@ -270,9 +336,4 @@ input[type='checkbox'] {
             }
         }
     }
-}
-
-label {
-    font-weight: 500;
-    margin-bottom: 8px;
 }

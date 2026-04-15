@@ -1,16 +1,14 @@
 <template>
   <section class="room ">
-    <button class="outline small share-btn" @click="copyLink">
+    <button class="black small share-btn" @click="copyLink">
       {{ copied ? '✓ Copied!' : '🔗 Share Invite Link' }}
     </button>
 
     <div class="section-title">
       <div>
-        <h1>Welcome to the
-          <br>
-          <strong class="no-wrap">{{ room.roomName }}</strong>
-          <br>
-          Room, {{ name }}!
+        <h1 class="">Welcome to the
+          <strong class="no-wrap">{{ room.roomName }}</strong> Room,
+          {{ name }}!
         </h1>
       </div>
       <div v-if="jiraIssue">

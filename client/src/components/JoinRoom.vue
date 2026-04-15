@@ -3,12 +3,13 @@
     <div class="room" v-if="!joined">
       <div class="section-title">
         <h1 v-if="!route.params.roomId" class="title">Join a Room</h1>
-        <div v-if="!route.params.roomId">
-          <input v-model="roomNameInput" placeholder="Room Name" class="input"/>
-        </div>
+
+        <input v-if="!route.params.roomId" v-model="roomNameInput" placeholder="Room Name" />
+
         <h1 v-else class="title">Joining room: <strong>{{ room.roomName }}</strong></h1>
+
+        <input v-model="name" type="text" placeholder="Username" />
       </div>
-      <input v-model="name" type="text" placeholder="Username" class="input"/>
 
       <div class="button-section">
         <button @click="joinRoom">
@@ -20,10 +21,10 @@
             <label for="invite-only">
               Invite-only
             </label>
-            <p v-if="locked" class="text-small">
+            <p v-if="locked" class="text-small confirmation-text">
               By checking this box, only users with the share link will be able to join the room
             </p>
-          <button @click="createRoom">
+          <button @click="createRoom" class="secondary-blue">
             Create Room
           </button>
         </div>
