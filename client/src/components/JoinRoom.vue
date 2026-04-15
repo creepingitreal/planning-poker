@@ -138,7 +138,7 @@ const createRoom = () => {
 
   socket.emit('createRoom', {room: {...room.value, locked: locked.value}, user: name.value});
 
-  joined.value = true;
+  locked.value = false;
 };
 
 socket.on('roomJoined', ({ roomId, roomName }) => {
