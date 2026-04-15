@@ -6,7 +6,7 @@
         <div v-if="!route.params.roomId">
           <input v-model="roomNameInput" placeholder="Room Name" class="input"/>
         </div>
-        <h1 v-else class="title">Joining room: {{ route.params.roomId }}</h1>
+        <h1 v-else class="title">Joining room: <strong>{{ room.roomName }}</strong></h1>
       </div>
       <input v-model="name" type="text" placeholder="Username" class="input"/>
 
@@ -67,6 +67,7 @@ onMounted(() => {
 
   if (route.params.roomId) {
     room.value.roomId = route.params.roomId;
+    socket.emit('getRoomName', route.params.roomId);
 
     const saved = sessionStorage.getItem(`poker_session_${route.params.roomId}`);
     if (saved) {
@@ -87,6 +88,12 @@ onMounted(() => {
   }
 });
 
+
+socket.on('roomNameResolved', ({ roomName, error }) => {
+  if (!error) {
+    room.value.roomName = roomName;
+  }
+});
 const saveSession = (room, name) => {
   sessionStorage.setItem(`poker_session_${room.roomId}`, JSON.stringify({
     room,

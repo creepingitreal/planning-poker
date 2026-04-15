@@ -10,7 +10,7 @@
           <br>
           <strong class="no-wrap">{{ room.roomName }}</strong>
           <br>
-          Room, {{name}}!
+          Room, {{ name }}!
         </h1>
       </div>
       <div v-if="jiraIssue">
@@ -20,7 +20,7 @@
     </div>
 
     <game-board :room="room" :players="players"></game-board>
-</section>
+  </section>
 </template>
 
 <script setup>
@@ -28,25 +28,25 @@ import GameBoard from "./GameBoard.vue";
 import {ref} from "vue";
 
 const props = defineProps({
-    room: {
-        type: Object,
-        required: true
-    },
-    players: {
-        type: Object,
-        required: true
-    },
-    name: {
-        type: String,
-        required: true
-    },
+  room: {
+    type: Object,
+    required: true
+  },
+  players: {
+    type: Object,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
   shareUrl: {
-      type: String,
+    type: String,
     default: ''
   },
   jiraIssue: {
-      type: String,
-      required: false
+    type: String,
+    required: false
   }
 });
 
@@ -56,6 +56,8 @@ const copyLink = async () => {
   const url = props.shareUrl || window.location.href;
   await navigator.clipboard.writeText(url);
   copied.value = true;
-  setTimeout(() => { copied.value = false; }, 3000);
+  setTimeout(() => {
+    copied.value = false;
+  }, 3000);
 };
 </script>

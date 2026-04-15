@@ -34,7 +34,7 @@
 
 <script setup>
 import socket from "../../socket.js";
-import {computed, ref} from "vue";
+import {computed, onUnmounted, ref} from "vue";
 import Vote from "./Vote.vue";
 import '../css/game-board.css';
 
@@ -68,7 +68,13 @@ const clearVotes = () => {
   socket.emit('clearVotes', {roomId: props.room.roomId});
 };
 
-socket.on('toggleVisibility', (visibility) => {
+const handleToggleVisibility = (visibility) => {
   isVisible.value = visibility;
-});
+}
+
+socket.on('toggleVisibility', handleToggleVisibility);
+
+onUnmounted(() => {
+  socket.off('toggleVisibility', handleToggleVisibility);
+})
 </script>

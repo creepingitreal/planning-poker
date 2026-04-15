@@ -38,7 +38,7 @@ io.on('connection', (socket) => {
         }
 
         rooms[room.roomId] = {};
-        roomNames[room.roomName] = room.roomId;
+        roomNames[room.roomId] = room.roomName;
 
         if (room.locked) {
             lockedRooms.add(room.roomId);
@@ -51,6 +51,15 @@ io.on('connection', (socket) => {
         socket.emit('roomJoined', { roomId: room.roomId, roomName: room.roomName });
 
         broadcastRoom(room.roomId);
+    });
+
+    socket.on('getRoomName', (roomId) => {
+        const roomName = roomNames[roomId];
+        if (roomName) {
+            socket.emit('roomNameResolved', { roomName });
+        } else {
+            socket.emit('roomNameResolved', { error: 'Room not found' });
+        }
     });
 
     socket.on('joinRoom', ({ room, user, fromLink = false }) => {
