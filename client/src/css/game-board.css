@@ -1,0 +1,92 @@
+
+.game-board {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+
+    .button-section {
+        @media screen and (max-width: 640px){
+            width: 100%;
+            button {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+        align-self: center;
+    }
+}
+
+.share-btn {
+    align-self: flex-end;
+    margin-bottom: 10px;
+}
+
+.reveal-btn {
+    min-width: 191px;
+}
+
+.players-container {
+    width: 100%;
+    text-align: start;
+    background-color: var(--lightest-grey);
+    padding: 20px;
+    border-radius: 15px;
+    height: 60%;
+    h3 {
+        margin-bottom: 20px;
+    }
+
+    @media screen and (min-width: 640px){
+        padding:50px;
+    }
+}
+
+.player {
+    height: 45px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(72, 214, 210, 0.25);
+    border-radius: 5px;
+
+    p {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+}
+
+.vote-card-section {
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.vote-option {
+    background-color: var(--accent-blue);
+    padding: unset;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 5px 8px;
+    min-width: 35px;
+    max-width: 35px;
+    min-height:45px;
+    max-height:45px;
+    font-size: 0.925rem;
+    &:hover {
+        background-color: #058f8c;
+        transition: ease-in-out .35s;
+    }
+    &:focus, &:focus-visible {
+        background-color: var(--secondary-blue);
+    }
+
+    @media screen and (min-width: 640px) {
+        min-width: 40px;
+        max-width: 40px;
+        min-height: 55px;
+        max-height: 55px;
+    }
+}

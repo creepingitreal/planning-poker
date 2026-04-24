@@ -1,134 +1,339 @@
 @import "tailwindcss";
 
+/*–––––––––––––– Global Styling ––––––––––––––*/
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+    @font-face {
+        font-family: "Gilroy";
+        font-weight: 400;
+    }
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+    --dark-blue: #0e216d;
+    --primary-blue: #122C91;
+    --secondary-blue: #2a6fdb;
+    --accent-blue: #48D6D1;
+    --border-blue: rgb(14 33 109 / 0.07);
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+    --primary-black: #111111;
+    --white: #ffffff;
+    --lightest-grey: #F5F5F5;
+    --medium-grey: #ADADAD;
+    --dark-grey: #5E6266;
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+    --soft-yellow: #faf9e4;
+    --warning: #ad5000;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 2.1875rem;
-  line-height: 1.1;
-}
-
-h2 {
-    font-size: 1.75rem;
-}
-
-h3{
-    font-size: 1.5rem;
-}
-
-h4 {
-    font-size: 1.25rem;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-.room {
-    padding: 60px;
-    width: 80vw;
-    height: 80vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.game-board {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-
-    .players {
-        margin: 0 auto;
-        text-align: left;
-        width: 60%;
-        div {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-        }
-    }
-}
-.card-container {
-    @apply
-    flex-row
-    justify-between
-}
-
-.card {
-    background-color: #4caf50;
-    border: 2px solid #89c68b;
-    padding: unset;
-    width: 55px;
-    height:70px;
-    border-radius: 5px;
-    &.selected {
-
-    }
+    width: 100%;
+    height: 100vh;
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+    margin: 0 auto;
+    height: 100%;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+
+
+nav {
+    background-color: var(--dark-blue);
+    padding: 30px;
+    margin-bottom: 20px;
+    align-items: start;
+    @media screen and(min-width: 640px) {
+        padding: 50px;
+        margin-bottom: 50px;
+        align-items: center;
+    }
+}
+
+.logo {
+    position: relative;
+    align-self: center;
+    width: fit-content;
+    img {
+        width: 100%;
+        max-width: 250px;
+    }
+    @media screen and (min-width: 640px) {
+        left: 10vw;
+        img {
+            max-width: 400px;
+        }
+    }
+}
+
+main {
+    padding: 0 20px;
+    @media screen and (min-width: 640px){
+        padding: 0 50px;
+    }
+}
+
+h1 {
+    font-size: 1.5rem;
+
+    @media screen and (min-width: 640px) {
+        font-size: 1.625rem;
+    }
+}
+
+h2 {
+    font-size: 1.25rem;
+
+    @media screen and (min-width: 640px) {
+        font-size: 1.45rem;
+    }
+}
+
+h3 {
+    font-size: 1rem;
+
+    @media screen and (min-width: 640px) {
+        font-size: 1.3rem;
+    }
+}
+
+h4 {
+    font-size: 0.95rem;
+
+    @media screen and (min-width: 640px) {
+        font-size: 1.25rem;
+    }
+}
+
+p {
+    font-size: 1rem;
+}
+
+.section-layout {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.section-title {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 400px;
+    @media screen and (min-width: 640px) {
+        text-align: center;
+        max-width: 100%;
+    }
+}
+
+.title-small {
+    font-size: 1rem;
+}
+
+.text-small {
+    font-size: 0.8rem;
+}
+
+.confirmation-text {
+    color: var(--dark-grey);
+}
+.no-wrap {
+    white-space: nowrap;
+}
+
+
+.margin-top {
+    margin-top: 20px;
+}
+
+.room {
+    max-width: 840px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.max-w-40px {
+    padding: 50px;
+}
+
+.secondary-blue {
+    background-color: var(--secondary-blue);
+}
+
+
+/*–––––––––––––– Button Styling ––––––––––––––*/
+button {
+    border-radius: 999px;
+    border: 1px solid transparent;
+    padding: 16px 50px;
+    line-height: 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: var(--primary-blue);
+    color: #fff;
+    cursor: pointer;
+    transition: ease-in-out .3s;
+    box-shadow: rgba(60, 64, 67, 0.15) 0px 1px 2px 0px, rgba(60, 64, 67, 0.1) 0px 2px 6px 2px;
+    min-height: 50px;
+    max-height: 50px;
+    max-width: fit-content;
+    min-width: 150px;
+
+    @media screen and (min-width: 640px) {
+        font-size: 0.938rem;
+    }
+
+    &:hover {
+        background-color: var(--dark-blue);
+        transition: ease-in-out .3s;
+    }
+
+    &:focus,
+    &:focus-visible {
+        /*outline: 8px auto -webkit-focus-ring-color;*/
+    }
+
+    &.outline {
+        color: var(--primary-black);
+        border-color: var(--medium-grey);
+        background-color: var(--white);
+        &:hover {
+            background-color: white;
+        }
+    }
+
+    &.black {
+        background-color: var(--primary-black);
+        border-color: var(--primary-black);
+        color: var(--white);
+    }
+
+    &.small {
+        min-height: 40px;
+        max-height: 40px;
+        font-size: 0.9rem;
+        padding: 5px 15px;
+    }
+}
+
+.button-section {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap:10px;
+    @media screen and (min-width: 640px) {
+        flex-direction: row;
+        gap: 30px;
+    }
+}
+
+
+/*–––––––––––––– Input Styling ––––––––––––––*/
+label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+
+input:not([type="checkbox"]):not([type="radio"]) {
+    width: 400px;
+    max-width: 400px;
+    background-color: var(--lightest-grey);
+    min-height: 50%;
+    padding: 14px 15px;
+    font-size: 0.8125rem;
+    line-height: 1.15;
+    font-weight: 400;
+    letter-spacing: 5%;
+    border-radius: 8px;
+}
+
+input::placeholder {
+    font-size: 0.8125rem;
+    color: var(--medium-grey);
+}
+
+input[type='checkbox'] {
+    appearance: none;
+    -webkit-appearance: none;
+    & + label {
+        position: relative;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+
+        &::before {
+            border: solid 1px var(--border-blue);
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            border-radius: 5px;
+            content: ' ';
+            display: inline-block;
+            background-color: white;
+        }
+    }
+
+    &:hover {
+        & + label {
+            &::before {
+                background-color: var(--secondary-white);
+            }
+        }
+    }
+
+    &:checked {
+        & + label {
+            &::after {
+                position: absolute;
+                content: '';
+                background-color: var(--secondary-blue);
+                background-image: url('img/tick-icon-white.svg');
+                background-repeat: no-repeat;
+                background-position: center;
+                border: none;
+                background-size: 48%;
+                height: 20px;
+                width: 20px;
+                border-radius: 5px;
+            }
+        }
+
+        &:hover {
+            & + label {
+                &::after {
+                    transition: ease-in-out .3s;
+                    background-color: var(--primary-blue);
+                }
+            }
+        }
+    }
+
+    &:disabled {
+        & + label {
+            pointer-events: none;
+            cursor: not-allowed;
+
+            &::before {
+                border-color: grey;
+            }
+        }
+
+        &:checked {
+            & + label {
+                &::after {
+                    background-color: dimgrey;
+                }
+            }
+        }
+    }
 }
