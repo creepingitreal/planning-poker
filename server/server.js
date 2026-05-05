@@ -3,8 +3,9 @@ import http from 'http';
 import {Server} from 'socket.io';
 import cors from 'cors';
 import {fileURLToPath} from 'url';
+import path, { dirname, join } from 'path';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
@@ -12,10 +13,10 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
 }));
 
-app.use(express.static(path.join(__dirname, '../client/dist')));
+app.use(express.static(join(__dirname, '../client/dist')));
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+    res.sendFile(join(__dirname, '../client/dist/index.html'));
 })
 
 const server = http.createServer(app);
