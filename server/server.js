@@ -1,16 +1,28 @@
 import express from 'express';
 import http from 'http';
-import { Server } from 'socket.io';
+import {Server} from 'socket.io';
 import cors from 'cors';
+import {fileURLToPath} from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
-app.use(cors());
+
+app.use(cors({
+    origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+}));
+
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+})
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:5173',
+        origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
         methods: ['GET', 'POST'],
     },
 });
@@ -31,9 +43,9 @@ io.on('connection', (socket) => {
         });
     };
 
-    socket.on('createRoom', ({ room, user }) => {
+    socket.on('createRoom', ({room, user}) => {
         if (rooms[room.roomId]) {
-            socket.emit('roomError', { message: `Room "${room.roomName}" already exists.` });
+            socket.emit('roomError', {message: `Room "${room.roomName}" already exists.`});
             return;
         }
 
@@ -44,11 +56,11 @@ io.on('connection', (socket) => {
             lockedRooms.add(room.roomId);
         }
 
-        rooms[room.roomId][socket.id] = { user, vote: null };
+        rooms[room.roomId][socket.id] = {user, vote: null};
 
         socket.join(room.roomId);
 
-        socket.emit('roomJoined', { roomId: room.roomId, roomName: room.roomName });
+        socket.emit('roomJoined', {roomId: room.roomId, roomName: room.roomName});
 
         broadcastRoom(room.roomId);
     });
@@ -56,42 +68,42 @@ io.on('connection', (socket) => {
     socket.on('getRoomName', (roomId) => {
         const roomName = roomNames[roomId];
         if (roomName) {
-            socket.emit('roomNameResolved', { roomName });
+            socket.emit('roomNameResolved', {roomName});
         } else {
-            socket.emit('roomNameResolved', { error: 'Room not found' });
+            socket.emit('roomNameResolved', {error: 'Room not found'});
         }
     });
 
-    socket.on('joinRoom', ({ room, user, fromLink = false }) => {
+    socket.on('joinRoom', ({room, user, fromLink = false}) => {
         let roomId = room.roomId;
 
         if (!roomId && room.roomName) {
             roomId = roomNames[room.roomName];
             if (!roomId) {
-                socket.emit('roomError', { message: 'Room not found.' });
+                socket.emit('roomError', {message: 'Room not found.'});
                 return;
             }
         }
 
         if (!rooms[roomId]) {
-            socket.emit('roomError', { message: 'Room not found.' });
+            socket.emit('roomError', {message: 'Room not found.'});
             return;
         }
 
         if (lockedRooms.has(roomId) && !fromLink) {
-            socket.emit('roomError', { message: 'This room is invite-only.' });
+            socket.emit('roomError', {message: 'This room is invite-only.'});
             return;
         }
 
         socket.join(roomId);
-        rooms[roomId][socket.id] = { user, vote: null };
+        rooms[roomId][socket.id] = {user, vote: null};
 
-        socket.emit('roomJoined', { roomId, roomName: roomNames[roomId] ?? roomId });
+        socket.emit('roomJoined', {roomId, roomName: roomNames[roomId] ?? roomId});
 
         broadcastRoom(roomId);
     });
 
-    socket.on('castVote', ({ roomId, vote }) => {
+    socket.on('castVote', ({roomId, vote}) => {
         if (rooms[roomId]?.[socket.id]) {
             rooms[roomId][socket.id].vote = vote;
         }
@@ -105,14 +117,14 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('clearVotes', ({ roomId }) => {
-        Object.keys(rooms[roomId]).forEach(user =>{
-          rooms[roomId][user].vote = null;
+    socket.on('clearVotes', ({roomId}) => {
+        Object.keys(rooms[roomId]).forEach(user => {
+            rooms[roomId][user].vote = null;
         })
 
         broadcastRoom(roomId)
 
-        io.to(roomId).emit('toggleVisibility',  false);
+        io.to(roomId).emit('toggleVisibility', false);
     });
 
     socket.on('disconnect', () => {
@@ -129,6 +141,7 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(8000, () => {
-    console.log('Server is running on port 8000');
+const PORT = process.env.PORT ?? 8000;
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
