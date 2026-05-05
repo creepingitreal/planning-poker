@@ -15,10 +15,9 @@ app.use(cors({
 
 app.use(express.static(join(__dirname, '../client/dist')));
 
-app.get('*', (req, res) => {
-    res.sendFile(join(__dirname, '../client/dist/index.html'));
-})
-
+app.get('/{*path}', (req, res) => {
+    res.sendFile(join(__dirname, '../client/dist', 'index.html'));
+});
 const server = http.createServer(app);
 
 const io = new Server(server, {
