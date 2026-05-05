@@ -6,7 +6,7 @@
 
     <div class="section-title">
       <div>
-        <h1 class="">Welcome to the
+        <h1>Welcome to the
           <strong class="no-wrap">{{ room.roomName }}</strong> Room,
           {{ name }}!
         </h1>
