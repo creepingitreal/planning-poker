@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<iframe id="poker-frame" src=""></iframe>
+<script>
+    AP.context.getContext((context) => {
+        const issueKey = context.jira.issue.key;
+        document.getElementById('poker-frame').src =
+            `https://your-app.onrender.com/?issue=${issueKey}`;
+    });
+</script>
+</body>
+</html>
