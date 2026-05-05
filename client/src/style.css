@@ -44,7 +44,7 @@ nav {
     padding: 30px;
     margin-bottom: 20px;
     align-items: start;
-    @media screen and(min-width: 640px) {
+    @media screen and (min-width: 640px) {
         padding: 50px;
         margin-bottom: 50px;
         align-items: center;
