@@ -121,7 +121,11 @@ p {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    max-width: 400px;
+    align-items: center;
+    width:100%;
+    & > * {
+        width:100%;
+    }
     @media screen and (min-width: 640px) {
         text-align: center;
         max-width: 100%;
@@ -139,6 +143,7 @@ p {
 .confirmation-text {
     color: var(--dark-grey);
 }
+
 .no-wrap {
     white-space: nowrap;
 }
@@ -178,20 +183,21 @@ button {
     background-color: var(--primary-blue);
     color: #fff;
     cursor: pointer;
-    transition: ease-in-out .3s;
+    transition: ease-in-out 200ms;
     box-shadow: rgba(60, 64, 67, 0.15) 0px 1px 2px 0px, rgba(60, 64, 67, 0.1) 0px 2px 6px 2px;
     min-height: 50px;
     max-height: 50px;
-    max-width: fit-content;
     min-width: 150px;
+    width: 100%;
 
     @media screen and (min-width: 640px) {
+        max-width: fit-content;
         font-size: 0.938rem;
     }
 
     &:hover {
         background-color: var(--dark-blue);
-        transition: ease-in-out .3s;
+        transition: ease-in-out 200ms;
     }
 
     &:focus,
@@ -223,12 +229,13 @@ button {
 }
 
 .button-section {
-    width: fit-content;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: end;
     gap:10px;
     @media screen and (min-width: 640px) {
+        max-width: fit-content;
         flex-direction: row;
         gap: 30px;
     }
@@ -244,7 +251,6 @@ label {
 
 
 input:not([type="checkbox"]):not([type="radio"]) {
-    width: 400px;
     max-width: 400px;
     background-color: var(--lightest-grey);
     min-height: 50%;
@@ -297,7 +303,7 @@ input[type='checkbox'] {
                 position: absolute;
                 content: '';
                 background-color: var(--secondary-blue);
-                background-image: url('img/tick-icon-white.svg');
+                background-image: url('/img/tick-icon-white.svg');
                 background-repeat: no-repeat;
                 background-position: center;
                 border: none;
@@ -311,7 +317,7 @@ input[type='checkbox'] {
         &:hover {
             & + label {
                 &::after {
-                    transition: ease-in-out .3s;
+                    transition: ease-in-out 200ms;
                     background-color: var(--primary-blue);
                 }
             }

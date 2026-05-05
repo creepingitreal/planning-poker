@@ -51,7 +51,7 @@ const props = defineProps({
 const copied = ref(false);
 
 const copyLink = async () => {
-  const url = props.shareUrl || window.location.href;
+  const url = props.shareUrl || globalThis.location.href;
   await navigator.clipboard.writeText(url);
   copied.value = true;
   setTimeout(() => {
