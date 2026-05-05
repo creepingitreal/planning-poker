@@ -13,11 +13,9 @@
 
     &.visible {
         background-color: var(--secondary-blue);
-        transition: 0.3s;
+        transition: 200ms;
         @media screen and (min-width: 640px){
             font-weight: 600;
         }
     }
-
-
 }

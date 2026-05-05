@@ -62,7 +62,7 @@ const players = ref({});
 const jiraIssue = ref('');
 
 onMounted(() => {
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(globalThis.location.search);
   const issue = params.get('issue');
   if (issue) jiraIssue.value = issue;
 

@@ -6,7 +6,7 @@
 
     <div class="section-title">
       <div>
-        <h1 class="">Welcome to the
+        <h1>Welcome to the
           <strong class="no-wrap">{{ room.roomName }}</strong> Room,
           {{ name }}!
         </h1>
@@ -51,7 +51,7 @@ const props = defineProps({
 const copied = ref(false);
 
 const copyLink = async () => {
-  const url = props.shareUrl || window.location.href;
+  const url = props.shareUrl || globalThis.location.href;
   await navigator.clipboard.writeText(url);
   copied.value = true;
   setTimeout(() => {

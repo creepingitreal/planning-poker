@@ -4,7 +4,7 @@
       <div class="logo">
         <img
             id="logo"
-            src="./svg/logo-white.svg"
+            :src="logoWhite"
             alt="procode-nundrum logo"
         >
       </div>
@@ -16,5 +16,6 @@
 </template>
 
 <script setup>
-import './style.css';
+  import './style.css';
+  import logoWhite from './svg/logo-white.svg';
 </script>
