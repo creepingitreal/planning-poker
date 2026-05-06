@@ -11,9 +11,11 @@ modules:
   function:
     - key: resolver
       handler: index.handler
+
 resources:
   - key: main
     path: static/procode-deploy/build
+
 permissions:
   scopes:
     - read:jira-work
@@ -23,7 +25,8 @@ permissions:
         - https://procode-planning-poker.onrender.com
     frames:
       - https://procode-planning-poker.onrender.com
+
 app:
   runtime:
     name: nodejs24.x
-    id: ari:cloud:ecosystem::app/88383d6d-1877-46cf-b70f-b89b81fa17a0
+  id: ari:cloud:ecosystem::app/88383d6d-1877-46cf-b70f-b89b81fa17a0
