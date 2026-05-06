@@ -26,8 +26,4 @@ permissions:
 app:
   runtime:
     name: nodejs24.x
-  id: ari:cloud:ecosystem::app/b483dee6-9319-490a-a10c-471fbfc283b6
-
-
-  #  npx @forge/cli deploy
-  #  npx @forge/cli install --site yourcompany.atlassian.net
+    id: ari:cloud:ecosystem::app/88383d6d-1877-46cf-b70f-b89b81fa17a0
