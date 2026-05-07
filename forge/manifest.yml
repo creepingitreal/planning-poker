@@ -21,10 +21,12 @@ permissions:
     - read:jira-work
   external:
     fetch:
+      client:
+        - address:  https://procode-planning-poker.onrender.com
       backend:
-        - https://procode-planning-poker.onrender.com
+        - address: https://procode-planning-poker.onrender.com
     frames:
-      - https://procode-planning-poker.onrender.com
+      - address: https://procode-planning-poker.onrender.com
 
 app:
   runtime:
