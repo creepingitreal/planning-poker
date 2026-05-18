@@ -61,42 +61,14 @@ const errorMsg = ref('');
 const players = ref({});
 const jiraIssue = ref('');
 
-onMounted(() => {
-  const params = new URLSearchParams(globalThis.location.search);
-  const issue = params.get('issue');
-  if (issue) jiraIssue.value = issue;
-
-  if (route.params.roomId) {
-    room.value.roomId = route.params.roomId;
-    socket.emit('getRoomName', route.params.roomId);
-
-    const saved = sessionStorage.getItem(`poker_session_${route.params.roomId}`);
-    if (saved) {
-      const session = JSON.parse(saved);
-      const twentyFourHours = 24 * 60 * 60 * 1000;
-
-      if (Date.now() - session.savedAt < twentyFourHours) {
-        room.value = session.room;
-        name.value = session.name;
-
-        socket.emit('joinRoom', { room: session.room, user: session.name, fromLink: true });
-
-        joined.value = true;
-      } else {
-        sessionStorage.removeItem(`poker_session_${route.params.roomId}`);
-      }
-    }
-  }
-});
-
-
 socket.on('roomNameResolved', ({ roomName, error }) => {
   if (!error) {
     room.value.roomName = roomName;
   }
 });
+
 const saveSession = (room, name) => {
-  sessionStorage.setItem(`poker_session_${room.roomId}`, JSON.stringify({
+  localStorage.setItem(`poker_session_${room.roomId}`, JSON.stringify({
     room,
     name,
     savedAt: Date.now()
@@ -134,7 +106,7 @@ const createRoom = () => {
     return;
   }
 
-  room.value.roomName = randomNameGenerator();
+  room.value.roomName = roomNameInput.value  || randomNameGenerator();
   room.value.roomId = generateRoomId();
 
   socket.emit('createRoom', {room: {...room.value, locked: locked.value}, user: name.value});
@@ -165,6 +137,35 @@ const handleUpdateRoom = ({players: data, shareUrl: url, roomName: roomName}) =>
 };
 
 socket.on('updateRoom', handleUpdateRoom);
+
+onMounted(() => {
+  const params = new URLSearchParams(globalThis.location.search);
+  const issue = params.get('issue');
+  if (issue) jiraIssue.value = issue;
+
+  if (route.params.roomId) {
+    room.value.roomId = route.params.roomId;
+    socket.emit('getRoomName', route.params.roomId);
+
+    const saved = localStorage.getItem(`poker_session_${route.params.roomId}`);
+
+    if (saved) {
+      const session = JSON.parse(saved);
+      const twentyFourHours = 24 * 60 * 60 * 1000;
+
+      if (Date.now() - session.savedAt < twentyFourHours) {
+        room.value = session.room;
+        name.value = session.name;
+
+        socket.emit('joinRoom', { room: session.room, user: session.name, fromLink: true });
+
+        joined.value = true;
+      } else {
+        localStorage.removeItem(`poker_session_${route.params.roomId}`);
+      }
+    }
+  }
+});
 
 onUnmounted(() => {
   socket.off('updateRoom', handleUpdateRoom);

@@ -79,7 +79,7 @@
         background-color: #058f8c;
         transition: ease-in-out 200ms;
     }
-    &:focus, &:focus-visible {
+    &:focus, &:focus-visible, &.selected {
         background-color: var(--secondary-blue);
     }
 

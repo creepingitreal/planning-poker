@@ -1,7 +1,6 @@
 <template>
   <section class="game-board  section-layout">
     <div class="players-container">
-<!--      <h2 class="title-small"><strong>Players:</strong></h2>-->
       <div class="player" v-for="(player, id) in players || {}"
            :key="id"
       >
@@ -22,6 +21,7 @@
 
     <div class="vote-card-section">
       <button class="vote-option"
+              :class="{selected: selectedVote === value}"
               v-for="value in voteOptions"
               :key="value"
               @click="castVote(value)"
@@ -56,7 +56,10 @@ const hasVotes = computed(() => {
   return Object.values(props.players).some(player => player.vote !== null);
 })
 
+const selectedVote = ref(null);
+
 const castVote = (value) => {
+  selectedVote.value = value;
   socket.emit('castVote', {roomId: props.room.roomId, vote: value});
 };
 
@@ -65,6 +68,7 @@ const revealVotes = (visibility) => {
 };
 
 const clearVotes = () => {
+  selectedVote.value = null;
   socket.emit('clearVotes', {roomId: props.room.roomId});
 };
 
