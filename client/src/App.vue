@@ -17,5 +17,5 @@
 
 <script setup>
   import './style.css';
-  import logoWhite from './svg/logo-white.svg';
+  import logoWhite from './svg/procode-logo-white.svg';
 </script>
