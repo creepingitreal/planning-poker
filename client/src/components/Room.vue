@@ -6,9 +6,8 @@
 
     <div class="section-title">
       <div>
-        <h1>Welcome to the
-          <strong class="no-wrap">{{ room.roomName }}</strong> Room,
-          {{ name }}!
+        <h1>Room:
+          <strong class="room-name no-wrap">{{ room.roomName }}</strong>
         </h1>
       </div>
       <div v-if="jiraIssue">

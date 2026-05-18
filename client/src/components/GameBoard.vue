@@ -1,7 +1,6 @@
 <template>
   <section class="game-board  section-layout">
     <div class="players-container">
-<!--      <h2 class="title-small"><strong>Players:</strong></h2>-->
       <div class="player" v-for="(player, id) in players || {}"
            :key="id"
       >

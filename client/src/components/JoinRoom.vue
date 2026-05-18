@@ -89,12 +89,12 @@ onMounted(() => {
   }
 });
 
-
 socket.on('roomNameResolved', ({ roomName, error }) => {
   if (!error) {
     room.value.roomName = roomName;
   }
 });
+
 const saveSession = (room, name) => {
   sessionStorage.setItem(`poker_session_${room.roomId}`, JSON.stringify({
     room,
@@ -134,7 +134,7 @@ const createRoom = () => {
     return;
   }
 
-  room.value.roomName = randomNameGenerator();
+  room.value.roomName = roomNameInput.value  || randomNameGenerator();
   room.value.roomId = generateRoomId();
 
   socket.emit('createRoom', {room: {...room.value, locked: locked.value}, user: name.value});
