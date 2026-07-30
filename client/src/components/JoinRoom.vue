@@ -8,7 +8,7 @@
 
         <h1 v-else class="title">Joining room: <strong>{{ room.roomName }}</strong></h1>
 
-        <input v-model="name" type="text" placeholder="Username" />
+        <input v-model="name" type="text" placeholder="Username" autocomplete="given-name"/>
       </div>
 
       <div class="button-section">
