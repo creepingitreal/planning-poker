@@ -1,20 +1,28 @@
-# Planning Poker
+# Planning Poker Learning Workspace
 
-A real-time planning poker application for agile teams to estimate work collaboratively. Built with Vue 3 on the frontend and a Node.js/Socket.IO server on the backend.
+This repository is being used for a first learning session. The current code and structure are examples and starter material, not a finished product. The existing Vue, Node, and Forge files are here to explore, discuss, and evolve during future sessions.
 
 ---
 
-## Features
+## Current Status
 
-- **Create or join rooms** – Create a named room or join an existing one by room name.
-- **Invite-only rooms** – Lock a room so that only users with the share link can join.
-- **Share link** – Copy a direct invite link to your clipboard and send it to teammates.
-- **Real-time voting** – All connected players see votes update live via WebSockets.
-- **Fibonacci voting scale** – Vote with standard story-point values: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, or ?.
-- **Reveal / hide votes** – Reveal all votes simultaneously to avoid anchoring bias, then hide them again.
-- **Clear votes** – Reset all votes to begin a new round.
-- **Jira integration** – Pass a Jira issue key via the \`?issue=\` query parameter and it will be displayed in the room.
-- **Session persistence** – Your session is saved for 24 hours so you can rejoin a room after a page refresh.
+- The current implementation is an example planning poker app used as a learning reference.
+- Some folders, especially the Forge app, still contain upstream starter-template content.
+- Expect the project to change as concepts are introduced and the examples are adapted.
+
+---
+
+## Example Capabilities In The Current Code
+
+- **Create or join rooms** – Example room creation and join flow.
+- **Invite-only rooms** – Example shared-room behaviour.
+- **Share link** – Example invite-link generation.
+- **Real-time voting** – Example Socket.IO-based vote updates.
+- **Fibonacci voting scale** – Example story-point card set.
+- **Reveal / hide votes** – Example reveal flow for a voting round.
+- **Clear votes** – Example round reset behaviour.
+- **Jira integration** – Example issue-key display via the \`?issue=\` query parameter.
+- **Session persistence** – Example rejoin behaviour after refresh.
 
 ---
 
@@ -49,7 +57,7 @@ planning-poker/
 
 ---
 
-## Getting Started
+## Getting Started For This Learning Session
 
 ### Prerequisites
 
@@ -74,7 +82,7 @@ npm install
 npm run dev        # starts Vite dev server on port 5173
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+Open [http://localhost:5173](http://localhost:5173) in your browser to inspect the current example UI.
 
 ### Docker
 
@@ -85,6 +93,12 @@ docker-compose up --build
 ```
 
 The server will be available at \`http://localhost:8000\`.
+
+---
+
+## Session Goal
+
+Use this workspace to learn how the example app is structured, how the client and server communicate, and how the Forge sample fits alongside the main project.
 
 ---
 
