@@ -104,9 +104,26 @@ Use this workspace to learn how the example app is structured, how the client an
 
 ## Environment Variables
 
-| Variable | Location | Default | Description |
-|---|---|---|---|
-| \`PUBLIC_BASE_URL\` | server | \`http://localhost:5173\` | Base URL used to generate room share links |
+### Core Variables
+
+| Variable | Service | Example (Local Dev) | Example (Split Deployment) | Purpose |
+|---|---|---|---|---|
+| `VITE_SERVER_URL` | client | `http://localhost:8000` | `https://api.example.com` | Socket.IO/backend URL the frontend connects to. |
+| `CORS_ORIGIN` | server | `http://localhost:5173` | `https://app.example.com` | Frontend origin allowed to call and connect to the backend. |
+| `PUBLIC_BASE_URL` | server | `http://localhost:5173` | `https://app.example.com` | Frontend base URL used to generate room share links. |
+
+### Notes For Split Frontend/Backend Deployments
+
+- `CORS_ORIGIN` controls who is allowed to connect to the backend.
+- `PUBLIC_BASE_URL` is not for backend access control; it is used when generating share links shown to users.
+- Split deployments often need two configuration passes because each service URL depends on the other.
+
+Suggested first pass sequence:
+
+1. Deploy backend and get backend URL.
+2. Deploy frontend with `VITE_SERVER_URL` set to backend URL.
+3. Update backend `CORS_ORIGIN` and `PUBLIC_BASE_URL` to frontend URL.
+4. Redeploy backend.
 
 ---
 
