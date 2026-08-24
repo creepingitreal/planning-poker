@@ -5,6 +5,7 @@ generated/
 # dependencies
 Dependencies.toml
 **/node_modules/
+**/dist/
 
 # config files
 Config.toml
