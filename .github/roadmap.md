@@ -27,8 +27,10 @@ customers (2026-04-30). Migrated to ECS Express Mode.
 
 - Backend deployed and healthy ✅ (fixed ARM64/AMD64 architecture mismatch
   and an ELB health-check bug in the process)
-- Frontend deployment in progress, blocked on AWS CodeBuild GitHub
-  Enterprise source authorization
+- Frontend ECS Express service created ✅
+- Frontend `session1` image deployed but returned a 404 due to an Nginx
+  Docker `COPY` destination error; corrected `session2` is being built and
+  will need deploying
 
 ---
 
@@ -44,9 +46,10 @@ Status: Not Started
 
 CI/CD (AWS CodeBuild)
 
-Status: In Progress ⏳ — building frontend image via CodeBuild instead of
-local Docker CLI, to avoid Mac ARM64 vs ECS AMD64 mismatches and move
-toward a repeatable, production-like build process.
+Status: In Progress ⏳ — GitHub Enterprise source credentials, build
+environment variables, and ECR permissions are configured. CodeBuild
+successfully built and pushed frontend image `session1`; a corrected
+`session2` image is in progress.
 
 ---
 

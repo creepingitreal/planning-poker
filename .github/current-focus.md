@@ -4,8 +4,8 @@ Phase 3/5 - Container Deployment (ECS Express Mode) + CI/CD (CodeBuild)
 
 ## Current Topic
 
-Deploying frontend via AWS CodeBuild; resolving GitHub Enterprise source
-authorization before continuing.
+Completing the frontend ECS deployment and connecting the two public
+services with the correct CORS configuration.
 
 ## Completed
 
@@ -18,6 +18,18 @@ authorization before continuing.
 - ECS Express Mode backend deployment — RUNNING and healthy, after fixing:
   - CPU architecture mismatch (ARM64 build vs AMD64 ECS runtime)
   - ELB health-check failure (added `/` and `/health` routes to backend)
+- Confirmed the intended deployment target:
+  - AWS account `492052863778`, region `eu-west-2`
+  - GitHub Enterprise repository
+    `https://procode.ghe.com/alex-demetriades/PlanningPoker.git`, branch `AWS-OKR`
+- Configured CodeBuild GitHub Enterprise source credentials.
+- Configured the CodeBuild service role with ECR push access.
+- Configured CodeBuild environment variables for the account, ECR repository,
+  image tag, and build-time backend URL.
+- Successfully built and pushed frontend image `session1` with CodeBuild.
+- Created the public ECS Express frontend service using container port `80`.
+- Diagnosed the frontend 404 and corrected the Nginx web-root destination in
+  `client/Dockerfile`; the corrected image is being produced as `session2`.
 
 ## Learning Next
 
@@ -26,22 +38,18 @@ authorization before continuing.
 - ECS Express Mode two-container split-service deployment end-to-end
 - CORS configuration across separately deployed frontend/backend
 
-## Blockers
+## Current Blocker
 
-- **Must verify before continuing:** confirm correct AWS account/project
-  and correct GitHub org/repo (github.com vs company GitHub Enterprise) —
-  user suspects recent CodeBuild/ECR-frontend work may have been done in
-  the wrong place.
-- CodeBuild GitHub Enterprise source authorization failing:
-  `authorization failed for primary source and source version AWS-OKR`.
-  Needs source credentials configured under CodeBuild → Settings →
-  Source credentials → GitHub Enterprise Server.
+- The first frontend image returned a 404 because the Dockerfile copied Vite
+  files to `usr/share/nginx/html` rather than `/usr/share/nginx/html`.
+  The correction is committed; wait for the `session2` build, then update the
+  frontend ECS service to that image.
 
 ## Next Practical Task
 
-1. Re-verify AWS account/region and GitHub repo target.
-2. Fix CodeBuild GitHub Enterprise source credentials.
-3. Add CodeBuild project env vars (`AWS_ACCOUNT_ID`, `ECR_REPOSITORY`,
-   `IMAGE_TAG`, `VITE_SERVER_URL`) and confirm its service role can push to ECR.
-4. Run the frontend build, deploy it as an ECS Express service (port 80),
-   then update backend CORS/PUBLIC_BASE_URL to the new frontend URL.
+1. Confirm ECR contains `planning-poker-frontend:session2`.
+2. Update the frontend ECS Express service to the `session2` image and verify
+   that its public URL loads the Vue application.
+3. Set the backend `CORS_ORIGIN` (and `PUBLIC_BASE_URL` if used) to the
+   frontend public URL, then redeploy the backend.
+4. Test room creation and Socket.IO connectivity in the browser.

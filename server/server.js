@@ -2,10 +2,6 @@ import express from 'express';
 import http from 'http';
 import {Server} from 'socket.io';
 import cors from 'cors';
-import {fileURLToPath} from 'url';
-import path, { dirname, join } from 'path';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
@@ -22,11 +18,6 @@ app.get('/health', (req, res) => {
     res.sendStatus(200);
 });
 
-app.use(express.static(join(__dirname, '../client/dist')));
-
-app.get('/{*path}', (req, res) => {
-    res.sendFile(join(__dirname, '../client/dist', 'index.html'));
-});
 const server = http.createServer(app);
 
 const io = new Server(server, {
