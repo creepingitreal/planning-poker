@@ -104,13 +104,26 @@ The server will be available at \`http://localhost:8000\`.
 4. **Reveal** – Click **Reveal Votes** to show all votes simultaneously.
 5. **Next round** – Click **Clear Votes** to reset and start a new round.
 
-### Jira Integration
+### Core Variables
 
-Append \`?issue=<ISSUE_KEY>\` to any room URL to display the Jira issue key inside the room, e.g.:
+| Variable | Service | Example (Local Dev) | Example (Split Deployment) | Purpose |
+|---|---|---|---|---|
+| `VITE_SERVER_URL` | client | `http://localhost:8000` | `https://api.example.com` | Socket.IO/backend URL the frontend connects to. |
+| `CORS_ORIGIN` | server | `http://localhost:5173` | `https://app.example.com` | Frontend origin allowed to call and connect to the backend. |
+| `PUBLIC_BASE_URL` | server | `http://localhost:5173` | `https://app.example.com` | Frontend base URL used to generate room share links. |
 
-```
-http://localhost:5173/room/\<roomId\>\?issue\=PROJ-123
-```
+### Notes For Split Frontend/Backend Deployments
+
+- `CORS_ORIGIN` controls who is allowed to connect to the backend.
+- `PUBLIC_BASE_URL` is not for backend access control; it is used when generating share links shown to users.
+- Split deployments often need two configuration passes because each service URL depends on the other.
+
+Suggested first pass sequence:
+
+1. Deploy backend and get backend URL.
+2. Deploy frontend with `VITE_SERVER_URL` set to backend URL.
+3. Update backend `CORS_ORIGIN` and `PUBLIC_BASE_URL` to frontend URL.
+4. Redeploy backend.
 
 ---
 

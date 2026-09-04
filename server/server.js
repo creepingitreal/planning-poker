@@ -13,6 +13,15 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
 }));
 
+
+app.get('/', (req, res) => {
+    res.status(200).send('Planning Poker backend is running');
+});
+
+app.get('/health', (req, res) => {
+    res.sendStatus(200);
+});
+
 app.use(express.static(join(__dirname, '../client/dist')));
 
 app.get('/{*path}', (req, res) => {
