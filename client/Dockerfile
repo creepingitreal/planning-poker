@@ -2,6 +2,9 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
+ARG VITE_SERVER_URL
+ENV VITE_SERVER_URL=$VITE_SERVER_URL
+
 COPY . .
 
 RUN npm install && \
