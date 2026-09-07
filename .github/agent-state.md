@@ -8,12 +8,13 @@ deployment is understood.
 
 ## Current Phase
 
-ECS Express Mode Deployment (App Runner abandoned — see below)
+ECS Express Mode Deployment ✅ COMPLETE — choosing between CloudWatch and
+Terraform for the next phase.
 
 ## Current Topic
 
-Deploying the corrected frontend image and completing the cross-service CORS
-configuration.
+Deployment complete. Choosing the next phase: CloudWatch observability or
+Terraform.
 
 ## Progress
 
@@ -34,8 +35,8 @@ configuration.
      `server/server.js` that return 200 before the static/catch-all routes.
   Deployed image tags: `session2` (broken, ARM64), `session3` (AMD64 fix),
   `session4` (AMD64 + health-check fix, currently live).
-- ECS Express Mode frontend ⏳ IN PROGRESS — plan is to build via AWS
-  CodeBuild (not local Docker CLI) so builds run linux/amd64 in AWS.
+- ECS Express Mode frontend ✅ — built via AWS CodeBuild (not local Docker
+  CLI) so builds run linux/amd64 in AWS.
   - Confirmed the intended AWS target is account `492052863778` in
     `eu-west-2`, and the intended source is
     `https://procode.ghe.com/alex-demetriades/PlanningPoker.git` on `AWS-OKR`.
@@ -55,7 +56,30 @@ configuration.
     port `80`. Its `session1` public URL returned a 404.
   - Cause: `client/Dockerfile` copied output to a relative path. The absolute
     Nginx path `/usr/share/nginx/html` is now fixed and committed as
-    `8f10bd7`; rebuilding as `session2`.
+    `8f10bd7`; `session2` is the deployed frontend image.
+- Backend split-service cleanup ✅
+  - Removed `express.static` and the SPA catch-all from `server/server.js`.
+    The backend image is built from `server/` only, so those routes logged
+    `ENOENT ... /client/dist/index.html`. The backend now serves only
+    Socket.IO, `/`, and `/health`.
+  - Changed `server/Dockerfile` to `npm start` instead of `npm run dev`.
+  - Added `buildspec.backend.yml` and CodeBuild project
+    `planning-poker-backend-build`, reusing the frontend service role.
+  - Blocked: the reused role's auto-generated base policy is scoped to the
+    frontend log group, so the backend build fails with `ACCESS_DENIED` on
+    `logs:CreateLogStream`. Add the
+    `/aws/codebuild/planning-poker-backend-build` ARNs to that policy. Not
+    urgent — the live backend is still the locally built `session4`.
+  - Added trailing-slash normalisation to `server/server.js` so
+    `CORS_ORIGIN`/`PUBLIC_BASE_URL` cannot break again. Committed but NOT yet
+    deployed, since it needs the blocked `session5` build.
+- END TO END WORKING ✅ — set `CORS_ORIGIN` and `PUBLIC_BASE_URL` on the
+  backend ECS service to the frontend URL with no trailing slash. The final
+  confusion was ECS running old and new tasks concurrently during the
+  rolling deployment, so old tasks kept serving the stale header until the
+  new deployment became `PRIMARY`.
+  - Frontend: `https://pl-865b11cfa69f4fc4b551b8967bf219e6.ecs.eu-west-2.on.aws`
+  - Backend: `https://pl-8543c815d9e04e9389f336c0e4747118.ecs.eu-west-2.on.aws`
 
 ## Constraints
 
@@ -66,11 +90,12 @@ configuration.
 
 ## Next Recommended Action
 
-1. Deploy frontend `session2` and verify its public URL serves the UI.
-2. Update and redeploy backend with the frontend URL in
-   `CORS_ORIGIN`/`PUBLIC_BASE_URL`.
-3. End-to-end test in browser (create a room, confirm Socket.IO connects).
-4. Only after full deployment works, revisit Terraform as a stretch goal.
+1. Add the backend log group ARNs to the CodeBuild service role policy.
+2. Build backend `session5` and deploy it, making the trailing-slash
+   normalisation live.
+3. Update `.env.prod`, which still references the old Render URLs.
+4. Choose the next phase: CloudWatch (metrics, alarms, log queries) or
+   Terraform (codifying what was built by hand).
 
 ## Last Updated
 

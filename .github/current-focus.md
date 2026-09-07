@@ -1,11 +1,11 @@
 # Current Phase
 
-Phase 3/5 - Container Deployment (ECS Express Mode) + CI/CD (CodeBuild)
+Phase 3/5 complete - Container Deployment (ECS Express Mode) + CI/CD (CodeBuild)
 
 ## Current Topic
 
-Completing the frontend ECS deployment and connecting the two public
-services with the correct CORS configuration.
+Deployment complete. Consolidating what was built, then choosing between
+CloudWatch observability and Terraform as the next phase.
 
 ## Completed
 
@@ -29,27 +29,35 @@ services with the correct CORS configuration.
 - Successfully built and pushed frontend image `session1` with CodeBuild.
 - Created the public ECS Express frontend service using container port `80`.
 - Diagnosed the frontend 404 and corrected the Nginx web-root destination in
-  `client/Dockerfile`; the corrected image is being produced as `session2`.
+  `client/Dockerfile`; `session2` fixed it and is the deployed frontend.
+- Removed the backend's static-file and SPA catch-all routes, which were
+  logging `ENOENT` for a `client/dist` directory the backend image never
+  contained.
+- Switched `server/Dockerfile` from `npm run dev` (nodemon) to `npm start`.
+- Added `buildspec.backend.yml` and a `planning-poker-backend-build`
+  CodeBuild project so both services build the same way in AWS.
+- Set the backend's `CORS_ORIGIN` and `PUBLIC_BASE_URL` to the frontend URL
+  and confirmed the app works end to end in the browser. ✅
 
 ## Learning Next
 
-- AWS CodeBuild (build service, source credentials, buildspecs)
-- Passing frontend build-time config (`VITE_SERVER_URL`) via Docker build args
-- ECS Express Mode two-container split-service deployment end-to-end
-- CORS configuration across separately deployed frontend/backend
+- CloudWatch: metrics, alarms, and structured log queries
+- Terraform: codifying the manually built infrastructure
+- IAM policy resource scoping versus AWS managed policies
 
 ## Current Blocker
 
-- The first frontend image returned a 404 because the Dockerfile copied Vite
-  files to `usr/share/nginx/html` rather than `/usr/share/nginx/html`.
-  The correction is committed; wait for the `session2` build, then update the
-  frontend ECS service to that image.
+- None for the deployment itself. The backend CodeBuild project still fails
+  with `ACCESS_DENIED` on `logs:CreateLogStream`, because the reused service
+  role's auto-generated base policy is scoped to the frontend log group only.
+  This is not urgent — the live backend runs the locally built `session4` —
+  but it must be fixed before the hardened `session5` image can be deployed.
 
 ## Next Practical Task
 
-1. Confirm ECR contains `planning-poker-frontend:session2`.
-2. Update the frontend ECS Express service to the `session2` image and verify
-   that its public URL loads the Vue application.
-3. Set the backend `CORS_ORIGIN` (and `PUBLIC_BASE_URL` if used) to the
-   frontend public URL, then redeploy the backend.
-4. Test room creation and Socket.IO connectivity in the browser.
+1. Add the `/aws/codebuild/planning-poker-backend-build` ARNs to
+   `CodeBuildBasePolicy-planning-poker-frontend-eu-west-2`.
+2. Build backend `session5` and deploy it, so the trailing-slash
+   normalisation in `server/server.js` is live.
+3. Update `.env.prod`, which still points at the old Render URLs.
+4. Decide the next phase: CloudWatch observability or Terraform.

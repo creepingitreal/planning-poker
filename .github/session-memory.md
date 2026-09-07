@@ -58,18 +58,31 @@ configuration, CORS).
 - Created the public frontend ECS Express service on port `80`
 - Diagnosed its initial 404: `client/Dockerfile` copied Vite assets to a
   relative destination rather than `/usr/share/nginx/html`; the corrected
-  `session2` image is being built for deployment
+  `session2` image is the deployed frontend
+- Removed the backend's static-file and SPA catch-all routes, which logged
+  `ENOENT` for a `client/dist` directory absent from the backend image
+- Switched `server/Dockerfile` to `npm start` rather than nodemon
+- Added `buildspec.backend.yml` and CodeBuild project
+  `planning-poker-backend-build` so both services build identically in AWS
+- Set `CORS_ORIGIN` and `PUBLIC_BASE_URL` on the backend ECS service to the
+  frontend URL, with no trailing slash, and confirmed the app works end to
+  end in the browser ✅
 
 ## Next Task
 
-1. Confirm frontend `session2` is in ECR, deploy it, and verify the UI loads.
-2. Update backend `CORS_ORIGIN`/`PUBLIC_BASE_URL` to the frontend's real URL
-   and redeploy backend.
-3. End-to-end browser test: create a room and confirm Socket.IO connects
-   without CORS errors.
+1. Add the backend log group ARNs to the CodeBuild service role policy to
+   clear the `logs:CreateLogStream` denial.
+2. Build backend `session5` and deploy it, making the trailing-slash
+   normalisation live.
+3. Update `.env.prod`, which still points at the old Render URLs.
+4. Choose the next phase: CloudWatch or Terraform.
 
 ## Suggested Next Topic
 
-Cross-origin browser security and deployment configuration (CORS and
-build-time versus runtime frontend variables) -- then, once full deployment
-works, Terraform as a stretch goal to codify what was done manually.
+CloudWatch (metrics, alarms, and log queries) to understand the system now
+running, or Terraform to codify the infrastructure built by hand.
+
+## Suggested Next Topic
+
+CloudWatch (metrics, alarms, and log queries) to understand the system now
+running, or Terraform to codify the infrastructure built by hand.
