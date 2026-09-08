@@ -1,31 +1,5 @@
 <template>
-  <section class="room ">
-  <div class="header">
-      <div class="retro-timer" v-if="activeTool === 'retro'">
-        <button
-            class="icon-only icon-btn-timer"
-            @click="startTimer"
-            :disabled="timer.running || timer.remaining <= 0"
-            aria-label="Start timer"
-            title="Start"
-        >
-          ▶
-        </button>
-        <button
-            class="icon-only icon-btn-timer"
-            @click="pauseTimer"
-            :disabled="!timer.running"
-            aria-label="Pause timer"
-            title="Pause"
-        >
-          ⏸
-        </button>
-        <button class="icon-only icon-btn-timer" @click="resetTimer" aria-label="Reset timer" title="Reset">
-          ↺
-        </button>
-        <span class="timer-display">{{ formattedTime }}</span>
-      </div>
-
+  <section class="room" :class="{ retro: activeTool === 'retro' }">
     <div class="section-title">
       <div>
         <h1>Sprint:
@@ -33,6 +7,44 @@
         </h1>
       </div>
     </div>
+
+    <div class="room-controls">
+      <div class="room-actions retro" v-if="activeTool === 'retro'">
+        <div class="retro-toolbar">
+          <div class="retro-timer">
+          <button
+                class="icon-only icon-btn-timer"
+                @click="startTimer"
+                :disabled="timer.running || timer.remaining <= 0"
+                aria-label="Start timer"
+                title="Start"
+            >
+              ▶
+            </button>
+            <button
+                class="icon-only icon-btn-timer"
+                @click="pauseTimer"
+                :disabled="!timer.running"
+                aria-label="Pause timer"
+                title="Pause"
+            >
+              ⏸
+            </button>
+            <button class="icon-only icon-btn-timer" @click="resetTimer" aria-label="Reset timer" title="Reset">
+              ↺
+            </button>
+            <span class="timer-display">{{ formattedTime }}</span>
+          </div>
+          <div class="button-section">
+            <button v-if="!board.revealed" @click="revealCards" class="secondary-blue">
+              Reveal Cards
+            </button>
+            <button v-if="isHost" @click="clearBoard" class="white">
+              Clear Board
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div class="room-actions">
         <button v-if="activeTool === 'retro'" class="outline small users-drawer-btn" @click="showUsersDrawer = true">
@@ -42,7 +54,7 @@
           {{ copied ? '✓ Copied!' : '🔗 Share Invite Link' }}
         </button>
       </div>
-  </div>
+    </div>
 
     <div
         v-if="activeTool === 'retro' && showUsersDrawer"
@@ -116,6 +128,7 @@ const props = defineProps({
 
 const copied = ref(false);
 const showUsersDrawer = ref(false);
+const isHost = computed(() => socket.id && socket.id === props.hostId);
 
 const formattedTime = computed(() => {
   const total = Math.max(0, props.timer?.remaining ?? 0);
@@ -140,6 +153,14 @@ const pauseTimer = () => {
 
 const resetTimer = () => {
   socket.emit('resetTimer', {roomId: props.room.roomId});
+};
+
+const revealCards = () => {
+  socket.emit('revealCards', {roomId: props.room.roomId});
+};
+
+const clearBoard = () => {
+  socket.emit('clearBoard', {roomId: props.room.roomId});
 };
 
 const copyLink = async () => {

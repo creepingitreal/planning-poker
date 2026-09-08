@@ -39,6 +39,8 @@
     flex-direction: column;
     gap: 12px;
     min-width: 0;
+    --retro-card-gap: 10px;
+    --retro-card-size: calc((100% - (2 * var(--retro-card-gap))) / 3);
 }
 
 .retro-column {
@@ -61,96 +63,16 @@
     flex-direction: row;
     flex-wrap: wrap;
     align-content: flex-start;
-    gap: 10px;
+    gap: var(--retro-card-gap);
     min-height: 40px;
 }
 
-.retro-card {
+.write-card-control {
     position: relative;
-    background-color: #fff;
-    border-radius: 10px;
-    border: 2px solid var(--medium-grey, #ccc);
-    padding: 10px 44px 10px 12px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
-    width: 200px;
-    height: 200px;
-    box-sizing: border-box;
+    align-self: flex-end;
     display: flex;
-
-    p {
-        text-align: start;
-        align-self: baseline;
-        margin: 0;
-        word-break: break-word;
-        overflow: hidden;
-    }
-
-    textarea {
-        width: 100%;
-        height: 100%;
-        resize: none;
-        overflow: hidden;
-    }
-}
-
-/* Face-down: unrevealed cards render as a solid block of the author's colour
-   (no text shown), so each participant can see cards exist without reading them. */
-.retro-card-hidden {
-    padding: 10px 12px;
-    min-height: 40px;
-}
-
-.retro-card-placeholder {
-    height: 1.2rem;
-}
-
-.card-actions {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    display: flex;
-    gap: 0;
-}
-
-.card-icon-btn {
-    min-width: 32px !important;
-    max-width: 32px !important;
-    min-height: 32px !important;
-    max-height: 32px !important;
-    width: 32px !important;
-    font-size: 1rem !important;
-    font-weight: 800 !important;
-}
-
-/* Fun, bold icon colours using the brand palette - delete stays red as a
-   clear warning regardless of the rest of the icon-only theme. */
-.icon-btn-add,
-.icon-btn-edit {
-    color: var(--secondary-blue) !important;
-    font-weight: 800;
-    font-size: 1.3rem !important;
-}
-
-.icon-btn-add {
-    color: #2EAD4F !important;
-}
-
-.icon-btn-add:hover:not(:disabled),
-.icon-btn-edit:hover:not(:disabled) {
-    background-color: color-mix(in srgb, var(--secondary-blue) 15%, transparent) !important;
-}
-
-.icon-btn-add:hover:not(:disabled) {
-    background-color: color-mix(in srgb, #2EAD4F 15%, transparent) !important;
-}
-
-.icon-btn-delete {
-    color: #E63946 !important;
-    font-weight: 800;
-}
-
-.icon-btn-delete:hover:not(:disabled) {
-    background-color: color-mix(in srgb, #E63946 15%, transparent) !important;
+    justify-content: flex-end;
+    width: 100%;
 }
 
 .add-card-toggle,
@@ -158,18 +80,16 @@
     align-self: flex-end;
 }
 
-/* Rendered below (outside) the column box, per the design reference. */
 .add-card-form {
-    display: flex;
-    flex-direction: column;
-    align-self: center;
-    width: 200px;
-    height: 200px;
-    box-sizing: border-box;
-    border: 2px solid var(--medium-grey, #ccc);
-    border-radius: 10px;
-    padding: 10px;
-    gap: 8px;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 5;
+
+    &.open-up {
+        top: auto;
+        bottom: calc(100% + 8px);
+    }
 
     &:focus,
     &:focus-within {
@@ -182,6 +102,8 @@
         flex: 1;
         resize: none;
         overflow: hidden;
+        height: 100%;
+    
 
         &:focus,
         &:focus-visible {
