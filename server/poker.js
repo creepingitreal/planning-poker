@@ -103,6 +103,7 @@ export const registerPokerHandlers = (io, socket, {onRoomCreated, onRoomJoined} 
         broadcastRoom(io, roomId);
 
         io.to(roomId).emit('toggleVisibility', false);
+        io.to(roomId).emit('clearVotes');
     });
 };
 

@@ -68,7 +68,6 @@ const revealVotes = (visibility) => {
 };
 
 const clearVotes = () => {
-  selectedVote.value = null;
   socket.emit('clearVotes', {roomId: props.room.roomId});
 };
 
@@ -76,9 +75,15 @@ const handleToggleVisibility = (visibility) => {
   isVisible.value = visibility;
 }
 
+const handleClearVotes = () => {
+  selectedVote.value = null;
+}
+
 socket.on('toggleVisibility', handleToggleVisibility);
+socket.on('clearVotes', handleClearVotes);
 
 onUnmounted(() => {
   socket.off('toggleVisibility', handleToggleVisibility);
+  socket.off('clearVotes', handleClearVotes);
 })
 </script>
