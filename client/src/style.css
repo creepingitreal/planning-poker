@@ -262,7 +262,9 @@ button {
         border-color: var(--medium-grey);
         background-color: var(--white);
         &:hover {
-            background-color: white;
+            background-color: var(--lightest-grey);
+            border-color: var(--dark-grey);
+            transform: translateY(-1px);
         }
     }
 
@@ -270,6 +272,12 @@ button {
         background-color: var(--primary-black);
         border-color: var(--primary-black);
         color: var(--white);
+
+        &:hover:not(:disabled) {
+            background-color: var(--dark-grey);
+            border-color: var(--dark-grey);
+            transform: translateY(-1px);
+        }
     }
 
     &.small {

@@ -2,7 +2,6 @@
 
 import {
     rooms,
-    roomHosts,
     retroBoards,
     retroTimers,
     retroTimerIntervals,
@@ -100,11 +99,6 @@ export const registerRetroHandlers = (io, socket) => {
 
     socket.on('clearBoard', ({roomId}) => {
         if (!retroBoards[roomId]) return;
-
-        if (roomHosts[roomId] !== socket.id) {
-            socket.emit('roomError', {message: 'Only the host can clear the board.'});
-            return;
-        }
 
         retroBoards[roomId] = newRetroBoard();
         broadcastBoard(io, roomId);

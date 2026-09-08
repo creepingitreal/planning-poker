@@ -39,6 +39,7 @@
               @click="toggleWriteCard(column.id)"
               :aria-expanded="isWriteCardOpen(column.id)"
               :aria-controls="`add-card-form-${column.id}`"
+              :ref="element => setWriteCardButton(column.id, element)"
           >
             {{ isWriteCardOpen(column.id) ? '- Hide Retro Card' : '+ Retro Card' }}
           </button>
@@ -95,6 +96,7 @@ const newCardText = reactive({});
 const openWriteCards = reactive({});
 const writeCardPlacements = reactive({});
 const writeCardControls = {};
+const writeCardButtons = {};
 const writeCardForms = {};
 const cardTextElements = {};
 const editingCardId = ref(null);
@@ -171,6 +173,13 @@ const setWriteCardControl = (columnId, element) => {
     delete writeCardControls[columnId];
   }
 };
+const setWriteCardButton = (columnId, element) => {
+  if (element) {
+    writeCardButtons[columnId] = element;
+  } else {
+    delete writeCardButtons[columnId];
+  }
+};
 const setWriteCardForm = (columnId, element) => {
   const cardElement = element?.cardElement?.value ?? element?.cardElement ?? element?.$el ?? element;
 
@@ -183,14 +192,20 @@ const setWriteCardForm = (columnId, element) => {
 const positionWriteCard = (columnId) => {
   const control = writeCardControls[columnId];
   const form = writeCardForms[columnId];
+  const button = writeCardButtons[columnId];
 
   if (!control || !form) return;
 
-  const spacing = 8;
+  if (button) {
+    control.style.setProperty('--write-card-button-width', `${button.offsetWidth}px`);
+  }
+
+  // The form is anchored beside the button: top-aligned by default, or
+  // bottom-aligned when top-aligning would push it past the viewport.
   const controlRect = control.getBoundingClientRect();
   const formHeight = form.offsetHeight;
-  const wouldOverflowBottom = controlRect.bottom + spacing + formHeight > window.innerHeight;
-  const hasRoomAbove = controlRect.top - spacing - formHeight >= 0;
+  const wouldOverflowBottom = controlRect.top + formHeight > window.innerHeight;
+  const hasRoomAbove = controlRect.bottom - formHeight >= 0;
 
   writeCardPlacements[columnId] = wouldOverflowBottom && hasRoomAbove ? 'up' : 'down';
 };

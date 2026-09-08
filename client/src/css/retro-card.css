@@ -4,7 +4,7 @@
     border-radius: 10px;
     border: 2px solid var(--medium-grey, #ccc);
     gap: 5px;
-    padding: 10px;
+    padding: 15px 20px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
     flex: 0 0 var(--retro-card-size, 200px);
     width: var(--retro-card-size, 200px);
@@ -31,6 +31,12 @@
         resize: none;
         overflow: hidden;
         line-height: 1.2;
+
+        &:focus,
+        &:focus-visible {
+            outline: none;
+            box-shadow: none;
+        }
     }
 }
 
