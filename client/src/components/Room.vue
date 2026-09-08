@@ -6,23 +6,22 @@
 
     <div class="section-title">
       <div>
-        <h1>Room:
+        <h1>Sprint:
           <strong class="room-name no-wrap">{{ room.roomName }}</strong>
         </h1>
       </div>
-      <div v-if="jiraIssue">
-        <h1>Jira Ticket: </h1>
-        <h1><strong>{{ jiraIssue }}</strong></h1>
-      </div>
     </div>
 
-    <game-board :room="room" :players="players"></game-board>
+    <retro-board v-show="activeTool === 'retro'" :room="room" :host-id="hostId" :board="board"></retro-board>
+    <game-board v-show="activeTool === 'poker'" :room="room" :players="players"></game-board>
   </section>
 </template>
 
 <script setup>
 import GameBoard from "./GameBoard.vue";
-import {ref} from "vue";
+import RetroBoard from "./RetroBoard.vue";
+import {onMounted, onUnmounted, ref} from "vue";
+import {activeTool, showToolSubnav} from "../js/roomNav.js";
 
 const props = defineProps({
   room: {
@@ -41,9 +40,13 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  jiraIssue: {
+  hostId: {
     type: String,
-    required: false
+    default: null
+  },
+  board: {
+    type: Object,
+    default: () => ({columns: []})
   }
 });
 
@@ -57,4 +60,13 @@ const copyLink = async () => {
     copied.value = false;
   }, 3000);
 };
+
+onMounted(() => {
+  activeTool.value = 'poker';
+  showToolSubnav.value = true;
+});
+
+onUnmounted(() => {
+  showToolSubnav.value = false;
+});
 </script>

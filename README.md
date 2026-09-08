@@ -13,7 +13,6 @@ A real-time planning poker application for agile teams to estimate work collabor
 - **Fibonacci voting scale** – Vote with standard story-point values: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, or ?.
 - **Reveal / hide votes** – Reveal all votes simultaneously to avoid anchoring bias, then hide them again.
 - **Clear votes** – Reset all votes to begin a new round.
-- **Jira integration** – Pass a Jira issue key via the \`?issue=\` query parameter and it will be displayed in the room.
 - **Session persistence** – Your session is saved for 24 hours so you can rejoin a room after a page refresh.
 
 ---

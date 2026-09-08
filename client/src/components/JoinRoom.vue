@@ -2,13 +2,13 @@
   <section>
     <div class="room" v-if="!joined">
       <div class="section-title">
-        <h1 v-if="!route.params.roomId" class="title">Join a Room</h1>
+        <h1 v-if="!route.params.roomId" class="title">Join or Create a Room</h1>
 
-        <input v-if="!route.params.roomId" v-model="roomNameInput" placeholder="Room Name" />
+        <input v-if="!route.params.roomId" v-model="roomNameInput" placeholder="Sprint Name" />
 
         <h1 v-else class="title">Joining room: <strong>{{ room.roomName }}</strong></h1>
 
-        <input v-model="name" type="text" placeholder="Username" />
+        <input v-model="name" type="text" placeholder="Username *" />
       </div>
 
       <div class="button-section">
@@ -32,7 +32,7 @@
     </div>
 
     <div v-else>
-      <Room :room="room" :name="name" :players="players" :share-url="shareUrl" :jira-issue="jiraIssue"/>
+      <Room :room="room" :name="name" :players="players" :share-url="shareUrl" :host-id="hostId" :board="board"/>
     </div>
   </section>
 </template>
@@ -59,7 +59,8 @@ const roomNameInput = ref('');
 const locked = ref(false);
 const errorMsg = ref('');
 const players = ref({});
-const jiraIssue = ref('');
+const hostId = ref(null);
+const board = ref({columns: []});
 
 socket.on('roomNameResolved', ({ roomName, error }) => {
   if (!error) {
@@ -129,20 +130,23 @@ socket.on('roomError', ({message}) => {
   alert(message)
 });
 
-const handleUpdateRoom = ({players: data, shareUrl: url, roomName: roomName}) => {
+const handleUpdateRoom = ({players: data, shareUrl: url, roomName: roomName, hostId: currentHostId}) => {
   players.value = data;
 
   if (url) shareUrl.value = url;
   if (roomName) room.value.roomName = roomName;
+  hostId.value = currentHostId ?? null;
 };
 
 socket.on('updateRoom', handleUpdateRoom);
 
-onMounted(() => {
-  const params = new URLSearchParams(globalThis.location.search);
-  const issue = params.get('issue');
-  if (issue) jiraIssue.value = issue;
+const handleUpdateBoard = ({board: boardData}) => {
+  board.value = boardData ?? {columns: []};
+};
 
+socket.on('updateBoard', handleUpdateBoard);
+
+onMounted(() => {
   if (route.params.roomId) {
     room.value.roomId = route.params.roomId;
     socket.emit('getRoomName', route.params.roomId);
@@ -169,6 +173,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   socket.off('updateRoom', handleUpdateRoom);
+  socket.off('updateBoard', handleUpdateBoard);
   socket.off('roomJoined');
   socket.off('roomError');
 });
@@ -180,6 +185,8 @@ watch(() => route.path, (newPath) => {
     room.value = { roomId: '', roomName: '' };
     name.value = '';
     players.value = {};
+    hostId.value = null;
+    board.value = {columns: []};
   }
 });
 </script>
