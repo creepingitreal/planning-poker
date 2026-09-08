@@ -12,6 +12,32 @@ export const addParticipant = (roomId, socketId) => {
     joinOrder[roomId].push(socketId);
 };
 
+// Distinct, readable pastel colours handed out at random to participants so
+// their retro cards are visually identifiable. No two participants in the same
+// room share a colour; falls back to a random pastel HSL colour once the
+// curated palette is exhausted.
+const PARTICIPANT_COLORS = [
+    '#ffd6d6', '#ffd8bd', '#ffe5b4', '#fff3bf', '#dff3c4',
+    '#c7f1e4', '#c8eeee', '#d8e4f0', '#c8e6f5', '#e5d5f8',
+];
+
+export const nextParticipantColor = (roomId) => {
+    const takenColors = new Set(Object.values(rooms[roomId] ?? {}).map(p => p.color));
+    const available = PARTICIPANT_COLORS.filter(c => !takenColors.has(c));
+
+    if (available.length > 0) {
+        return available[Math.floor(Math.random() * available.length)];
+    }
+
+    let color;
+    do {
+        const hue = Math.floor(Math.random() * 360);
+        color = `hsl(${hue}, 80%, 88%)`;
+    } while (takenColors.has(color));
+
+    return color;
+};
+
 const DEFAULT_RETRO_COLUMNS = () => ([
     {id: 'went-well', title: 'Went Well'},
     {id: 'to-improve', title: 'To Improve'},

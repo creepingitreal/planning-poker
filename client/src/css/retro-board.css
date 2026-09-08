@@ -2,11 +2,22 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    height: 100%;
+    width: 100%;
+    min-height: 70vh;
+}
 
-    .button-section {
-        align-self: flex-end;
-    }
+.retro-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+
+.button-section {
+    display: flex;
+    gap: 8px;
 }
 
 .columns-container {
@@ -14,90 +25,168 @@
     flex-direction: column;
     gap: 20px;
     width: 100%;
+    flex: 1;
 
     @media screen and (min-width: 900px) {
         flex-direction: row;
+        align-items: flex-start;
     }
 }
 
-.retro-column {
+.retro-column-wrapper {
     flex: 1;
-    background-color: var(--lightest-grey);
-    border-radius: 15px;
-    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
     min-width: 0;
 }
 
+.retro-column {
+    background-color: var(--lightest-grey);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 400px;
+}
+
 .column-title {
-    text-align: start;
+    text-align: center;
     margin-bottom: 4px;
 }
 
 .cards-list {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
     gap: 10px;
     min-height: 40px;
 }
 
 .retro-card {
+    position: relative;
     background-color: #fff;
     border-radius: 10px;
-    padding: 10px 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    cursor: grab;
+    border: 2px solid var(--medium-grey, #ccc);
+    padding: 10px 44px 10px 12px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+    width: 200px;
+    height: 200px;
+    box-sizing: border-box;
+    display: flex;
 
     p {
         text-align: start;
-        font-size: 0.9rem;
-        margin: 0 0 8px;
-        cursor: text;
+        align-self: baseline;
+        margin: 0;
         word-break: break-word;
+        overflow: hidden;
     }
 
     textarea {
         width: 100%;
-        resize: vertical;
-        font-size: 0.9rem;
-        margin-bottom: 8px;
+        height: 100%;
+        resize: none;
+        overflow: hidden;
     }
 }
 
-.card-footer {
+/* Face-down: unrevealed cards render as a solid block of the author's colour
+   (no text shown), so each participant can see cards exist without reading them. */
+.retro-card-hidden {
+    padding: 10px 12px;
+    min-height: 40px;
+}
+
+.retro-card-placeholder {
+    height: 1.2rem;
+}
+
+.card-actions {
+    position: absolute;
+    top: 4px;
+    right: 4px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    gap: 0;
 }
 
-.card-author {
-    font-size: 0.75rem;
-    color: var(--grey, #777);
+.card-icon-btn {
+    min-width: 32px !important;
+    max-width: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    width: 32px !important;
+    font-size: 1rem !important;
+    font-weight: 800 !important;
 }
 
-.card-delete {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    line-height: 1;
-    color: var(--grey, #777);
-
-    &:hover {
-        color: #d33;
-    }
+/* Fun, bold icon colours using the brand palette - delete stays red as a
+   clear warning regardless of the rest of the icon-only theme. */
+.icon-btn-add,
+.icon-btn-edit {
+    color: var(--secondary-blue) !important;
+    font-weight: 800;
+    font-size: 1.3rem !important;
 }
 
+.icon-btn-add {
+    color: #2EAD4F !important;
+}
+
+.icon-btn-add:hover:not(:disabled),
+.icon-btn-edit:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--secondary-blue) 15%, transparent) !important;
+}
+
+.icon-btn-add:hover:not(:disabled) {
+    background-color: color-mix(in srgb, #2EAD4F 15%, transparent) !important;
+}
+
+.icon-btn-delete {
+    color: #E63946 !important;
+    font-weight: 800;
+}
+
+.icon-btn-delete:hover:not(:disabled) {
+    background-color: color-mix(in srgb, #E63946 15%, transparent) !important;
+}
+
+.add-card-toggle,
+.add-card-btn {
+    align-self: flex-end;
+}
+
+/* Rendered below (outside) the column box, per the design reference. */
 .add-card-form {
     display: flex;
     flex-direction: column;
+    align-self: center;
+    width: 200px;
+    height: 200px;
+    box-sizing: border-box;
+    border: 2px solid var(--medium-grey, #ccc);
+    border-radius: 10px;
+    padding: 10px;
     gap: 8px;
+
+    &:focus,
+    &:focus-within {
+        outline: none;
+        box-shadow: none;
+    }
 
     textarea {
         width: 100%;
-        resize: vertical;
-        min-height: 40px;
+        flex: 1;
+        resize: none;
+        overflow: hidden;
+
+        &:focus,
+        &:focus-visible {
+            outline: none;
+            box-shadow: none;
+        }
     }
 }

@@ -32,7 +32,7 @@
     </div>
 
     <div v-else>
-      <Room :room="room" :name="name" :players="players" :share-url="shareUrl" :host-id="hostId" :board="board"/>
+      <Room :room="room" :name="name" :players="players" :share-url="shareUrl" :host-id="hostId" :board="board" :timer="timer"/>
     </div>
   </section>
 </template>
@@ -60,7 +60,8 @@ const locked = ref(false);
 const errorMsg = ref('');
 const players = ref({});
 const hostId = ref(null);
-const board = ref({columns: []});
+const board = ref({columns: [], cards: [], revealed: false});
+const timer = ref({duration: 300, remaining: 300, running: false});
 
 socket.on('roomNameResolved', ({ roomName, error }) => {
   if (!error) {
@@ -141,10 +142,16 @@ const handleUpdateRoom = ({players: data, shareUrl: url, roomName: roomName, hos
 socket.on('updateRoom', handleUpdateRoom);
 
 const handleUpdateBoard = ({board: boardData}) => {
-  board.value = boardData ?? {columns: []};
+  board.value = boardData ?? {columns: [], cards: [], revealed: false};
 };
 
 socket.on('updateBoard', handleUpdateBoard);
+
+const handleUpdateTimer = ({timer: timerData}) => {
+  if (timerData) timer.value = timerData;
+};
+
+socket.on('updateTimer', handleUpdateTimer);
 
 onMounted(() => {
   if (route.params.roomId) {
@@ -174,6 +181,7 @@ onMounted(() => {
 onUnmounted(() => {
   socket.off('updateRoom', handleUpdateRoom);
   socket.off('updateBoard', handleUpdateBoard);
+  socket.off('updateTimer', handleUpdateTimer);
   socket.off('roomJoined');
   socket.off('roomError');
 });
@@ -186,7 +194,8 @@ watch(() => route.path, (newPath) => {
     name.value = '';
     players.value = {};
     hostId.value = null;
-    board.value = {columns: []};
+    board.value = {columns: [], cards: [], revealed: false};
+    timer.value = {duration: 300, remaining: 300, running: false};
   }
 });
 </script>

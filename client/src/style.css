@@ -202,13 +202,16 @@ p {
     margin-top: 20px;
 }
 
-.room {
-    max-width: 840px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
+/* Breaks a child out of the room's max-width so it can span the full viewport
+   width (used by the retro board, which should always render at full size). */
+.full-width-section {
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
 }
 
 .max-w-40px {
@@ -274,6 +277,33 @@ button {
         max-height: 40px;
         font-size: 0.9rem;
         padding: 5px 15px;
+    }
+
+    &.icon-only {
+        border-radius: 50%;
+        background: none;
+        border: none;
+        box-shadow: none;
+        color: var(--primary-black);
+        min-width: 40px;
+        max-width: 40px;
+        min-height: 40px;
+        max-height: 40px;
+        width: 40px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+
+        &:hover:not(:disabled) {
+            background-color: var(--lightest-grey);
+        }
+
+        &:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
     }
 }
 

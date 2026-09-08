@@ -1,0 +1,117 @@
+
+.room {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+
+    &:has(.retro-board ) {
+        max-width: 2000px;
+    }
+
+    .header {
+
+        @media screen and (min-width: 640px) {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        }
+    }
+
+    .room-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    .users-drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.2);
+        z-index: 9;
+    }
+
+    .users-drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: min(320px, 85vw);
+        height: 100vh;
+        padding: 24px;
+        box-sizing: border-box;
+        background-color: var(--white);
+        box-shadow: rgba(0, 0, 0, 0.12) -4px 0 16px;
+        transform: translateX(100%);
+        transition: transform 200ms ease-in-out;
+        z-index: 10;
+    }
+
+    .users-drawer.open {
+        transform: translateX(0);
+    }
+
+    .users-drawer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .users-drawer-close {
+        color: var(--primary-black) !important;
+    }
+
+    .users-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    .users-list-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+    }
+
+    .user-colour-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+    }
+
+
+    .retro-timer {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .timer-display {
+        font-size: 1.4rem;
+        font-variant-numeric: tabular-nums;
+        min-width: 3.5ch;
+        text-align: center;
+        margin-left: 6px;
+    }
+
+    .icon-btn-timer {
+        color: var(--secondary-blue) !important;
+        font-weight: 800;
+        font-size: 1.3rem !important;
+    }
+
+    .icon-btn-timer:hover:not(:disabled) {
+        background-color: color-mix(in srgb, var(--secondary-blue) 15%, transparent) !important;
+    }
+}

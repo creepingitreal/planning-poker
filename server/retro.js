@@ -26,12 +26,13 @@ const boardForRecipient = (roomId, recipientId) => {
 
     const cards = board.cards.map(card => {
         const isOwn = card.authorId === recipientId;
+        const authorColor = rooms[roomId]?.[card.authorId]?.color ?? null;
 
         if (board.revealed || isOwn) {
-            return {id: card.id, columnId: card.columnId, text: card.text, isOwn};
+            return {id: card.id, columnId: card.columnId, text: card.text, isOwn, color: authorColor};
         }
 
-        return {id: card.id, columnId: card.columnId, text: null, isOwn: false, hidden: true};
+        return {id: card.id, columnId: card.columnId, text: null, isOwn: false, hidden: true, color: authorColor};
     });
 
     return {columns: board.columns, cards, revealed: board.revealed};

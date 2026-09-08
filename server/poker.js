@@ -1,6 +1,6 @@
 // Planning Poker socket event handlers.
 
-import {rooms, roomNames, lockedRooms, roomHosts, joinOrder, addParticipant} from './state.js';
+import {rooms, roomNames, lockedRooms, roomHosts, joinOrder, addParticipant, nextParticipantColor} from './state.js';
 
 export const broadcastRoom = (io, roomId) => {
     const shareUrl = `${process.env.PUBLIC_BASE_URL ?? 'http://localhost:5173'}/room/${roomId}`;
@@ -28,7 +28,7 @@ export const registerPokerHandlers = (io, socket, {onRoomCreated, onRoomJoined} 
             lockedRooms.add(room.roomId);
         }
 
-        rooms[room.roomId][socket.id] = {user, vote: null};
+        rooms[room.roomId][socket.id] = {user, vote: null, color: nextParticipantColor(room.roomId)};
         addParticipant(room.roomId, socket.id);
 
         socket.join(room.roomId);
@@ -71,7 +71,7 @@ export const registerPokerHandlers = (io, socket, {onRoomCreated, onRoomJoined} 
         }
 
         socket.join(roomId);
-        rooms[roomId][socket.id] = {user, vote: null};
+        rooms[roomId][socket.id] = {user, vote: null, color: nextParticipantColor(roomId)};
         addParticipant(roomId, socket.id);
 
         socket.emit('roomJoined', {roomId, roomName: roomNames[roomId] ?? roomId});
