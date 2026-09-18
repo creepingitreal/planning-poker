@@ -149,7 +149,11 @@ socket.on("roomJoined", ({ roomId, roomName }) => {
 
   saveSession(room.value, name.value);
 
-  router.push(`/room/${roomId}`);
+  const selectedTool = route.query.tool;
+  const toolQuery = selectedTool
+    ? `?tool=${encodeURIComponent(selectedTool)}`
+    : "";
+  router.push(`/room/${roomId}${toolQuery}`);
 
   joined.value = true;
 });
@@ -225,7 +229,7 @@ onUnmounted(() => {
 watch(
   () => route.path,
   (newPath) => {
-    if (newPath === "/") {
+    if (newPath === "/" || newPath === "/dashboard" || newPath === "/join") {
       joined.value = false;
       room.value = { roomId: "", roomName: "" };
       name.value = "";

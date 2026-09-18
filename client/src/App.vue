@@ -2,7 +2,7 @@
   <div>
     <div class="nav-bar" :class="{ 'no-padding-bottom': showToolSubnav }">
       <nav>
-        <RouterLink to="/">
+        <RouterLink to="/dashboard">
           <div class="logo">
             <img id="logo" :src="logoWhite" alt="procode-nundrum logo" />
           </div>

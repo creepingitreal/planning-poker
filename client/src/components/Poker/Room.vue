@@ -128,6 +128,7 @@ import GameBoard from "./GameBoard.vue";
 import RetroBoard from "../Retro/RetroBoard.vue";
 import SpinTheWheel from "../Wheel/SpinTheWheel.vue";
 import { computed, onMounted, onUnmounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import {
   activeTool,
   showToolSubnav,
@@ -167,6 +168,8 @@ const props = defineProps({
     default: () => ({ duration: 300, remaining: 300, running: false }),
   },
 });
+
+const route = useRoute();
 
 const copied = ref(false);
 const showUsersDrawer = ref(false);
@@ -215,7 +218,7 @@ const copyLink = async () => {
 };
 
 onMounted(() => {
-  restoreActiveTool(props.room.roomId);
+  restoreActiveTool(props.room.roomId, route.query.tool);
   persistActiveTool(props.room.roomId);
   showToolSubnav.value = true;
 });

@@ -1,0 +1,114 @@
+.dashboard {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 0 80px;
+}
+
+.dashboard-heading {
+  max-width: 620px;
+  margin-bottom: 42px;
+}
+
+.dashboard-kicker {
+  margin: 0 0 12px;
+  color: var(--secondary-blue);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.dashboard-heading h1 {
+  margin: 0 0 12px;
+  color: var(--dark-blue);
+  font-size: clamp(2rem, 5vw, 4.4rem);
+  line-height: 0.98;
+}
+
+.dashboard-heading > p:last-child {
+  margin: 0;
+  color: var(--dark-grey);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.dashboard-tools {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.dashboard-tool {
+  position: relative;
+  display: flex;
+  min-height: 260px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  border: 1px solid var(--border-blue);
+  background: var(--white);
+  color: var(--primary-black);
+  text-decoration: none;
+  box-shadow: 0 12px 28px rgb(14 33 109 / 0.08);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.dashboard-tool:hover,
+.dashboard-tool:focus-visible {
+  border-color: var(--accent-blue);
+  box-shadow: 0 18px 34px rgb(14 33 109 / 0.14);
+  transform: translateY(-4px);
+}
+
+.dashboard-tool:focus-visible {
+  outline: 3px solid var(--accent-blue);
+  outline-offset: 3px;
+}
+
+.dashboard-tool-index {
+  color: var(--secondary-blue);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.dashboard-tool-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dashboard-tool-copy strong {
+  color: var(--dark-blue);
+  font-size: 1.35rem;
+}
+
+.dashboard-tool-copy span {
+  color: var(--dark-grey);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.dashboard-tool-arrow {
+  align-self: flex-end;
+  color: var(--secondary-blue);
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+@media screen and (max-width: 760px) {
+  .dashboard {
+    padding-top: 30px;
+  }
+
+  .dashboard-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-tool {
+    min-height: 190px;
+  }
+}
