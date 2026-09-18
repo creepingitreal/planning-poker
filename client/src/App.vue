@@ -1,42 +1,19 @@
 <template>
   <div>
-    <div class="nav-bar"
-    :class="{'no-padding-bottom': showToolSubnav}"
-    >
+    <div class="nav-bar" :class="{ 'no-padding-bottom': showToolSubnav }">
       <nav>
         <RouterLink to="/">
           <div class="logo">
-            <img
-                id="logo"
-                :src="logoWhite"
-                alt="procode-nundrum logo"
-            >
+            <img id="logo" :src="logoWhite" alt="procode-nundrum logo" />
           </div>
         </RouterLink>
       </nav>
-      <nav class="subnav tool-tabs" v-if="showToolSubnav">
-        <button
-            class="tool-tab"
-            :class="{active: activeTool === 'poker'}"
-            @click="activeTool = 'poker'"
-        >
-          Planning Poker
-        </button>
-        <button
-            class="tool-tab"
-            :class="{active: activeTool === 'retro'}"
-            @click="activeTool = 'retro'"
-        >
-          Retro Board
-        </button>
-        <button
-            class="tool-tab"
-            :class="{active: activeTool === 'wheel'}"
-            @click="activeTool = 'wheel'"
-        >
-          Spin the Wheel
-        </button>
-      </nav>
+      <SubNav
+        :show-tool-subnav="showToolSubnav"
+        :active-tool="activeTool"
+        :tab-names="tabNames"
+        @update:active-tool="activeTool = $event"
+      />
     </div>
     <main>
       <RouterView />
@@ -45,6 +22,10 @@
 </template>
 
 <script setup>
-  import './style.css';
-  import logoWhite from './svg/procode-logo-white.svg';
+import "./style.css";
+import logoWhite from "./svg/procode-logo-white.svg";
+import SubNav from "./components/SubNav/SubNav.vue";
+import { activeTool, showToolSubnav } from "./js/roomNav.js";
+
+const tabNames = ["poker", "retro", "wheel"];
 </script>
