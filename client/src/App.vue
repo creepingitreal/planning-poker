@@ -29,6 +29,13 @@
         >
           Retro Board
         </button>
+        <button
+            class="tool-tab"
+            :class="{active: activeTool === 'wheel'}"
+            @click="activeTool = 'wheel'"
+        >
+          Spin the Wheel
+        </button>
       </nav>
     </div>
     <main>
@@ -40,5 +47,4 @@
 <script setup>
   import './style.css';
   import logoWhite from './svg/procode-logo-white.svg';
-  import {activeTool, showToolSubnav} from './js/roomNav.js';
 </script>
