@@ -51,15 +51,12 @@ const props = defineProps({
 defineEmits(["icon-click"]);
 
 const cardElement = ref(null);
-const pastelCardColor = computed(() =>
-  props.color ? `color-mix(in srgb, ${props.color} 80%, white)` : null,
-);
 const retroCardStyle = computed(() => {
-  if (!pastelCardColor.value) return {};
+  if (!props.color) return {};
 
   return {
-    backgroundColor: pastelCardColor.value,
-    borderColor: pastelCardColor.value,
+    backgroundColor: props.color,
+    borderColor: props.color,
   };
 });
 

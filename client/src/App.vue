@@ -2,7 +2,7 @@
   <div>
     <div class="nav-bar" :class="{ 'no-padding-bottom': showToolSubnav }">
       <nav>
-        <RouterLink to="/dashboard">
+        <RouterLink :to="logoLink">
           <div class="logo">
             <img id="logo" :src="logoWhite" alt="procode-nundrum logo" />
           </div>
@@ -25,7 +25,20 @@
 import "./style.css";
 import logoWhite from "./svg/procode-logo-white.svg";
 import SubNav from "./components/SubNav/SubNav.vue";
-import { activeTool, showToolSubnav } from "./js/roomNav.js";
+import { computed } from "vue";
+import { activeTool, showToolSubnav, currentRoom } from "./js/roomNav.js";
 
 const tabNames = ["poker", "retro", "wheel"];
+
+const logoLink = computed(() =>
+  currentRoom.value.roomId
+    ? {
+        path: "/dashboard",
+        query: {
+          roomId: currentRoom.value.roomId,
+          roomName: currentRoom.value.roomName,
+        },
+      }
+    : { path: "/" },
+);
 </script>

@@ -1,28 +1,18 @@
 <template>
   <section>
-    <div class="room" v-if="!joined">
+    <div class="room">
       <div class="section-title">
-        <h1 v-if="!route.params.roomId" class="title">Join or Create a Room</h1>
+        <h1 class="title">Join or Create a Room</h1>
 
-        <input
-          v-if="!route.params.roomId"
-          v-model="roomNameInput"
-          placeholder="Sprint Name"
-        />
-
-        <h1 v-else class="title">
-          Joining room: <strong>{{ room.roomName }}</strong>
-        </h1>
+        <input v-model="roomNameInput" placeholder="Sprint Name" />
 
         <input v-model="name" type="text" placeholder="Username *" />
       </div>
 
       <div class="button-section">
-        <button @click="joinRoom">
-          {{ route.params.roomId ? "Join room now" : "Join" }}
-        </button>
+        <button @click="joinRoom">Join</button>
 
-        <div v-if="!route.params.roomId" class="container-create-btn">
+        <div class="container-create-btn">
           <input
             id="invite-only"
             type="checkbox"
@@ -40,34 +30,20 @@
         </div>
       </div>
     </div>
-
-    <div v-else>
-      <Room
-        :room="room"
-        :name="name"
-        :players="players"
-        :share-url="shareUrl"
-        :host-id="hostId"
-        :board="board"
-        :timer="timer"
-      />
-    </div>
   </section>
 </template>
 
 <script setup>
 import socket from "../../../socket.js";
 import "./join-room.css";
-import Room from "./Room.vue";
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { onUnmounted, ref } from "vue";
 import { generateRoomId, randomNameGenerator } from "../../js/generators.js";
 import { useRoute, useRouter } from "vue-router";
+import { setCurrentRoom } from "../../js/roomNav.js";
 
 const route = useRoute(false);
 const router = useRouter();
 
-const shareUrl = ref("");
-const joined = ref(false);
 const name = ref("");
 const room = ref({
   roomId: "",
@@ -75,58 +51,39 @@ const room = ref({
 });
 const roomNameInput = ref("");
 const locked = ref(false);
-const errorMsg = ref("");
-const players = ref({});
-const hostId = ref(null);
-const board = ref({ columns: [], cards: [], revealed: false });
-const timer = ref({ duration: 300, remaining: 300, running: false });
+const isCreating = ref(false);
 
-socket.on("roomNameResolved", ({ roomName, error }) => {
-  if (!error) {
-    room.value.roomName = roomName;
-  }
-});
-
-const saveSession = (room, name) => {
+const saveSession = (roomData, userName) => {
   localStorage.setItem(
-    `poker_session_${room.roomId}`,
+    `poker_session_${roomData.roomId}`,
     JSON.stringify({
-      room,
-      name,
+      room: roomData,
+      name: userName,
       savedAt: Date.now(),
     }),
   );
 };
 
 const joinRoom = () => {
-  errorMsg.value = "";
   if (!name.value) {
     alert("Please enter your name");
     return;
   }
 
-  if (route.params.roomId) {
-    socket.emit("joinRoom", {
-      room: { roomId: route.params.roomId, roomName: "" },
-      user: name.value,
-      fromLink: true,
-    });
-  } else {
-    if (!roomNameInput.value) {
-      alert("Please enter a room name");
-      return;
-    }
-    socket.emit("joinRoom", {
-      room: { roomId: "", roomName: roomNameInput.value },
-      user: name.value,
-      fromLink: false,
-    });
+  if (!roomNameInput.value) {
+    alert("Please enter a room name");
+    return;
   }
+
+  isCreating.value = false;
+  socket.emit("joinRoom", {
+    room: { roomId: "", roomName: roomNameInput.value },
+    user: name.value,
+    fromLink: false,
+  });
 };
 
 const createRoom = () => {
-  errorMsg.value = "";
-
   if (!name.value) {
     alert("Please enter your name");
     return;
@@ -134,6 +91,7 @@ const createRoom = () => {
 
   room.value.roomName = roomNameInput.value || randomNameGenerator();
   room.value.roomId = generateRoomId();
+  isCreating.value = true;
 
   socket.emit("createRoom", {
     room: { ...room.value, locked: locked.value },
@@ -143,101 +101,38 @@ const createRoom = () => {
   locked.value = false;
 };
 
-socket.on("roomJoined", ({ roomId, roomName }) => {
+const handleRoomJoined = ({ roomId, roomName }) => {
   room.value.roomId = roomId;
   room.value.roomName = roomName;
 
   saveSession(room.value, name.value);
+  setCurrentRoom(roomId, roomName);
+
+  if (isCreating.value) {
+    isCreating.value = false;
+    router.push({
+      path: "/dashboard",
+      query: { roomId, roomName },
+    });
+    return;
+  }
 
   const selectedTool = route.query.tool;
   const toolQuery = selectedTool
     ? `?tool=${encodeURIComponent(selectedTool)}`
     : "";
   router.push(`/room/${roomId}${toolQuery}`);
+};
 
-  joined.value = true;
-});
-
-socket.on("roomError", ({ message }) => {
+const handleRoomError = ({ message }) => {
   alert(message);
-});
-
-const handleUpdateRoom = ({
-  players: data,
-  shareUrl: url,
-  roomName: roomName,
-  hostId: currentHostId,
-}) => {
-  players.value = data;
-
-  if (url) shareUrl.value = url;
-  if (roomName) room.value.roomName = roomName;
-  hostId.value = currentHostId ?? null;
 };
 
-socket.on("updateRoom", handleUpdateRoom);
-
-const handleUpdateBoard = ({ board: boardData }) => {
-  board.value = boardData ?? { columns: [], cards: [], revealed: false };
-};
-
-socket.on("updateBoard", handleUpdateBoard);
-
-const handleUpdateTimer = ({ timer: timerData }) => {
-  if (timerData) timer.value = timerData;
-};
-
-socket.on("updateTimer", handleUpdateTimer);
-
-onMounted(() => {
-  if (route.params.roomId) {
-    room.value.roomId = route.params.roomId;
-    socket.emit("getRoomName", route.params.roomId);
-
-    const saved = localStorage.getItem(`poker_session_${route.params.roomId}`);
-
-    if (saved) {
-      const session = JSON.parse(saved);
-      const twentyFourHours = 24 * 60 * 60 * 1000;
-
-      if (Date.now() - session.savedAt < twentyFourHours) {
-        room.value = session.room;
-        name.value = session.name;
-
-        socket.emit("joinRoom", {
-          room: session.room,
-          user: session.name,
-          fromLink: true,
-        });
-
-        joined.value = true;
-      } else {
-        localStorage.removeItem(`poker_session_${route.params.roomId}`);
-      }
-    }
-  }
-});
+socket.on("roomJoined", handleRoomJoined);
+socket.on("roomError", handleRoomError);
 
 onUnmounted(() => {
-  socket.off("updateRoom", handleUpdateRoom);
-  socket.off("updateBoard", handleUpdateBoard);
-  socket.off("updateTimer", handleUpdateTimer);
-  socket.off("roomJoined");
-  socket.off("roomError");
+  socket.off("roomJoined", handleRoomJoined);
+  socket.off("roomError", handleRoomError);
 });
-
-watch(
-  () => route.path,
-  (newPath) => {
-    if (newPath === "/" || newPath === "/dashboard" || newPath === "/join") {
-      joined.value = false;
-      room.value = { roomId: "", roomName: "" };
-      name.value = "";
-      players.value = {};
-      hostId.value = null;
-      board.value = { columns: [], cards: [], revealed: false };
-      timer.value = { duration: 300, remaining: 300, running: false };
-    }
-  },
-);
 </script>

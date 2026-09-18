@@ -6,6 +6,18 @@ import { ref, watch } from "vue";
 export const activeTool = ref("poker");
 export const showToolSubnav = ref(false);
 
+// Tracks the room the user is currently in so the logo can route back to
+// that room's dashboard instead of always resetting to the join screen.
+export const currentRoom = ref({ roomId: "", roomName: "" });
+
+export const setCurrentRoom = (roomId, roomName) => {
+  currentRoom.value = { roomId, roomName };
+};
+
+export const clearCurrentRoom = () => {
+  currentRoom.value = { roomId: "", roomName: "" };
+};
+
 const ACTIVE_TOOL_KEY_PREFIX = "poker_active_tool_";
 
 // Restores the previously selected tool for a room (e.g. after a page refresh)

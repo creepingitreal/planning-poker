@@ -32,6 +32,10 @@
   line-height: 1.5;
 }
 
+.dashboard-new-room {
+  margin-top: 24px;
+}
+
 .dashboard-tools {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

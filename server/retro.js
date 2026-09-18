@@ -1,167 +1,187 @@
 // Retro Board socket event handlers: cards, reveal, and the shared countdown timer.
 
 import {
-    rooms,
-    retroBoards,
-    retroTimers,
-    retroTimerIntervals,
-    newRetroBoard,
-    newRetroTimer,
-    nextCardId,
-    stopRetroTimerInterval,
-} from './state.js';
+  rooms,
+  retroBoards,
+  retroTimers,
+  retroTimerIntervals,
+  newRetroBoard,
+  newRetroTimer,
+  nextCardId,
+  stopRetroTimerInterval,
+} from "./state.js";
 
 export const ensureRetroState = (roomId) => {
-    if (!retroBoards[roomId]) retroBoards[roomId] = newRetroBoard();
-    if (!retroTimers[roomId]) retroTimers[roomId] = newRetroTimer();
+  if (!retroBoards[roomId]) retroBoards[roomId] = newRetroBoard();
+  if (!retroTimers[roomId]) retroTimers[roomId] = newRetroTimer();
 };
 
 // Cards are private to their author until the board is revealed. Each connected
 // socket in the room gets its own filtered view: its own cards always visible,
 // everyone else's cards shown as hidden placeholders (or fully, once revealed).
 const boardForRecipient = (roomId, recipientId) => {
-    const board = retroBoards[roomId];
-    if (!board) return null;
+  const board = retroBoards[roomId];
+  if (!board) return null;
 
-    const cards = board.cards.map(card => {
-        const isOwn = card.authorId === recipientId;
-        const authorColor = rooms[roomId]?.[card.authorId]?.color ?? null;
+  const cards = board.cards.map((card) => {
+    const isOwn = card.authorId === recipientId;
+    const authorColor =
+      card.color ?? rooms[roomId]?.[card.authorId]?.color ?? null;
 
-        if (board.revealed || isOwn) {
-            return {id: card.id, columnId: card.columnId, text: card.text, isOwn, color: authorColor};
-        }
+    if (board.revealed || isOwn) {
+      return {
+        id: card.id,
+        columnId: card.columnId,
+        text: card.text,
+        isOwn,
+        color: authorColor,
+      };
+    }
 
-        return {id: card.id, columnId: card.columnId, text: null, isOwn: false, hidden: true, color: authorColor};
-    });
+    return {
+      id: card.id,
+      columnId: card.columnId,
+      text: null,
+      isOwn: false,
+      hidden: true,
+      color: authorColor,
+    };
+  });
 
-    return {columns: board.columns, cards, revealed: board.revealed};
+  return { columns: board.columns, cards, revealed: board.revealed };
 };
 
 export const broadcastBoard = (io, roomId) => {
-    if (!retroBoards[roomId]) return;
+  if (!retroBoards[roomId]) return;
 
-    const socketsInRoom = io.sockets.adapter.rooms.get(roomId);
-    if (!socketsInRoom) return;
+  const socketsInRoom = io.sockets.adapter.rooms.get(roomId);
+  if (!socketsInRoom) return;
 
-    for (const recipientId of socketsInRoom) {
-        io.to(recipientId).emit('updateBoard', {board: boardForRecipient(roomId, recipientId)});
-    }
+  for (const recipientId of socketsInRoom) {
+    io.to(recipientId).emit("updateBoard", {
+      board: boardForRecipient(roomId, recipientId),
+    });
+  }
 };
 
 export const broadcastTimer = (io, roomId) => {
-    if (!retroTimers[roomId]) return;
-    io.to(roomId).emit('updateTimer', {timer: retroTimers[roomId]});
+  if (!retroTimers[roomId]) return;
+  io.to(roomId).emit("updateTimer", { timer: retroTimers[roomId] });
 };
 
 export const registerRetroHandlers = (io, socket) => {
-    socket.on('addCard', ({roomId, columnId, text}) => {
-        const board = retroBoards[roomId];
-        const column = board?.columns.find(c => c.id === columnId);
-        if (!column || !text?.trim()) return;
+  socket.on("addCard", ({ roomId, columnId, text }) => {
+    if (!rooms[roomId]?.[socket.id]) return;
 
-        board.cards.push({
-            id: nextCardId(),
-            columnId,
-            text: text.trim(),
-            authorId: socket.id,
-        });
+    ensureRetroState(roomId);
+    const board = retroBoards[roomId];
+    const column = board?.columns.find((c) => c.id === columnId);
+    if (!column || !text?.trim()) return;
 
-        broadcastBoard(io, roomId);
+    board.cards.push({
+      id: nextCardId(),
+      columnId,
+      text: text.trim(),
+      authorId: socket.id,
+      color: rooms[roomId]?.[socket.id]?.color ?? null,
     });
 
-    socket.on('editCard', ({roomId, cardId, text}) => {
-        const board = retroBoards[roomId];
-        const card = board?.cards.find(c => c.id === cardId);
-        if (!card || card.authorId !== socket.id || !text?.trim()) return;
+    broadcastBoard(io, roomId);
+  });
 
-        card.text = text.trim();
-        broadcastBoard(io, roomId);
-    });
+  socket.on("editCard", ({ roomId, cardId, text }) => {
+    const board = retroBoards[roomId];
+    const card = board?.cards.find((c) => c.id === cardId);
+    if (!card || card.authorId !== socket.id || !text?.trim()) return;
 
-    socket.on('deleteCard', ({roomId, cardId}) => {
-        const board = retroBoards[roomId];
-        if (!board) return;
+    card.text = text.trim();
+    broadcastBoard(io, roomId);
+  });
 
-        const card = board.cards.find(c => c.id === cardId);
-        if (!card || card.authorId !== socket.id) return;
+  socket.on("deleteCard", ({ roomId, cardId }) => {
+    const board = retroBoards[roomId];
+    if (!board) return;
 
-        board.cards = board.cards.filter(c => c.id !== cardId);
-        broadcastBoard(io, roomId);
-    });
+    const card = board.cards.find((c) => c.id === cardId);
+    if (!card || card.authorId !== socket.id) return;
 
-    socket.on('revealCards', ({roomId}) => {
-        const board = retroBoards[roomId];
-        if (!board) return;
+    board.cards = board.cards.filter((c) => c.id !== cardId);
+    broadcastBoard(io, roomId);
+  });
 
-        board.revealed = true;
-        broadcastBoard(io, roomId);
-    });
+  socket.on("revealCards", ({ roomId }) => {
+    const board = retroBoards[roomId];
+    if (!board) return;
 
-    socket.on('clearBoard', ({roomId}) => {
-        if (!retroBoards[roomId]) return;
+    board.revealed = true;
+    broadcastBoard(io, roomId);
+  });
 
-        retroBoards[roomId] = newRetroBoard();
-        broadcastBoard(io, roomId);
-    });
+  socket.on("clearBoard", ({ roomId }) => {
+    if (!retroBoards[roomId]) return;
 
-    // --- Timer events --- any participant may start/pause/reset the shared timer.
+    retroBoards[roomId] = newRetroBoard();
+    broadcastBoard(io, roomId);
+  });
 
-    const tick = (roomId) => {
-        const timer = retroTimers[roomId];
-        if (!timer) return;
+  // --- Timer events --- any participant may start/pause/reset the shared timer.
 
-        timer.remaining = Math.max(0, timer.remaining - 1);
-        broadcastTimer(io, roomId);
+  const tick = (roomId) => {
+    const timer = retroTimers[roomId];
+    if (!timer) return;
 
-        if (timer.remaining === 0) {
-            timer.running = false;
-            stopRetroTimerInterval(roomId);
-            broadcastTimer(io, roomId);
-        }
-    };
+    timer.remaining = Math.max(0, timer.remaining - 1);
+    broadcastTimer(io, roomId);
 
-    socket.on('startTimer', ({roomId}) => {
-        const timer = retroTimers[roomId];
-        if (!timer || timer.running || timer.remaining <= 0) return;
+    if (timer.remaining === 0) {
+      timer.running = false;
+      stopRetroTimerInterval(roomId);
+      broadcastTimer(io, roomId);
+    }
+  };
 
-        timer.running = true;
-        stopRetroTimerInterval(roomId);
-        retroTimerIntervals[roomId] = setInterval(() => tick(roomId), 1000);
+  socket.on("startTimer", ({ roomId }) => {
+    const timer = retroTimers[roomId];
+    if (!timer || timer.running || timer.remaining <= 0) return;
 
-        broadcastTimer(io, roomId);
-    });
+    timer.running = true;
+    stopRetroTimerInterval(roomId);
+    retroTimerIntervals[roomId] = setInterval(() => tick(roomId), 1000);
 
-    socket.on('pauseTimer', ({roomId}) => {
-        const timer = retroTimers[roomId];
-        if (!timer) return;
+    broadcastTimer(io, roomId);
+  });
 
-        timer.running = false;
-        stopRetroTimerInterval(roomId);
+  socket.on("pauseTimer", ({ roomId }) => {
+    const timer = retroTimers[roomId];
+    if (!timer) return;
 
-        broadcastTimer(io, roomId);
-    });
+    timer.running = false;
+    stopRetroTimerInterval(roomId);
 
-    socket.on('resetTimer', ({roomId, duration}) => {
-        const timer = retroTimers[roomId];
-        if (!timer) return;
+    broadcastTimer(io, roomId);
+  });
 
-        stopRetroTimerInterval(roomId);
+  socket.on("resetTimer", ({ roomId, duration }) => {
+    const timer = retroTimers[roomId];
+    if (!timer) return;
 
-        if (Number.isFinite(duration) && duration > 0) {
-            timer.duration = duration;
-        }
+    stopRetroTimerInterval(roomId);
 
-        timer.remaining = timer.duration;
-        timer.running = false;
+    if (Number.isFinite(duration) && duration > 0) {
+      timer.duration = duration;
+    }
 
-        broadcastTimer(io, roomId);
-    });
+    timer.remaining = timer.duration;
+    timer.running = false;
+
+    broadcastTimer(io, roomId);
+  });
 };
 
 // Called whenever a room becomes empty (no connected participants left) to
 // avoid leaking setInterval timers for abandoned rooms.
 export const cleanupRetroTimerIfRoomEmpty = (roomId) => {
-    if (!rooms[roomId] || Object.keys(rooms[roomId]).length === 0) {
-        stopRetroTimerInterval(roomId);
-    }
+  if (!rooms[roomId] || Object.keys(rooms[roomId]).length === 0) {
+    stopRetroTimerInterval(roomId);
+  }
 };
