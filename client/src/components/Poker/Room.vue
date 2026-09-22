@@ -5,25 +5,6 @@
       class="room"
       :class="{ retro: activeTool === 'retro' }"
     >
-      <button
-        class="icon-only users-drawer-trigger"
-        type="button"
-        aria-label="Open users drawer"
-        title="Open users"
-        @click="showUsersDrawer = true"
-      >
-        <span aria-hidden="true">☰</span>
-      </button>
-
-      <UsersDrawer
-        :open="showUsersDrawer"
-        :players="players"
-        :allow-manual="activeTool === 'wheel'"
-        :manual-names="wheelManualNames"
-        @close="showUsersDrawer = false"
-        @update:manual-names="wheelManualNames = $event"
-      />
-
       <RetroBoard
         v-show="activeTool === 'retro'"
         class="full-width-section"
@@ -53,13 +34,15 @@
   import GameBoard from "./Poker.vue";
   import RetroBoard from "../Retro/RetroBoard.vue";
   import SpinTheWheel from "../Wheel/SpinTheWheel.vue";
-  import UsersDrawer from "../UsersDrawer/UsersDrawer.vue";
   import "./room.css";
   import { computed, onMounted, onUnmounted, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import {
     activeTool,
     showTools,
+    showUsersDrawer,
+    roomPlayers,
+    wheelManualNames,
     restoreActiveTool,
     persistActiveTool,
     setCurrentRoom,
@@ -76,7 +59,7 @@
     roomName: "",
   });
   const shareUrl = ref("");
-  const players = ref({});
+  const players = roomPlayers;
   const hostId = ref(null);
   const createEmptyBoard = () => ({
     columns: [
@@ -91,8 +74,6 @@
   const timer = ref({ duration: 300, remaining: 300, running: false });
 
   const copied = ref(false);
-  const showUsersDrawer = ref(false);
-  const wheelManualNames = ref([]);
   const clientId =
     localStorage.getItem("poker_client_id") || crypto.randomUUID();
   localStorage.setItem("poker_client_id", clientId);
@@ -220,6 +201,9 @@
     socket.off("updateRoom", handleUpdateRoom);
     socket.off("updateBoard", handleUpdateBoard);
     socket.off("updateTimer", handleUpdateTimer);
+    roomPlayers.value = {};
+    wheelManualNames.value = [];
+    showUsersDrawer.value = false;
     showTools.value = false;
   });
 </script>

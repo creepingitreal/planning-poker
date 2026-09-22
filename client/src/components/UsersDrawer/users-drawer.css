@@ -5,7 +5,12 @@
   z-index: 9;
 }
 
-.users-drawer-trigger {
+.users-drawer-trigger.icon-only {
+  font-size: 30px;
+  min-width: 30px;
+  width: 30px;
+  height: 30px;
+  min-height: 30px;
   line-height: 1;
   color: var(--white) !important;
   

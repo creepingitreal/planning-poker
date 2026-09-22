@@ -1,7 +1,10 @@
 <template>
   <div>
-    <div class="nav-bar" :class="{ 'no-padding-bottom': currentRoom.roomName !== '' }">
-      <div>
+    <div
+      class="nav-bar"
+      :class="{ 'no-padding-bottom': currentRoom.roomName !== '' }"
+    >
+      <div class="nav-header">
         <nav class="logo-wrapper">
           <RouterLink :to="logoLink">
             <div class="logo">
@@ -12,6 +15,24 @@
             {{ currentRoom.roomName }}
           </p>
         </nav>
+        <button
+          v-if="currentRoom.roomId"
+          class="icon-only users-drawer-trigger"
+          type="button"
+          aria-label="Open users drawer"
+          title="Open users"
+          @click="showUsersDrawer = true"
+        >
+          <span aria-hidden="true">☰</span>
+        </button>
+        <UsersDrawer
+          :open="showUsersDrawer"
+          :players="roomPlayers"
+          :allow-manual="activeTool === 'wheel'"
+          :manual-names="wheelManualNames"
+          @close="showUsersDrawer = false"
+          @update:manual-names="wheelManualNames = $event"
+        />
       </div>
       <SubNav
         :show-tools="showTools"
@@ -31,8 +52,16 @@
   import "./style.css";
   import logoWhite from "./svg/procode-logo-white.svg";
   import SubNav from "./components/SubNav/SubNav.vue";
+  import UsersDrawer from "./components/UsersDrawer/UsersDrawer.vue";
   import { computed } from "vue";
-  import { activeTool, showTools, currentRoom } from "./js/roomNav.js";
+  import {
+    activeTool,
+    showTools,
+    currentRoom,
+    showUsersDrawer,
+    roomPlayers,
+    wheelManualNames,
+  } from "./js/roomNav.js";
 
   const tabNames = ["poker", "retro", "wheel"];
 

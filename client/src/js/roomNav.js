@@ -5,6 +5,9 @@ import { ref, watch } from "vue";
 // scoped inside the room's boxed content layout.
 export const activeTool = ref("poker");
 export const showTools = ref(false);
+export const showUsersDrawer = ref(false);
+export const roomPlayers = ref({});
+export const wheelManualNames = ref([]);
 
 // Tracks the room the user is currently in so the logo can route back to
 // that room's dashboard instead of always resetting to the join screen.

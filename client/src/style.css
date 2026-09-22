@@ -49,6 +49,13 @@ body {
     padding-bottom: 0;
   }
 
+  .nav-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
   .logo-wrapper {
     display: flex;
     flex-direction: column;
