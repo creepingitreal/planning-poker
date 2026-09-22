@@ -8,6 +8,7 @@ import {
   newRetroBoard,
   newRetroTimer,
   nextCardId,
+  nextColumnId,
   stopRetroTimerInterval,
 } from "./state.js";
 
@@ -24,6 +25,8 @@ const boardForRecipient = (roomId, recipientId) => {
   if (!board) return null;
 
   const cards = board.cards.map((card) => {
+    const likes = normalizeLikes(card.likes);
+    card.likes = likes;
     const isOwn = card.authorId === recipientId;
     const authorColor =
       card.color ?? rooms[roomId]?.[card.authorId]?.color ?? null;
@@ -35,6 +38,8 @@ const boardForRecipient = (roomId, recipientId) => {
         text: card.text,
         isOwn,
         color: authorColor,
+        likes: likes.size,
+        likedByMe: likes.has(recipientId),
       };
     }
 
@@ -45,10 +50,18 @@ const boardForRecipient = (roomId, recipientId) => {
       isOwn: false,
       hidden: true,
       color: authorColor,
+      likes: likes.size,
+      likedByMe: likes.has(recipientId),
     };
   });
 
   return { columns: board.columns, cards, revealed: board.revealed };
+};
+
+const normalizeLikes = (likes) => {
+  if (likes instanceof Set) return likes;
+  if (Array.isArray(likes)) return new Set(likes);
+  return new Set();
 };
 
 export const broadcastBoard = (io, roomId) => {
@@ -84,8 +97,51 @@ export const registerRetroHandlers = (io, socket) => {
       text: text.trim(),
       authorId: socket.id,
       color: rooms[roomId]?.[socket.id]?.color ?? null,
+      likes: new Set(),
     });
 
+    broadcastBoard(io, roomId);
+  });
+
+  socket.on("updateColumnTitle", ({ roomId, columnId, title }) => {
+    if (!rooms[roomId]?.[socket.id]) return;
+
+    const board = retroBoards[roomId];
+    const column = board?.columns.find(
+      (candidate) => candidate.id === columnId,
+    );
+    const trimmedTitle = title?.trim();
+    if (!column || !trimmedTitle) return;
+
+    column.title = trimmedTitle;
+    broadcastBoard(io, roomId);
+  });
+
+  socket.on("addColumn", ({ roomId }) => {
+    if (!rooms[roomId]?.[socket.id]) return;
+
+    ensureRetroState(roomId);
+    const board = retroBoards[roomId];
+    board.columns.push({ id: nextColumnId(), title: "New Board" });
+    broadcastBoard(io, roomId);
+  });
+
+  socket.on("toggleCardLike", ({ roomId, cardId }) => {
+    if (!rooms[roomId]?.[socket.id]) return;
+
+    const board = retroBoards[roomId];
+    if (!board?.revealed) return;
+
+    const card = board.cards.find((candidate) => candidate.id === cardId);
+    if (!card) return;
+
+    card.likes = normalizeLikes(card.likes);
+
+    if (card.likes.has(socket.id)) {
+      card.likes.delete(socket.id);
+    } else {
+      card.likes.add(socket.id);
+    }
     broadcastBoard(io, roomId);
   });
 

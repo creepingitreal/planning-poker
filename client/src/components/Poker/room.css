@@ -6,13 +6,6 @@
   align-items: center;
   gap: 20px;
 
-  .users-drawer-trigger {
-    align-self: flex-end;
-    color: var(--primary-blue);
-    font-size: 1.25rem;
-    line-height: 1;
-  }
-
   &.retro {
     max-width: 2000px;
   }

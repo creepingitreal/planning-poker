@@ -4,7 +4,7 @@ import { ref, watch } from "vue";
 // full-width subnav directly under the main site nav, rather than being
 // scoped inside the room's boxed content layout.
 export const activeTool = ref("poker");
-export const showToolSubnav = ref(false);
+export const showTools = ref(false);
 
 // Tracks the room the user is currently in so the logo can route back to
 // that room's dashboard instead of always resetting to the join screen.

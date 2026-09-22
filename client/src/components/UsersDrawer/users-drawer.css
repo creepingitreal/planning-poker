@@ -5,6 +5,15 @@
   z-index: 9;
 }
 
+.users-drawer-trigger {
+  line-height: 1;
+  color: var(--white) !important;
+  
+  &:hover {
+    background-color: var(--secondary-blue) !important;
+  }
+}
+
 .users-drawer {
   position: fixed;
   top: 0;

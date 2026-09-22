@@ -1,115 +1,148 @@
 .retro-board {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
-    min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  min-height: 70vh;
 }
 
 .retro-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-
 .button-section {
-    display: flex;
-    gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 
 .columns-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
-    flex: 1;
-
-    @media screen and (min-width: 900px) {
-        flex-direction: row;
-        align-items: flex-start;
-    }
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  flex: 1;
 }
 
 .retro-column-wrapper {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-width: 0;
-    --retro-card-gap: 10px;
-    --retro-card-size: calc((100% - (2 * var(--retro-card-gap))) / 3);
+  flex: 1 1 min(100%, 320px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  --retro-card-gap: 10px;
+  --retro-card-size: calc((100% - (2 * var(--retro-card-gap))) / 3);
 }
 
-.retro-column {
-    background-color: var(--lightest-grey);
-    border-radius: 15px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-height: 400px;
+.add-board-control {
+  flex: 0 0 42px;
+  align-self: flex-start;
+  min-width: 42px;
+  width: 42px;
+  min-height: 42px;
+  padding: 0;
+  border: 2px dashed var(--medium-grey);
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--dark-grey);
+  font-size: 1.5rem;
+  line-height: 1;
+
+  &:hover {
+    border-color: var(--secondary-blue);
+    color: var(--secondary-blue);
+  }
 }
 
 .column-title {
-    text-align: center;
-    margin-bottom: 4px;
+  display: block;
+  min-height: unset;
+  width: 100%;
+  padding: 4px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-align: center;
+
+  &:hover,
+  &:focus {
+    border-color: var(--medium-grey);
+    background: var(--white);
+    outline: none;
+  }
+}
+
+.retro-column {
+  background-color: var(--lightest-grey);
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 400px;
 }
 
 .cards-list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    gap: var(--retro-card-gap);
-    min-height: 40px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: var(--retro-card-gap);
+  min-height: 40px;
 }
 
 /* Full width so the card keeps sizing against the column, and positioned so
    the absolutely placed form never shifts the toggle button. */
 .write-card-control {
-    position: relative;
-    align-self: flex-end;
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
+  position: relative;
+  align-self: flex-end;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
 }
 
 .add-card-toggle,
 .add-card-btn {
-    align-self: flex-end;
+  min-width: fit-content;
+  align-self: flex-end;
 }
 
 .add-card-form {
-    position: absolute;
-    top: 0;
-    right: calc(var(--write-card-button-width, 0px) + 8px);
-    z-index: 5;
+  position: absolute;
+  top: 0;
+  right: calc(var(--write-card-button-width, 0px) + 8px);
+  z-index: 5;
 
-    &.open-up {
-        top: auto;
-        bottom: 0;
-    }
+  &.open-up {
+    top: auto;
+    bottom: 0;
+  }
+
+  &:focus,
+  &:focus-within {
+    outline: none;
+    box-shadow: none;
+  }
+
+  textarea {
+    width: 100%;
+    flex: 1;
+    resize: none;
+    overflow: hidden;
+    height: 100%;
 
     &:focus,
-    &:focus-within {
-        outline: none;
-        box-shadow: none;
+    &:focus-visible {
+      outline: none;
+      box-shadow: none;
     }
-
-    textarea {
-        width: 100%;
-        flex: 1;
-        resize: none;
-        overflow: hidden;
-        height: 100%;
-
-        &:focus,
-        &:focus-visible {
-            outline: none;
-            box-shadow: none;
-        }
-    }
+  }
 }

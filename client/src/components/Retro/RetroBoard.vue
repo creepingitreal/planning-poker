@@ -1,5 +1,46 @@
 <template>
   <section class="retro-board section-layout">
+    <div class="retro-toolbar">
+      <ButtonSection
+        :is-visible="board.revealed"
+        :has-votes="hasCards"
+        :show-reveal="!board.revealed"
+        :reveal-votes="revealCards"
+        :clear-votes="clearBoard"
+        reveal-label="Reveal Cards"
+        clear-label="Clear Board"
+      />
+      <div class="retro-timer">
+        <button
+          class="icon-only icon-btn-timer"
+          @click="$emit('start-timer')"
+          :disabled="timer.running || timer.remaining <= 0"
+          aria-label="Start timer"
+          title="Start"
+        >
+          ▶
+        </button>
+        <button
+          class="icon-only icon-btn-timer"
+          @click="$emit('pause-timer')"
+          :disabled="!timer.running"
+          aria-label="Pause timer"
+          title="Pause"
+        >
+          ⏸
+        </button>
+        <button
+          class="icon-only icon-btn-timer"
+          @click="$emit('reset-timer')"
+          aria-label="Reset timer"
+          title="Reset"
+        >
+          ↺
+        </button>
+        <span class="timer-display">{{ formattedTime }}</span>
+      </div>
+    </div>
+
     <div class="columns-container">
       <div
         class="retro-column-wrapper"
@@ -7,18 +48,28 @@
         :key="column.id"
       >
         <div class="retro-column">
-          <h3 class="column-title">{{ column.title }}</h3>
+          <input
+            class="column-title"
+            :value="column.title"
+            aria-label="Board title"
+            @change="updateColumnTitle(column.id, $event.target.value)"
+            @keydown.enter.prevent="$event.target.blur()"
+          />
 
           <div class="cards-list">
             <RetroCard
               v-for="card in cardsForColumn(column.id)"
               :key="card.id"
-              :hidden="isFaceDown(card)"
+              :hidden="card.hidden"
               :color="card.color"
               :icon-buttons="cardIconButtons(card)"
+              :likes="card.likes"
+              :liked="card.likedByMe"
+              :show-like="board.revealed"
+              @like="toggleCardLike(card.id)"
               @icon-click="(action) => handleCardAction(action, card)"
             >
-              <template v-if="isFaceDown(card)">
+              <template v-if="card.hidden">
                 <div class="retro-card-placeholder"></div>
               </template>
 
@@ -54,9 +105,7 @@
             :aria-controls="`add-card-form-${column.id}`"
             :ref="(element) => setWriteCardButton(column.id, element)"
           >
-            {{
-              isWriteCardOpen(column.id) ? "- Hide Retro Card" : "+ Retro Card"
-            }}
+            {{ isWriteCardOpen(column.id) ? "-" : "+" }}
           </button>
 
           <RetroCard
@@ -67,6 +116,7 @@
             :ref="(element) => setWriteCardForm(column.id, element)"
             :color="myColor"
             :icon-buttons="addCardIconButtons"
+            :show-like="false"
             @icon-click="addCard(column.id)"
           >
             <textarea
@@ -83,228 +133,260 @@
 </template>
 
 <script setup>
-import socket from "../../../socket.js";
-import { computed, nextTick, onMounted, reactive, ref, watch } from "vue";
-import RetroCard from "../Retro/RetroCard.vue";
-import "./retro-board.css";
+  import socket from "../../../socket.js";
+  import ButtonSection from "../ButtonSection/ButtonSection.vue";
+  import { computed, nextTick, onMounted, reactive, ref, watch } from "vue";
+  import RetroCard from "../Retro/RetroCard.vue";
+  import "./retro-board.css";
 
-const props = defineProps({
-  room: {
-    type: Object,
-    required: true,
-  },
-  players: {
-    type: Object,
-    default: () => ({}),
-  },
-  hostId: {
-    type: String,
-    default: null,
-  },
-  board: {
-    type: Object,
-    default: () => ({ columns: [], cards: [], revealed: false }),
-  },
-});
+  const props = defineProps({
+    room: {
+      type: Object,
+      required: true,
+    },
+    players: {
+      type: Object,
+      default: () => ({}),
+    },
+    board: {
+      type: Object,
+      default: () => ({ columns: [], cards: [], revealed: false }),
+    },
+    timer: {
+      type: Object,
+      default: () => ({ duration: 300, remaining: 300, running: false }),
+    },
+  });
 
-const newCardText = reactive({});
-const openWriteCards = reactive({});
-const writeCardPlacements = reactive({});
-const writeCardControls = {};
-const writeCardButtons = {};
-const writeCardForms = {};
-const cardTextElements = {};
-const editingCardId = ref(null);
-const editingText = ref("");
-const editInput = ref(null);
+  const emit = defineEmits([
+    "reveal",
+    "clear",
+    "start-timer",
+    "pause-timer",
+    "reset-timer",
+  ]);
 
-const cardActionButtons = [
-  {
-    name: "edit",
-    class: "icon-btn-edit",
-    label: "Edit card",
-    title: "Edit",
-    icon: "✎",
-  },
-  {
-    name: "delete",
-    class: "icon-btn-delete",
-    label: "Delete card",
-    title: "Delete",
-    icon: "✕",
-  },
-];
-const addCardIconButtons = [
-  {
-    name: "add",
-    class: "icon-btn-add add-card-btn",
-    label: "Add card",
-    title: "Add",
-    icon: "✓",
-  },
-];
-const maxCardFontSize = 16;
-const minCardFontSize = 10;
+  const newCardText = reactive({});
+  const openWriteCards = reactive({});
+  const writeCardPlacements = reactive({});
+  const writeCardControls = {};
+  const writeCardButtons = {};
+  const writeCardForms = {};
+  const cardTextElements = {};
+  const editingCardId = ref(null);
+  const editingText = ref("");
+  const editInput = ref(null);
 
-const myColor = computed(() => props.players?.[socket.id]?.color ?? null);
+  const cardActionButtons = [
+    {
+      name: "edit",
+      class: "icon-btn-edit",
+      label: "Edit card",
+      title: "Edit",
+      icon: "✎",
+    },
+    {
+      name: "delete",
+      class: "icon-btn-delete",
+      label: "Delete card",
+      title: "Delete",
+      icon: "✕",
+    },
+  ];
+  const addCardIconButtons = [
+    {
+      name: "add",
+      class: "icon-btn-add add-card-btn",
+      label: "Add card",
+      title: "Add",
+      icon: "✓",
+    },
+  ];
+  const maxCardFontSize = 16;
+  const minCardFontSize = 10;
 
-const cardsForColumn = (columnId) =>
-  props.board?.cards?.filter((c) => c.columnId === columnId) ?? [];
-const cardIconButtons = (card) =>
-  card.isOwn && editingCardId.value !== card.id ? cardActionButtons : [];
-const setCardTextElement = (cardId, element) => {
-  if (element) {
-    cardTextElements[cardId] = element;
-  } else {
-    delete cardTextElements[cardId];
-  }
-};
-const setEditInput = (element) => {
-  editInput.value = element;
-  fitTextElement(element);
-};
-const fitTextElement = (element) => {
-  if (!element) return;
+  const myColor = computed(() => props.players?.[socket.id]?.color ?? null);
 
-  element.style.fontSize = `${maxCardFontSize}px`;
-  element.style.lineHeight = "1.2";
+  const cardsForColumn = (columnId) =>
+    props.board?.cards?.filter((c) => c.columnId === columnId) ?? [];
+  const cardIconButtons = (card) =>
+    card.isOwn && editingCardId.value !== card.id ? cardActionButtons : [];
+  const setCardTextElement = (cardId, element) => {
+    if (element) {
+      cardTextElements[cardId] = element;
+    } else {
+      delete cardTextElements[cardId];
+    }
+  };
+  const setEditInput = (element) => {
+    editInput.value = element;
+    fitTextElement(element);
+  };
+  const fitTextElement = (element) => {
+    if (!element) return;
 
-  let fontSize = maxCardFontSize;
-  while (
-    fontSize > minCardFontSize &&
-    (element.scrollHeight > element.clientHeight ||
-      element.scrollWidth > element.clientWidth)
-  ) {
-    fontSize -= 1;
-    element.style.fontSize = `${fontSize}px`;
-  }
-};
-const fitTextInput = (event) => {
-  fitTextElement(event.target);
-};
-const fitCardText = () =>
-  Object.values(cardTextElements).forEach(fitTextElement);
-const isWriteCardOpen = (columnId) => openWriteCards[columnId] === true;
-const setWriteCardControl = (columnId, element) => {
-  if (element) {
-    writeCardControls[columnId] = element;
-  } else {
-    delete writeCardControls[columnId];
-  }
-};
-const setWriteCardButton = (columnId, element) => {
-  if (element) {
-    writeCardButtons[columnId] = element;
-  } else {
-    delete writeCardButtons[columnId];
-  }
-};
-const setWriteCardForm = (columnId, element) => {
-  const cardElement =
-    element?.cardElement?.value ??
-    element?.cardElement ??
-    element?.$el ??
-    element;
+    element.style.fontSize = `${maxCardFontSize}px`;
+    element.style.lineHeight = "1.2";
 
-  if (cardElement) {
-    writeCardForms[columnId] = cardElement;
-  } else {
-    delete writeCardForms[columnId];
-  }
-};
-const positionWriteCard = (columnId) => {
-  const control = writeCardControls[columnId];
-  const form = writeCardForms[columnId];
-  const button = writeCardButtons[columnId];
+    let fontSize = maxCardFontSize;
+    while (
+      fontSize > minCardFontSize &&
+      (element.scrollHeight > element.clientHeight ||
+        element.scrollWidth > element.clientWidth)
+    ) {
+      fontSize -= 1;
+      element.style.fontSize = `${fontSize}px`;
+    }
+  };
+  const fitTextInput = (event) => {
+    fitTextElement(event.target);
+  };
+  const fitCardText = () =>
+    Object.values(cardTextElements).forEach(fitTextElement);
+  const isWriteCardOpen = (columnId) => openWriteCards[columnId] === true;
+  const setWriteCardControl = (columnId, element) => {
+    if (element) {
+      writeCardControls[columnId] = element;
+    } else {
+      delete writeCardControls[columnId];
+    }
+  };
+  const setWriteCardButton = (columnId, element) => {
+    if (element) {
+      writeCardButtons[columnId] = element;
+    } else {
+      delete writeCardButtons[columnId];
+    }
+  };
+  const setWriteCardForm = (columnId, element) => {
+    const cardElement =
+      element?.cardElement?.value ??
+      element?.cardElement ??
+      element?.$el ??
+      element;
 
-  if (!control || !form) return;
+    if (cardElement) {
+      writeCardForms[columnId] = cardElement;
+    } else {
+      delete writeCardForms[columnId];
+    }
+  };
+  const positionWriteCard = (columnId) => {
+    const control = writeCardControls[columnId];
+    const form = writeCardForms[columnId];
+    const button = writeCardButtons[columnId];
 
-  if (button) {
-    control.style.setProperty(
-      "--write-card-button-width",
-      `${button.offsetWidth}px`,
-    );
-  }
+    if (!control || !form) return;
 
-  // The form is anchored beside the button: top-aligned by default, or
-  // bottom-aligned when top-aligning would push it past the viewport.
-  const controlRect = control.getBoundingClientRect();
-  const formHeight = form.offsetHeight;
-  const wouldOverflowBottom = controlRect.top + formHeight > window.innerHeight;
-  const hasRoomAbove = controlRect.bottom - formHeight >= 0;
+    if (button) {
+      control.style.setProperty(
+        "--write-card-button-width",
+        `${button.offsetWidth}px`,
+      );
+    }
 
-  writeCardPlacements[columnId] =
-    wouldOverflowBottom && hasRoomAbove ? "up" : "down";
-};
-const toggleWriteCard = async (columnId) => {
-  openWriteCards[columnId] = !isWriteCardOpen(columnId);
+    // The form is anchored beside the button: top-aligned by default, or
+    // bottom-aligned when top-aligning would push it past the viewport.
+    const controlRect = control.getBoundingClientRect();
+    const formHeight = form.offsetHeight;
+    const wouldOverflowBottom =
+      controlRect.top + formHeight > window.innerHeight;
+    const hasRoomAbove = controlRect.bottom - formHeight >= 0;
 
-  if (openWriteCards[columnId]) {
+    writeCardPlacements[columnId] =
+      wouldOverflowBottom && hasRoomAbove ? "up" : "down";
+  };
+  const toggleWriteCard = async (columnId) => {
+    openWriteCards[columnId] = !isWriteCardOpen(columnId);
+
+    if (openWriteCards[columnId]) {
+      writeCardPlacements[columnId] = "down";
+      await nextTick();
+      positionWriteCard(columnId);
+    }
+  };
+
+  const hasCards = computed(() => props.board?.cards?.length > 0);
+
+  const revealCards = () => emit("reveal");
+  const clearBoard = () => emit("clear");
+
+  const formattedTime = computed(() => {
+    const total = Math.max(0, props.timer?.remaining ?? 0);
+    const minutes = Math.floor(total / 60);
+    const seconds = total % 60;
+    return `${minutes}:${String(seconds).padStart(2, "0")}`;
+  });
+
+  const updateColumnTitle = (columnId, title) => {
+    socket.emit("updateColumnTitle", {
+      roomId: props.room.roomId,
+      columnId,
+      title,
+    });
+  };
+
+  const addColumn = () => {
+    socket.emit("addColumn", { roomId: props.room.roomId });
+  };
+
+  const toggleCardLike = (cardId) => {
+    socket.emit("toggleCardLike", { roomId: props.room.roomId, cardId });
+  };
+
+  const addCard = (columnId) => {
+    const text = newCardText[columnId];
+    if (!text?.trim()) return;
+
+    socket.emit("addCard", { roomId: props.room.roomId, columnId, text });
+    newCardText[columnId] = "";
+    openWriteCards[columnId] = false;
     writeCardPlacements[columnId] = "down";
-    await nextTick();
-    positionWriteCard(columnId);
-  }
-};
+  };
 
-// A card is face-down until the board is revealed - including the author's
-// own cards - except while the author is actively editing it, so they can see
-// what they're typing/changing.
-const isFaceDown = (card) =>
-  !props.board?.revealed && editingCardId.value !== card.id;
+  const startEdit = (card) => {
+    editingCardId.value = card.id;
+    editingText.value = card.text;
+    nextTick(() => {
+      editInput.value?.focus();
+      fitTextElement(editInput.value);
+    });
+  };
 
-const addCard = (columnId) => {
-  const text = newCardText[columnId];
-  if (!text?.trim()) return;
+  const handleCardAction = (action, card) => {
+    if (action === "edit") {
+      startEdit(card);
+      return;
+    }
 
-  socket.emit("addCard", { roomId: props.room.roomId, columnId, text });
-  newCardText[columnId] = "";
-  openWriteCards[columnId] = false;
-  writeCardPlacements[columnId] = "down";
-};
+    if (action === "delete") {
+      deleteCard(card.id);
+    }
+  };
 
-const startEdit = (card) => {
-  editingCardId.value = card.id;
-  editingText.value = card.text;
-  nextTick(() => {
-    editInput.value?.focus();
-    fitTextElement(editInput.value);
+  const saveEdit = (cardId) => {
+    if (editingCardId.value !== cardId) return;
+
+    socket.emit("editCard", {
+      roomId: props.room.roomId,
+      cardId,
+      text: editingText.value,
+    });
+    editingCardId.value = null;
+    editingText.value = "";
+  };
+
+  const deleteCard = (cardId) => {
+    socket.emit("deleteCard", { roomId: props.room.roomId, cardId });
+  };
+
+  onMounted(() => {
+    nextTick(fitCardText);
   });
-};
 
-const handleCardAction = (action, card) => {
-  if (action === "edit") {
-    startEdit(card);
-    return;
-  }
-
-  if (action === "delete") {
-    deleteCard(card.id);
-  }
-};
-
-const saveEdit = (cardId) => {
-  if (editingCardId.value !== cardId) return;
-
-  socket.emit("editCard", {
-    roomId: props.room.roomId,
-    cardId,
-    text: editingText.value,
-  });
-  editingCardId.value = null;
-  editingText.value = "";
-};
-
-const deleteCard = (cardId) => {
-  socket.emit("deleteCard", { roomId: props.room.roomId, cardId });
-};
-
-onMounted(() => {
-  nextTick(fitCardText);
-});
-
-watch(
-  () => [props.board?.revealed, props.board?.cards, editingCardId.value],
-  () => nextTick(fitCardText),
-  { deep: true, flush: "post" },
-);
+  watch(
+    () => [props.board?.revealed, props.board?.cards, editingCardId.value],
+    () => nextTick(fitCardText),
+    { deep: true, flush: "post" },
+  );
 </script>

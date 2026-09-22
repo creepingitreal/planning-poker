@@ -1,7 +1,7 @@
 // router/index.js
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../components/Dashboard/Dashboard.vue";
-import JoinRoom from "../components/Poker/JoinRoom.vue";
+import JoinRoom from "../components/Join/JoinRoom.vue";
 import Room from "../components/Poker/Room.vue";
 
 const router = createRouter({

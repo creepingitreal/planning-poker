@@ -6,14 +6,14 @@
     :class="{ 'retro-card-hidden': hidden }"
     :style="retroCardStyle"
   >
-    <div class="card-actions" v-if="iconButtons.length">
+    <div v-if="iconButtons.length" class="card-actions">
       <button
         v-for="button in iconButtons"
         :key="button.name"
         type="button"
         class="icon-only card-icon-btn"
         :class="button.class"
-        @click="$emit('icon-click', button.name)"
+        @click="handleIconClick(button.name)"
         :aria-label="button.label"
         :title="button.title"
       >
@@ -22,45 +22,80 @@
     </div>
 
     <slot />
+
+    <button
+      v-if="showLike"
+      type="button"
+      class="card-like-button"
+      :class="{ liked }"
+      :aria-label="liked ? 'Unlike card' : 'Like card'"
+      :title="liked ? 'Unlike' : 'Like'"
+      @click="toggleLike"
+    >
+      <span aria-hidden="true">♥</span>
+      <span>{{ likes }}</span>
+    </button>
   </component>
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
-import "./retro-card.css";
+  import { computed, ref } from "vue";
+  import "./retro-card.css";
 
-const props = defineProps({
-  as: {
-    type: String,
-    default: "div",
-  },
-  color: {
-    type: String,
-    default: null,
-  },
-  hidden: {
-    type: Boolean,
-    default: false,
-  },
-  iconButtons: {
-    type: Array,
-    default: () => [],
-  },
-});
+  const props = defineProps({
+    as: {
+      type: String,
+      default: "div",
+    },
+    color: {
+      type: String,
+      default: null,
+    },
+    hidden: {
+      type: Boolean,
+      default: false,
+    },
+    iconButtons: {
+      type: Array,
+      default: () => [],
+    },
+    likes: {
+      type: Number,
+      default: 0,
+    },
+    liked: {
+      type: Boolean,
+      default: false,
+    },
+    showLike: {
+      type: Boolean,
+      default: true,
+    },
+  });
 
-defineEmits(["icon-click"]);
+  const emit = defineEmits(["icon-click", "like"]);
 
-const cardElement = ref(null);
-const retroCardStyle = computed(() => {
-  if (!props.color) return {};
+  const cardElement = ref(null);
 
-  return {
-    backgroundColor: props.color,
-    borderColor: props.color,
+  const handleIconClick = (buttonName) => {
+    emit("icon-click", buttonName);
   };
-});
 
-defineExpose({
-  cardElement,
-});
+  const toggleLike = () => {
+    if (!props.showLike || props.hidden) return;
+    emit("like");
+  };
+
+  const retroCardStyle = computed(() => {
+    if (!props.color) return {};
+
+    return {
+      backgroundColor: props.color,
+      borderColor: props.color,
+    };
+  });
+
+  defineExpose({
+    cardElement,
+  });
 </script>

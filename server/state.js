@@ -24,7 +24,7 @@ const DEFAULT_RETRO_COLUMNS = () => [
   { id: "action-items", title: "Action Items" },
 ];
 
-// roomId -> { columns: [{id, title}], cards: [{id, columnId, authorId, text}], revealed: bool }
+// roomId -> { columns: [{id, title}], cards: [{id, columnId, authorId, text, likes}], revealed: bool }
 export const retroBoards = {};
 
 export const DEFAULT_TIMER_DURATION = 5 * 60; // 5 minutes, in seconds
@@ -47,6 +47,7 @@ export const newRetroTimer = () => ({
 
 let cardIdCounter = 0;
 export const nextCardId = () => `card-${Date.now()}-${cardIdCounter++}`;
+export const nextColumnId = () => `board-${Date.now()}-${cardIdCounter++}`;
 
 export const stopRetroTimerInterval = (roomId) => {
   if (retroTimerIntervals[roomId]) {
