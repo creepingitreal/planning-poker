@@ -13,8 +13,7 @@
     <ButtonSection
       :is-visible="isVisible"
       :has-votes="hasVotes"
-      :reveal-votes="revealVotes"
-      :clear-votes="clearVotes"
+      :room-id="room.roomId"
     />
 
     <div class="vote-card-section">
@@ -76,17 +75,6 @@
   const castVote = (value) => {
     selectedVote.value = value;
     socket.emit("castVote", { roomId: props.room.roomId, vote: value });
-  };
-
-  const revealVotes = (visibility) => {
-    socket.emit("revealVotes", {
-      roomId: props.room.roomId,
-      visibility: visibility,
-    });
-  };
-
-  const clearVotes = () => {
-    socket.emit("clearVotes", { roomId: props.room.roomId });
   };
 
   const handleToggleVisibility = (visibility) => {

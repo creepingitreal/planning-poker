@@ -1,22 +1,29 @@
 // In-memory state shared across the poker and retro socket handlers.
 // Everything here lives only for the lifetime of the process (no persistence).
 
-export const rooms = {}; // roomId -> { [socketId]: {user, vote, color} }
+export const rooms = {}; // roomId -> { [participantId]: {user, vote, color, socketId} }
 export const roomNames = {}; // roomId -> roomName
 export const lockedRooms = new Set(); // roomIds that are invite-only
-export const roomHosts = {}; // roomId -> socket.id of current host
-export const joinOrder = {}; // roomId -> array of socket ids in join order (oldest first)
+export const roomHosts = {}; // roomId -> participantId of current host
+export const joinOrder = {}; // roomId -> participant ids in join order (oldest first)
 
-export const addParticipant = (roomId, socketId) => {
+export const addParticipant = (roomId, participantId) => {
   if (!joinOrder[roomId]) joinOrder[roomId] = [];
-  joinOrder[roomId].push(socketId);
+  joinOrder[roomId].push(participantId);
 };
 
-export const newParticipant = (user, color) => ({
+export const newParticipant = ({ participantId, user, color, socketId }) => ({
+  participantId,
   user,
   vote: null,
   color,
+  socketId,
 });
+
+export const participantForSocket = (roomId, socketId) =>
+  Object.values(rooms[roomId] ?? {}).find(
+    (participant) => participant.socketId === socketId,
+  );
 
 const DEFAULT_RETRO_COLUMNS = () => [
   { id: "went-well", title: "Went Well" },
@@ -24,7 +31,8 @@ const DEFAULT_RETRO_COLUMNS = () => [
   { id: "action-items", title: "Action Items" },
 ];
 
-// roomId -> { columns: [{id, title}], cards: [{id, columnId, authorId, text, likes}], revealed: bool }
+// roomId -> { columns: [{id, title}], cards: [{id, columnId, authorId: participantId, text, likes: Set<participantId>}], revealed: bool, hasBeenRevealed: bool }
+// The client receives `likes` as a count, not the server-side Set.
 export const retroBoards = {};
 
 export const DEFAULT_TIMER_DURATION = 5 * 60; // 5 minutes, in seconds
@@ -38,6 +46,7 @@ export const newRetroBoard = () => ({
   columns: DEFAULT_RETRO_COLUMNS(),
   cards: [],
   revealed: false,
+  hasBeenRevealed: false,
 });
 export const newRetroTimer = () => ({
   duration: DEFAULT_TIMER_DURATION,

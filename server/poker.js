@@ -8,6 +8,7 @@ import {
   joinOrder,
   addParticipant,
   newParticipant,
+  participantForSocket,
 } from "./state.js";
 import { nextParticipantColor } from "./colorAllocation.js";
 
@@ -22,11 +23,18 @@ const ensureParticipantColors = (roomId) => {
 export const broadcastRoom = (io, roomId) => {
   const shareUrl = `${process.env.PUBLIC_BASE_URL ?? "http://localhost:5173"}/room/${roomId}`;
   ensureParticipantColors(roomId);
+  const players = Object.values(rooms[roomId] ?? {})
+    .filter((participant) => participant.socketId)
+    .reduce((result, participant) => {
+      result[participant.socketId] = participant;
+      return result;
+    }, {});
+  const host = rooms[roomId]?.[roomHosts[roomId]];
   io.to(roomId).emit("updateRoom", {
-    players: rooms[roomId],
+    players,
     shareUrl,
     roomName: roomNames[roomId],
-    hostId: roomHosts[roomId],
+    hostId: host?.socketId ?? null,
   });
 };
 
@@ -35,7 +43,7 @@ export const registerPokerHandlers = (
   socket,
   { onRoomCreated, onRoomJoined } = {},
 ) => {
-  socket.on("createRoom", ({ room, user } = {}) => {
+  socket.on("createRoom", ({ room, user, clientId } = {}) => {
     if (!room?.roomId || !room?.roomName || !user?.trim()) {
       socket.emit("roomError", {
         message: "Room name and username are required.",
@@ -50,20 +58,24 @@ export const registerPokerHandlers = (
       return;
     }
 
+    const participantId = clientId || socket.id;
+
     rooms[room.roomId] = {};
     roomNames[room.roomId] = room.roomName;
-    roomHosts[room.roomId] = socket.id;
+    roomHosts[room.roomId] = participantId;
     joinOrder[room.roomId] = [];
 
     if (room.locked) {
       lockedRooms.add(room.roomId);
     }
 
-    rooms[room.roomId][socket.id] = newParticipant(
+    rooms[room.roomId][participantId] = newParticipant({
+      participantId,
       user,
-      nextParticipantColor(rooms, room.roomId),
-    );
-    addParticipant(room.roomId, socket.id);
+      color: nextParticipantColor(rooms, room.roomId),
+      socketId: socket.id,
+    });
+    addParticipant(room.roomId, participantId);
     ensureParticipantColors(room.roomId);
 
     socket.join(room.roomId);
@@ -84,7 +96,7 @@ export const registerPokerHandlers = (
     }
   });
 
-  socket.on("joinRoom", ({ room, user, fromLink = false }) => {
+  socket.on("joinRoom", ({ room, user, clientId, fromLink = false }) => {
     let roomId = room.roomId;
 
     if (!roomId && room.roomName) {
@@ -105,12 +117,21 @@ export const registerPokerHandlers = (
       return;
     }
 
+    const participantId = clientId || socket.id;
+
     socket.join(roomId);
-    rooms[roomId][socket.id] = newParticipant(
-      user,
-      nextParticipantColor(rooms, roomId),
-    );
-    addParticipant(roomId, socket.id);
+    const participant = rooms[roomId][participantId];
+    if (participant) {
+      participant.socketId = socket.id;
+    } else {
+      rooms[roomId][participantId] = newParticipant({
+        participantId,
+        user,
+        color: nextParticipantColor(rooms, roomId),
+        socketId: socket.id,
+      });
+      addParticipant(roomId, participantId);
+    }
     ensureParticipantColors(roomId);
 
     socket.emit("roomJoined", {
@@ -124,8 +145,9 @@ export const registerPokerHandlers = (
   });
 
   socket.on("castVote", ({ roomId, vote }) => {
-    if (rooms[roomId]?.[socket.id]) {
-      rooms[roomId][socket.id].vote = vote;
+    const participant = participantForSocket(roomId, socket.id);
+    if (participant) {
+      participant.vote = vote;
     }
 
     broadcastRoom(io, roomId);
@@ -138,8 +160,8 @@ export const registerPokerHandlers = (
   });
 
   socket.on("clearVotes", ({ roomId }) => {
-    Object.keys(rooms[roomId]).forEach((user) => {
-      rooms[roomId][user].vote = null;
+    Object.values(rooms[roomId] ?? {}).forEach((participant) => {
+      participant.vote = null;
     });
 
     broadcastRoom(io, roomId);
@@ -158,18 +180,15 @@ export const registerDisconnectHandler = (
 ) => {
   socket.on("disconnect", () => {
     for (const roomId in rooms) {
-      if (rooms[roomId][socket.id]) {
-        delete rooms[roomId][socket.id];
-
-        if (joinOrder[roomId]) {
-          joinOrder[roomId] = joinOrder[roomId].filter(
-            (id) => id !== socket.id,
-          );
-        }
+      const participant = participantForSocket(roomId, socket.id);
+      if (participant) {
+        participant.socketId = null;
 
         // Host handover: transfer to the longest-connected remaining participant.
-        if (roomHosts[roomId] === socket.id) {
-          const nextHost = joinOrder[roomId]?.find((id) => rooms[roomId][id]);
+        if (roomHosts[roomId] === participant.participantId) {
+          const nextHost = joinOrder[roomId]?.find(
+            (id) => rooms[roomId][id]?.socketId,
+          );
           roomHosts[roomId] = nextHost ?? null;
         }
 

@@ -10,6 +10,7 @@ import {
   nextCardId,
   nextColumnId,
   stopRetroTimerInterval,
+  participantForSocket,
 } from "./state.js";
 
 export const ensureRetroState = (roomId) => {
@@ -18,11 +19,16 @@ export const ensureRetroState = (roomId) => {
 };
 
 // Cards are private to their author until the board is revealed. Each connected
-// socket in the room gets its own filtered view: its own cards always visible,
-// everyone else's cards shown as hidden placeholders (or fully, once revealed).
-const boardForRecipient = (roomId, recipientId) => {
+// socket in the room gets its own filtered view: its own cards are visible
+// during drafting, and everyone else's cards are hidden until reveal. After a
+// board has been revealed, hiding it masks cards for their authors as well.
+const boardForRecipient = (roomId, recipientSocketId) => {
   const board = retroBoards[roomId];
   if (!board) return null;
+
+  const recipient = participantForSocket(roomId, recipientSocketId);
+  if (!recipient) return null;
+  const recipientId = recipient.participantId;
 
   const cards = board.cards.map((card) => {
     const likes = normalizeLikes(card.likes);
@@ -31,7 +37,7 @@ const boardForRecipient = (roomId, recipientId) => {
     const authorColor =
       card.color ?? rooms[roomId]?.[card.authorId]?.color ?? null;
 
-    if (board.revealed || isOwn) {
+    if (board.revealed || (isOwn && !board.hasBeenRevealed)) {
       return {
         id: card.id,
         columnId: card.columnId,
@@ -84,7 +90,8 @@ export const broadcastTimer = (io, roomId) => {
 
 export const registerRetroHandlers = (io, socket) => {
   socket.on("addCard", ({ roomId, columnId, text }) => {
-    if (!rooms[roomId]?.[socket.id]) return;
+    const participant = participantForSocket(roomId, socket.id);
+    if (!participant) return;
 
     ensureRetroState(roomId);
     const board = retroBoards[roomId];
@@ -95,8 +102,8 @@ export const registerRetroHandlers = (io, socket) => {
       id: nextCardId(),
       columnId,
       text: text.trim(),
-      authorId: socket.id,
-      color: rooms[roomId]?.[socket.id]?.color ?? null,
+      authorId: participant.participantId,
+      color: participant.color ?? null,
       likes: new Set(),
     });
 
@@ -104,7 +111,7 @@ export const registerRetroHandlers = (io, socket) => {
   });
 
   socket.on("updateColumnTitle", ({ roomId, columnId, title }) => {
-    if (!rooms[roomId]?.[socket.id]) return;
+    if (!participantForSocket(roomId, socket.id)) return;
 
     const board = retroBoards[roomId];
     const column = board?.columns.find(
@@ -118,7 +125,7 @@ export const registerRetroHandlers = (io, socket) => {
   });
 
   socket.on("addColumn", ({ roomId }) => {
-    if (!rooms[roomId]?.[socket.id]) return;
+    if (!participantForSocket(roomId, socket.id)) return;
 
     ensureRetroState(roomId);
     const board = retroBoards[roomId];
@@ -127,7 +134,8 @@ export const registerRetroHandlers = (io, socket) => {
   });
 
   socket.on("toggleCardLike", ({ roomId, cardId }) => {
-    if (!rooms[roomId]?.[socket.id]) return;
+    const participant = participantForSocket(roomId, socket.id);
+    if (!participant) return;
 
     const board = retroBoards[roomId];
     if (!board?.revealed) return;
@@ -137,18 +145,20 @@ export const registerRetroHandlers = (io, socket) => {
 
     card.likes = normalizeLikes(card.likes);
 
-    if (card.likes.has(socket.id)) {
-      card.likes.delete(socket.id);
+    if (card.likes.has(participant.participantId)) {
+      card.likes.delete(participant.participantId);
     } else {
-      card.likes.add(socket.id);
+      card.likes.add(participant.participantId);
     }
     broadcastBoard(io, roomId);
   });
 
   socket.on("editCard", ({ roomId, cardId, text }) => {
     const board = retroBoards[roomId];
+    const participant = participantForSocket(roomId, socket.id);
     const card = board?.cards.find((c) => c.id === cardId);
-    if (!card || card.authorId !== socket.id || !text?.trim()) return;
+    if (!card || card.authorId !== participant?.participantId || !text?.trim())
+      return;
 
     card.text = text.trim();
     broadcastBoard(io, roomId);
@@ -158,18 +168,20 @@ export const registerRetroHandlers = (io, socket) => {
     const board = retroBoards[roomId];
     if (!board) return;
 
+    const participant = participantForSocket(roomId, socket.id);
     const card = board.cards.find((c) => c.id === cardId);
-    if (!card || card.authorId !== socket.id) return;
+    if (!card || card.authorId !== participant?.participantId) return;
 
     board.cards = board.cards.filter((c) => c.id !== cardId);
     broadcastBoard(io, roomId);
   });
 
-  socket.on("revealCards", ({ roomId }) => {
+  socket.on("revealCards", ({ roomId, visibility }) => {
     const board = retroBoards[roomId];
     if (!board) return;
 
-    board.revealed = true;
+    board.revealed = visibility ?? true;
+    if (board.revealed) board.hasBeenRevealed = true;
     broadcastBoard(io, roomId);
   });
 
@@ -237,7 +249,10 @@ export const registerRetroHandlers = (io, socket) => {
 // Called whenever a room becomes empty (no connected participants left) to
 // avoid leaking setInterval timers for abandoned rooms.
 export const cleanupRetroTimerIfRoomEmpty = (roomId) => {
-  if (!rooms[roomId] || Object.keys(rooms[roomId]).length === 0) {
+  const hasConnectedParticipants = Object.values(rooms[roomId] ?? {}).some(
+    (participant) => participant.socketId,
+  );
+  if (!hasConnectedParticipants) {
     stopRetroTimerInterval(roomId);
   }
 };

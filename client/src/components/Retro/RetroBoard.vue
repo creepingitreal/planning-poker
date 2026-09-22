@@ -4,9 +4,9 @@
       <ButtonSection
         :is-visible="board.revealed"
         :has-votes="hasCards"
-        :show-reveal="!board.revealed"
-        :reveal-votes="revealCards"
-        :clear-votes="clearBoard"
+        :room-id="room.roomId"
+        reveal-event="revealCards"
+        clear-event="clearBoard"
         reveal-label="Reveal Cards"
         hide-label="Hide Cards"
         clear-label="Clear Board"
@@ -159,13 +159,7 @@
     },
   });
 
-  const emit = defineEmits([
-    "reveal",
-    "clear",
-    "start-timer",
-    "pause-timer",
-    "reset-timer",
-  ]);
+  const emit = defineEmits(["start-timer", "pause-timer", "reset-timer"]);
 
   const newCardText = reactive({});
   const openWriteCards = reactive({});
@@ -308,9 +302,6 @@
   };
 
   const hasCards = computed(() => props.board?.cards?.length > 0);
-
-  const revealCards = () => emit("reveal");
-  const clearBoard = () => emit("clear");
 
   const formattedTime = computed(() => {
     const total = Math.max(0, props.timer?.remaining ?? 0);

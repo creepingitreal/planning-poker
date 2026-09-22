@@ -2,18 +2,18 @@
   <div class="button-section">
     <button
       v-if="showReveal"
-      @click="revealVotes(!isVisible)"
+      @click="toggleVisibility"
       :disabled="!hasVotes"
       class="reveal-btn"
     >
       {{ isVisible ? hideLabel : revealLabel }}
     </button>
-    <button @click="clearVotes" class="secondary-blue">{{ clearLabel }}</button>
+    <button @click="clearBoard" class="secondary-blue">{{ clearLabel }}</button>
   </div>
 </template>
 
 <script setup>
-  import { defineProps } from "vue";
+  import socket from "../../../socket.js";
 
   const props = defineProps({
     isVisible: {
@@ -24,13 +24,17 @@
       type: Boolean,
       required: true,
     },
-    revealVotes: {
-      type: Function,
+    roomId: {
+      type: String,
       required: true,
     },
-    clearVotes: {
-      type: Function,
-      required: true,
+    revealEvent: {
+      type: String,
+      default: "revealVotes",
+    },
+    clearEvent: {
+      type: String,
+      default: "clearVotes",
     },
     showReveal: {
       type: Boolean,
@@ -49,4 +53,15 @@
       default: "Clear Votes",
     },
   });
+
+  const toggleVisibility = () => {
+    socket.emit(props.revealEvent, {
+      roomId: props.roomId,
+      visibility: !props.isVisible,
+    });
+  };
+
+  const clearBoard = () => {
+    socket.emit(props.clearEvent, { roomId: props.roomId });
+  };
 </script>

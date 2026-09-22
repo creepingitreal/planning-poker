@@ -67,6 +67,9 @@
   const roomNameInput = ref("");
   const locked = ref(false);
   const isCreating = ref(false);
+  const clientId =
+    localStorage.getItem("poker_client_id") || crypto.randomUUID();
+  localStorage.setItem("poker_client_id", clientId);
 
   const saveSession = (roomData, userName) => {
     localStorage.setItem(
@@ -74,6 +77,7 @@
       JSON.stringify({
         room: roomData,
         name: userName,
+        clientId,
         savedAt: Date.now(),
       }),
     );
@@ -97,6 +101,7 @@
         roomName: roomId.value ? "" : roomNameInput.value,
       },
       user: name.value,
+      clientId,
       fromLink: !!roomId.value,
     });
   };
@@ -114,6 +119,7 @@
     socket.emit("createRoom", {
       room: { ...room.value, locked: locked.value },
       user: name.value,
+      clientId,
     });
 
     locked.value = false;

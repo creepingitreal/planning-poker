@@ -31,8 +31,6 @@
         :players="players"
         :board="board"
         :timer="timer"
-        @reveal="revealCards"
-        @clear="clearBoard"
         @start-timer="startTimer"
         @pause-timer="pauseTimer"
         @reset-timer="resetTimer"
@@ -95,6 +93,9 @@
   const copied = ref(false);
   const showUsersDrawer = ref(false);
   const wheelManualNames = ref([]);
+  const clientId =
+    localStorage.getItem("poker_client_id") || crypto.randomUUID();
+  localStorage.setItem("poker_client_id", clientId);
 
   const formattedTime = computed(() => {
     const total = Math.max(0, timer.value?.remaining ?? 0);
@@ -109,6 +110,7 @@
       JSON.stringify({
         room: roomData,
         name: userName,
+        clientId,
         savedAt: Date.now(),
       }),
     );
@@ -130,14 +132,6 @@
 
   const resetTimer = () => {
     socket.emit("resetTimer", { roomId: room.value.roomId });
-  };
-
-  const revealCards = () => {
-    socket.emit("revealCards", { roomId: room.value.roomId });
-  };
-
-  const clearBoard = () => {
-    socket.emit("clearBoard", { roomId: room.value.roomId });
   };
 
   const handleRoomJoined = ({ roomId, roomName }) => {
@@ -205,6 +199,7 @@
         socket.emit("joinRoom", {
           room: session.room,
           user: session.name,
+          clientId: session.clientId || clientId,
           fromLink: true,
         });
         return;
