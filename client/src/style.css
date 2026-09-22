@@ -52,6 +52,24 @@ body {
     &.no-padding-bottom {
         padding-bottom: 0;
     }
+
+  .logo-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: fit-content;
+    gap: 8px;
+  }
+
+  .nav-bar-room-name {
+    margin: 0 0 12px;
+    color: var(--secondary-blue);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
 }
 
 .subnav.tool-tabs {

@@ -2,10 +2,10 @@
   <section>
     <div class="room" v-if="!joined">
       <div class="section-title">
-        <h1 class="title">
-          Joining room: <strong>{{ room.roomName }}</strong>
-        </h1>
-
+        <p class="nav-bar-room-name">
+          {{ room.roomName }}
+        </p>
+        
         <input v-model="name" type="text" placeholder="Username *" />
       </div>
 
@@ -16,7 +16,6 @@
 
     <section v-else class="room" :class="{ retro: activeTool === 'retro' }">
       <button
-        v-if="activeTool === 'retro' || activeTool === 'wheel'"
         class="icon-only users-drawer-trigger"
         type="button"
         aria-label="Open users drawer"
@@ -25,15 +24,6 @@
       >
         <span aria-hidden="true">☰</span>
       </button>
-
-      <div class="section-title">
-        <div>
-          <h1>
-            Sprint:
-            <strong class="room-name no-wrap">{{ room.roomName }}</strong>
-          </h1>
-        </div>
-      </div>
 
       <div class="room-controls">
         <div class="room-actions retro" v-if="activeTool === 'retro'">
@@ -89,7 +79,6 @@
       </div>
 
       <UsersDrawer
-        v-if="activeTool === 'retro' || activeTool === 'wheel'"
         :open="showUsersDrawer"
         :players="players"
         :allow-manual="activeTool === 'wheel'"

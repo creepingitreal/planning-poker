@@ -2,9 +2,11 @@
   <section class="game-board section-layout">
     <div class="players-container">
       <div class="player" v-for="(player, id) in players || {}" :key="id">
-        <p>{{ player.user }}</p>
-
-        <Vote :vote="player.vote" :is-visible="isVisible" />
+        <Vote
+          :vote="player.vote"
+          :is-visible="isVisible"
+          :color="participantColours[player.user]"
+        />
       </div>
     </div>
 
@@ -37,6 +39,7 @@
 import socket from "../../../socket.js";
 import { computed, onUnmounted, ref } from "vue";
 import Vote from "./Vote.vue";
+import { allocateParticipantColors } from "../../js/colorAllocation.js";
 import "./game-board.css";
 
 const voteOptions = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, "?"];
@@ -55,6 +58,20 @@ const props = defineProps({
 
 const hasVotes = computed(() => {
   return Object.values(props.players).some((player) => player.vote !== null);
+});
+
+const participantColours = computed(() => {
+  const players = Object.values(props.players);
+  const assignedColours = Object.fromEntries(
+    players
+      .filter((player) => player.user && player.color)
+      .map((player) => [player.user, player.color]),
+  );
+  const participantNames = [
+    ...new Set(players.map((player) => player.user).filter(Boolean)),
+  ];
+
+  return allocateParticipantColors(participantNames, assignedColours);
 });
 
 const selectedVote = ref(null);

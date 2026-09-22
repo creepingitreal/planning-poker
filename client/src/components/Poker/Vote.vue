@@ -1,5 +1,10 @@
 <template>
-  <div class="vote" :class="isVisible ? 'visible' : ''" v-if="vote !== null">
+  <div
+    class="vote"
+    :class="isVisible ? 'visible' : ''"
+    :style="color ? { backgroundColor: color } : {}"
+    v-if="vote !== null"
+  >
     <p v-if="isVisible">{{ vote }}</p>
   </div>
 </template>
@@ -14,6 +19,10 @@ const props = defineProps({
   isVisible: {
     type: Boolean,
     default: true,
+  },
+  color: {
+    type: String,
+    default: null,
   },
 });
 </script>

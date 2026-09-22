@@ -1,7 +1,6 @@
 <template>
   <section class="dashboard">
     <div class="dashboard-heading">
-      <p class="dashboard-kicker">{{ roomName || "Procode Nundrum" }}</p>
       <h1>Choose your workspace</h1>
       <p>Start a session with the tool your team needs right now.</p>
       <button
