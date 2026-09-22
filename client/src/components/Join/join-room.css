@@ -62,7 +62,7 @@
 
     > .button-section {
       flex-direction: row;
-      align-items: flex-start;
+      align-items: flex-end;
 
       > button,
       .container-create-btn {

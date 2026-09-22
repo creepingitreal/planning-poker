@@ -2,17 +2,29 @@
   <section>
     <div class="room join-room">
       <div class="section-title">
-        <h1 class="title">Join or Create a Room</h1>
+        <h1 class="title">
+          {{ roomId ? roomName || "Join Room" : "Join or Create a Room" }}
+        </h1>
 
-        <input v-model="roomNameInput" placeholder="Sprint Name" />
+        <input
+          v-if="!roomId"
+          v-model="roomNameInput"
+          placeholder="Sprint Name"
+          @keyup.enter="joinRoom"
+        />
 
-        <input v-model="name" type="text" placeholder="Username *" />
+        <input
+          v-model="name"
+          type="text"
+          placeholder="Username *"
+          @keyup.enter="joinRoom"
+        />
       </div>
 
       <div class="button-section">
         <button @click="joinRoom">Join</button>
 
-        <div class="container-create-btn">
+        <div v-if="!roomId" class="container-create-btn">
           <input
             id="invite-only"
             type="checkbox"
@@ -36,13 +48,16 @@
 <script setup>
   import socket from "../../../socket.js";
   import "./join-room.css";
-  import { onUnmounted, ref } from "vue";
+  import { computed, onMounted, onUnmounted, ref } from "vue";
   import { generateRoomId, randomNameGenerator } from "../../js/generators.js";
   import { useRoute, useRouter } from "vue-router";
   import { setCurrentRoom } from "../../js/roomNav.js";
 
   const route = useRoute(false);
   const router = useRouter();
+
+  const roomId = computed(() => route.params.roomId || "");
+  const roomName = ref("");
 
   const name = ref("");
   const room = ref({
@@ -70,16 +85,19 @@
       return;
     }
 
-    if (!roomNameInput.value) {
+    if (!roomId.value && !roomNameInput.value) {
       alert("Please enter a room name");
       return;
     }
 
     isCreating.value = false;
     socket.emit("joinRoom", {
-      room: { roomId: "", roomName: roomNameInput.value },
+      room: {
+        roomId: roomId.value,
+        roomName: roomId.value ? "" : roomNameInput.value,
+      },
       user: name.value,
-      fromLink: false,
+      fromLink: !!roomId.value,
     });
   };
 
@@ -128,11 +146,25 @@
     alert(message);
   };
 
+  const handleRoomNameResolved = ({ roomName: resolvedName, error }) => {
+    if (!error) {
+      roomName.value = resolvedName;
+    }
+  };
+
   socket.on("roomJoined", handleRoomJoined);
   socket.on("roomError", handleRoomError);
+  socket.on("roomNameResolved", handleRoomNameResolved);
+
+  onMounted(() => {
+    if (roomId.value) {
+      socket.emit("getRoomName", roomId.value);
+    }
+  });
 
   onUnmounted(() => {
     socket.off("roomJoined", handleRoomJoined);
     socket.off("roomError", handleRoomError);
+    socket.off("roomNameResolved", handleRoomNameResolved);
   });
 </script>

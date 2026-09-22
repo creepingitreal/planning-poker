@@ -8,6 +8,7 @@
         :reveal-votes="revealCards"
         :clear-votes="clearBoard"
         reveal-label="Reveal Cards"
+        hide-label="Hide Cards"
         clear-label="Clear Board"
       />
       <div class="retro-timer">

@@ -1,20 +1,10 @@
 <template>
   <section>
-    <div class="room" v-if="!joined">
-      <div class="section-title">
-        <p class="nav-bar-room-name">
-          {{ room.roomName }}
-        </p>
-
-        <input v-model="name" type="text" placeholder="Username *" />
-      </div>
-
-      <div class="button-section">
-        <button @click="joinRoom">Join room now</button>
-      </div>
-    </div>
-
-    <section v-else class="room" :class="{ retro: activeTool === 'retro' }">
+    <section
+      v-if="joined"
+      class="room"
+      :class="{ retro: activeTool === 'retro' }"
+    >
       <button
         class="icon-only users-drawer-trigger"
         type="button"
@@ -66,10 +56,9 @@
   import RetroBoard from "../Retro/RetroBoard.vue";
   import SpinTheWheel from "../Wheel/SpinTheWheel.vue";
   import UsersDrawer from "../UsersDrawer/UsersDrawer.vue";
-  import "../Join/join-room.css";
   import "./room.css";
   import { computed, onMounted, onUnmounted, ref } from "vue";
-  import { useRoute } from "vue-router";
+  import { useRoute, useRouter } from "vue-router";
   import {
     activeTool,
     showTools,
@@ -80,6 +69,7 @@
   import socket from "../../../socket.js";
 
   const route = useRoute();
+  const router = useRouter();
 
   const joined = ref(false);
   const name = ref("");
@@ -130,19 +120,6 @@
     showTools.value = true;
   };
 
-  const joinRoom = () => {
-    if (!name.value) {
-      alert("Please enter your name");
-      return;
-    }
-
-    socket.emit("joinRoom", {
-      room: { roomId: route.params.roomId, roomName: "" },
-      user: name.value,
-      fromLink: true,
-    });
-  };
-
   const startTimer = () => {
     socket.emit("startTimer", { roomId: room.value.roomId });
   };
@@ -163,12 +140,6 @@
     socket.emit("clearBoard", { roomId: room.value.roomId });
   };
 
-  const handleRoomNameResolved = ({ roomName, error }) => {
-    if (!error) {
-      room.value.roomName = roomName;
-    }
-  };
-
   const handleRoomJoined = ({ roomId, roomName }) => {
     room.value.roomId = roomId;
     room.value.roomName = roomName;
@@ -182,6 +153,15 @@
 
   const handleRoomError = ({ message }) => {
     alert(message);
+
+    if (!joined.value) {
+      localStorage.removeItem(`poker_session_${route.params.roomId}`);
+
+      const toolQuery = route.query.tool
+        ? `?tool=${encodeURIComponent(route.query.tool)}`
+        : "";
+      router.replace(`/join/${route.params.roomId}${toolQuery}`);
+    }
   };
 
   const handleUpdateRoom = ({
@@ -205,7 +185,6 @@
     if (timerData) timer.value = timerData;
   };
 
-  socket.on("roomNameResolved", handleRoomNameResolved);
   socket.on("roomJoined", handleRoomJoined);
   socket.on("roomError", handleRoomError);
   socket.on("updateRoom", handleUpdateRoom);
@@ -213,8 +192,6 @@
   socket.on("updateTimer", handleUpdateTimer);
 
   onMounted(() => {
-    socket.emit("getRoomName", route.params.roomId);
-
     const saved = localStorage.getItem(`poker_session_${route.params.roomId}`);
 
     if (saved) {
@@ -230,14 +207,19 @@
           user: session.name,
           fromLink: true,
         });
-      } else {
-        localStorage.removeItem(`poker_session_${route.params.roomId}`);
+        return;
       }
+
+      localStorage.removeItem(`poker_session_${route.params.roomId}`);
     }
+
+    const toolQuery = route.query.tool
+      ? `?tool=${encodeURIComponent(route.query.tool)}`
+      : "";
+    router.replace(`/join/${route.params.roomId}${toolQuery}`);
   });
 
   onUnmounted(() => {
-    socket.off("roomNameResolved", handleRoomNameResolved);
     socket.off("roomJoined", handleRoomJoined);
     socket.off("roomError", handleRoomError);
     socket.off("updateRoom", handleUpdateRoom);

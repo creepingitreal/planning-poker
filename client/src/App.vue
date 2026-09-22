@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="nav-bar" :class="{ 'no-padding-bottom': showTools }">
+    <div class="nav-bar" :class="{ 'no-padding-bottom': currentRoom.roomName !== '' }">
       <div>
         <nav class="logo-wrapper">
           <RouterLink :to="logoLink">
