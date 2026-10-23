@@ -17,6 +17,7 @@
           v-model="name"
           type="text"
           placeholder="Username *"
+          autocomplete="given-name"
           @keyup.enter="joinRoom"
         />
       </div>
