@@ -8,7 +8,7 @@
         <nav class="logo-wrapper">
           <RouterLink :to="logoLink">
             <div class="logo">
-              <img id="logo" :src="logoWhite" alt="procode-nundrum logo" />
+              <Icon name="scrumble-logo" />
             </div>
           </RouterLink>
           <p v-if="currentRoom.roomName" class="nav-bar-room-name">
@@ -50,9 +50,9 @@
 
 <script setup>
   import "./style.css";
-  import logoWhite from "./svg/procode-logo-white.svg";
   import SubNav from "./components/SubNav/SubNav.vue";
   import UsersDrawer from "./components/UsersDrawer/UsersDrawer.vue";
+  import Icon from "./assets/shared/Icon.vue";
   import { computed } from "vue";
   import {
     activeTool,
