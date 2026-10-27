@@ -6,33 +6,10 @@
     >
       <div class="nav-header">
         <nav class="logo-wrapper">
-          <RouterLink :to="logoLink">
-            <div class="logo">
-              <Icon name="scrumble-logo" />
-            </div>
-          </RouterLink>
           <p v-if="currentRoom.roomName" class="nav-bar-room-name">
             {{ currentRoom.roomName }}
           </p>
         </nav>
-        <button
-          v-if="currentRoom.roomId"
-          class="icon-only users-drawer-trigger"
-          type="button"
-          aria-label="Open users drawer"
-          title="Open users"
-          @click="showUsersDrawer = true"
-        >
-          <span aria-hidden="true">☰</span>
-        </button>
-        <UsersDrawer
-          :open="showUsersDrawer"
-          :players="roomPlayers"
-          :allow-manual="activeTool === 'wheel'"
-          :manual-names="wheelManualNames"
-          @close="showUsersDrawer = false"
-          @update:manual-names="wheelManualNames = $event"
-        />
       </div>
       <SubNav
         :show-tools="showTools"
@@ -43,6 +20,15 @@
       />
     </div>
     <main>
+      <SidePanel 
+          v-if="currentRoom.roomId"
+          :open="showSidePanel"
+          :players="roomPlayers"
+          :manual-names="wheelManualNames"
+          @toggle="showSidePanel = !showSidePanel"
+          @update:manual-names="wheelManualNames = $event" 
+          />  
+          
       <RouterView />
     </main>
   </div>
@@ -52,13 +38,14 @@
   import "./style.css";
   import SubNav from "./components/SubNav/SubNav.vue";
   import UsersDrawer from "./components/UsersDrawer/UsersDrawer.vue";
+  import SidePanel from "./components/SidePanel/SidePanel.vue";
   import Icon from "./assets/shared/Icon.vue";
   import { computed } from "vue";
   import {
     activeTool,
     showTools,
     currentRoom,
-    showUsersDrawer,
+    showSidePanel,
     roomPlayers,
     wheelManualNames,
   } from "./js/roomNav.js";

@@ -1,5 +1,5 @@
 <template>
-  <component :is="icon" class="fill-current" />
+  <component :is="icon" :class="class" />
 </template>
 
 <script setup>
@@ -9,7 +9,11 @@
     name: {
       type: String,
       required: true,
-    }
+    },
+    class: {
+      type: String,
+      default: 'fill-current',
+    },
   });
 
 

@@ -55,7 +55,7 @@
 }
 
 .vote-option {
-  background-color: var(--accent-blue);
+  background-color: var(--accent);
   padding: unset;
   border-radius: 5px;
   box-shadow: rgba(0, 0, 0, 0.1) 0 5px 8px;
@@ -66,12 +66,12 @@
   font-size: 0.925rem;
   &:hover {
     background-color: #058f8c;
-    transition: ease-in-out 200ms;
+    transition: ease-in-out 300ms;
   }
   &:focus,
   &:focus-visible,
   &.selected {
-    background-color: var(--secondary-blue);
+    background-color: var(--accent);
   }
 
   @media screen and (min-width: 640px) {

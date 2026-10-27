@@ -37,7 +37,7 @@
             By checking this box, only users with the share link will be able to
             join the room
           </p>
-          <button @click="createRoom" class="secondary-blue">
+          <button @click="createRoom" class="accent">
             Create Room
           </button>
         </div>

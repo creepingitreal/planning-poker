@@ -3,7 +3,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--dark-blue);
+    background-color: var(--secondary-green);
     padding: unset;
     width: 30px;
     height:40px;
@@ -12,8 +12,8 @@
     color: white;
 
     &.visible {
-        background-color: var(--secondary-blue);
-        transition: 200ms;
+        background-color: var(--accent);
+        transition: 300ms;
         @media screen and (min-width: 640px){
             font-weight: 600;
         }

@@ -54,8 +54,8 @@
   line-height: 1;
 
   &:hover {
-    border-color: var(--secondary-blue);
-    color: var(--secondary-blue);
+    border-color: var(--accent);
+    color: var(--accent);
   }
 }
 
@@ -75,7 +75,7 @@
   &:hover,
   &:focus {
     border-color: var(--medium-grey);
-    background: var(--white);
+    background: var(--primary-green);
     outline: none;
   }
 }

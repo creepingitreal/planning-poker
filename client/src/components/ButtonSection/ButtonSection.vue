@@ -8,7 +8,7 @@
     >
       {{ isVisible ? hideLabel : revealLabel }}
     </button>
-    <button @click="clearBoard" class="secondary-blue">{{ clearLabel }}</button>
+    <button @click="clearBoard" class="accent">{{ clearLabel }}</button>
   </div>
 </template>
 

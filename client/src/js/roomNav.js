@@ -5,7 +5,7 @@ import { ref, watch } from "vue";
 // scoped inside the room's boxed content layout.
 export const activeTool = ref("poker");
 export const showTools = ref(false);
-export const showUsersDrawer = ref(false);
+export const showSidePanel = ref(false);
 export const roomPlayers = ref({});
 export const wheelManualNames = ref([]);
 

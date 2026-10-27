@@ -2,45 +2,43 @@
 
 /*–––––––––––––– Global Styling ––––––––––––––*/
 :root {
-  @font-face {
-    font-family: "Gilroy";
-    font-weight: 400;
-  }
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --dark-blue: #0e216d;
-  --primary-blue: #122c91;
-  --secondary-blue: #2a6fdb;
-  --accent-blue: #48d6d1;
+  --primary-black: #0D0D0D;
+  --secondary-black: #2D2D2D;
+
+  --primary-green: #B0E454;
+  --secondary-green: #224F10;
+  --light-green: #ECFFD1;
+
+  /* --accent: #2a6fdb; */
+  --accent: #E454B6;
   --border-blue: rgb(14 33 109 / 0.07);
 
-  --primary-black: #111111;
-  --white: #ffffff;
+  --white: #fff;
   --lightest-grey: #f5f5f5;
   --medium-grey: #adadad;
   --dark-grey: #5e6266;
 
-  --soft-yellow: #faf9e4;
   --warning: #ad5000;
+
+  box-sizing: border-box
 }
 
 body {
-  width: 100%;
-  height: 100vh;
-}
-
-#app {
-  margin: 0 auto;
+  margin: 5px;
   height: 100%;
+  max-height: 100%;
+  margin-left: 110px;
+  background-color: var(--secondary-black);
 }
 
 .nav-bar {
-  background-color: var(--dark-blue);
   padding: 30px;
-  align-items: start;
+  align-items: end;
   @media screen and (min-width: 640px) {
     align-items: center;
   }
@@ -50,8 +48,9 @@ body {
   }
 
   .nav-header {
+    width: 100%;
     display: flex;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: space-between;
     gap: 24px;
   }
@@ -67,7 +66,7 @@ body {
 
   .nav-bar-room-name {
     margin: 0 0 12px;
-    color: var(--secondary-blue);
+    color: var(--accent);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.14em;
@@ -87,10 +86,10 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--white);
+    color: var(--primary-green);
 
     &:hover {
-      color: var(--accent-blue);
+      color: var(--accent);
     }
   }
 
@@ -104,7 +103,7 @@ body {
 .tool-tabs {
   display: flex;
   justify-content: flex-end;
-  background-color: var(--dark-blue);
+  background-color: var(--secondary-green);
   letter-spacing: 1.7%;
 }
 
@@ -123,27 +122,24 @@ body {
   cursor: pointer;
   border-bottom: 4px solid transparent;
   margin-bottom: -1px;
-  transition: ease-in-out 200ms;
+  transition: ease-in-out 300ms;
 
   &:hover {
     background-color: transparent;
-    color: var(--white);
+    color: var(--primary-green);
   }
 
   &.active {
-    color: var(--white);
-    background-color: var(--primary-blue);
-    border-bottom-color: var(--accent-blue);
+    color: var(--primary-green);
+    background-color: var(--primary-black);
+    border-bottom-color: var(--accent);
   }
 }
 
 .logo {
   justify-self: center;
   width: fit-content;
-  img {
-    width: 100%;
-    max-width: 250px;
-  }
+  path {fill: var(--primary-green);}
   @media screen and (min-width: 640px) {
     justify-self: start;
     img {
@@ -239,27 +235,29 @@ p {
   padding: 50px;
 }
 
-.secondary-blue {
-  background-color: var(--secondary-blue);
+.accent {
+  background-color: var(--accent);
 }
 
 /*–––––––––––––– Button Styling ––––––––––––––*/
 button {
-  border: 2px solid var(--dark-blue);
+  
+  cursor: pointer;
+
+  &:not(.logo) {
+  border: 2px solid var(--secondary-green);
   border-radius: 5px;
-  padding: 0 16px;
   line-height: 40px;
   font-size: 0.8125rem;
   font-weight: 600;
   font-family: inherit;
-  background-color: var(--primary-blue);
-  color: var(--white);
-  cursor: pointer;
+  background-color: var(--primary-black);
+  color: var(--primary-green);
   transition:
-    background-color 200ms ease-in-out,
-    box-shadow 200ms ease-in-out,
-    transform 200ms ease-in-out;
-  box-shadow: var(--dark-blue) 2px 2px 0 0;
+    background-color 300ms ease-in-out,
+    box-shadow 300ms ease-in-out,
+    transform 300ms ease-in-out;
+  box-shadow: var(--secondary-green) 2px 2px 0 0;
   min-height: 44px;
   max-height: 44px;
   min-width: 120px;
@@ -275,11 +273,12 @@ button {
   }
 
   &:hover:not(:disabled) {
-    background-color: var(--secondary-blue);
+    color: var(--secondary-green);
+    background-color: var(--accent);
   }
 
   &:active:not(:disabled) {
-    box-shadow: var(--dark-blue) 1px 1px 0 0;
+    box-shadow: var(--secondary-green) 1px 1px 0 0;
     transform: translate(2px, 2px);
   }
 
@@ -289,9 +288,9 @@ button {
   }
 
   &.outline {
-    color: var(--dark-blue);
-    border-color: var(--dark-blue);
-    background-color: var(--white);
+    color: var(--secondary-green);
+    border-color: var(--secondary-green);
+    background-color: var(--primary-green);
 
     &:hover {
       background-color: var(--lightest-grey);
@@ -299,17 +298,17 @@ button {
   }
 
   &.black {
-    background-color: var(--primary-black);
-    border-color: var(--primary-black);
-    color: var(--white);
-    box-shadow: var(--primary-black) 3px 3px 0 0;
+    background-color: var(--primary-green);
+    border-color: var(--primary-green);
+    color: var(--primary-green);
+    box-shadow: var(--primary-green) 3px 3px 0 0;
 
     &:hover:not(:disabled) {
       background-color: var(--dark-grey);
     }
 
     &:active:not(:disabled) {
-      box-shadow: var(--primary-black) 1px 1px 0 0;
+      box-shadow: var(--primary-green) 1px 1px 0 0;
     }
   }
 
@@ -326,7 +325,7 @@ button {
     background: none;
     border: none;
     box-shadow: none;
-    color: var(--primary-black);
+    color: var(--primary-green);
     min-width: 25px;
     min-height: 25px;
     width: 25px;
@@ -346,6 +345,7 @@ button {
       cursor: not-allowed;
     }
   }
+}
 }
 
 .button-section {
@@ -385,6 +385,7 @@ input::placeholder {
 }
 
 input[type="checkbox"] {
+  color: var(--secondary-green);
   appearance: none;
   -webkit-appearance: none;
   & + label {
@@ -419,7 +420,7 @@ input[type="checkbox"] {
       &::after {
         position: absolute;
         content: "";
-        background-color: var(--secondary-blue);
+        background-color: var(--accent);
         background-image: url("/img/tick-icon-white.svg");
         background-repeat: no-repeat;
         background-position: center;
@@ -434,8 +435,8 @@ input[type="checkbox"] {
     &:hover {
       & + label {
         &::after {
-          transition: ease-in-out 200ms;
-          background-color: var(--primary-blue);
+          transition: ease-in-out 300ms;
+          background-color: var(--primary-black);
         }
       }
     }
