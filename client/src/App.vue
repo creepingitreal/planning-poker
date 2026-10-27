@@ -25,7 +25,6 @@
           :open="showSidePanel"
           :players="roomPlayers"
           :manual-names="wheelManualNames"
-          @toggle="showSidePanel = !showSidePanel"
           @update:manual-names="wheelManualNames = $event" 
           />  
           

@@ -1,8 +1,7 @@
 .dashboard {
   max-width: 1100px;
-  /* margin: 0 auto; */
-  /* padding: 48px 0 80px; */
-}
+  margin: 0 auto;
+    }
 
 .dashboard-heading {
   max-width: 620px;

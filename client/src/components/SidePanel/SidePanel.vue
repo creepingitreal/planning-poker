@@ -7,7 +7,7 @@
     :aria-hidden="!open"
   >
     <div class="side-panel-header">
-      <button @click="$emit('toggle')"  class="logo">
+      <button @click="showSidePanel = !showSidePanel"  class="logo">
         <div v-if="open">
           <Icon name="scrumble-logo" />
         </div>
@@ -19,7 +19,7 @@
         class="icon-only side-panel-close"
         type="button"
         aria-label="Close side panel"
-        @click="$emit('toggle')"
+        @click="showSidePanel = !showSidePanel"
       >
         ✕
       </button>
@@ -81,8 +81,8 @@
 <script setup>
 import { computed, ref } from "vue";
 import { allocateParticipantColors } from "../../js/colorAllocation.js";
-import "./side-panel.css";
 import { showSidePanel } from "../../js/roomNav.js";
+import "./side-panel.css";
 
 const props = defineProps({
   open: {
@@ -103,7 +103,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["toggle", "update:manualNames"]);
+const emit = defineEmits(["update:manualNames"]);
 const newName = ref("");
 
 const roomUsers = computed(() =>

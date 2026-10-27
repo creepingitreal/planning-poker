@@ -10,7 +10,7 @@
   top: 0;
   left: 0;
   width: min(100px);
-  height: 100vh;
+  height: calc(100vh - 10px);
   padding: 20px;
   border-radius: 15px;
   margin: 5px;
@@ -20,8 +20,9 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   color: var(--secondary-green);
   box-shadow: rgba(0, 0, 0, 0.12) 0 -4px 16px;
-  transition: transform 400ms ease-in-out;
+  transition: width 350ms ease-in-out;
   z-index: 10;
+  overflow-y: auto  ;
   
   .side-panel-header {
     margin-bottom: 20px;

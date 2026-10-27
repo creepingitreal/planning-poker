@@ -19,7 +19,7 @@
           :disabled="isSpinning || !participantNames.length"
           @click="handleSpinButtonClick"
         >
-          Spin
+          <Icon name="spinner-arrow" />
         </button>
       </template>
     </VueWheelSpinner>
@@ -30,6 +30,7 @@
 import VueWheelSpinner from "vue-wheel-spinner";
 import { allocateParticipantColors } from "../../js/colorAllocation.js";
 import "./spin-the-wheel.css";
+import Icon from "../../assets/shared/Icon.vue";
 
 export default {
   components: {
