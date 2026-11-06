@@ -1,23 +1,4 @@
-<template>
-  <div v-if="open" class="users-drawer-backdrop" @click="$emit('close')"></div>
-  <aside
-    class="users-drawer"
-    :class="{ open }"
-    aria-label="Room users"
-    :aria-hidden="!open"
-  >
-    <div class="users-drawer-header">
-      <h2>Users</h2>
-      <button
-        class="icon-only users-drawer-close"
-        type="button"
-        aria-label="Close users drawer"
-        @click="$emit('close')"
-      >
-        ✕
-      </button>
-    </div>
-
+<template>  
     <ul class="users-list">
       <li v-for="player in roomUsers" :key="player.id" class="users-list-item">
         <span
@@ -65,13 +46,13 @@
       />
       <button type="submit">Add</button>
     </form>
-  </aside>
 </template>
 
 <script setup>
 import { computed, ref } from "vue";
 import { allocateParticipantColors } from "../../js/colorAllocation.js";
-import "./users-drawer.css";
+import "./users.css";
+import Icon from "../../assets/shared/Icon.vue";
 
 const props = defineProps({
   open: {

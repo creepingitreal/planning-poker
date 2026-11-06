@@ -40,7 +40,6 @@
   import {
     activeTool,
     showTools,
-    showSidePanel,
     roomPlayers,
     wheelManualNames,
     restoreActiveTool,
@@ -203,7 +202,6 @@
     socket.off("updateTimer", handleUpdateTimer);
     roomPlayers.value = {};
     wheelManualNames.value = [];
-    showSidePanel.value = false;
     showTools.value = false;
   });
 </script>

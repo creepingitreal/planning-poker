@@ -12,7 +12,7 @@
         </nav>
       </div>
       <SubNav
-        :show-tools="showTools"
+      :show-tools="showTools"
         :has-room="currentRoom.roomName !== ''"
         :active-tool="activeTool"
         :tab-names="tabNames"
@@ -22,12 +22,9 @@
     <main>
       <SidePanel 
           v-if="currentRoom.roomId"
-          :open="showSidePanel"
           :players="roomPlayers"
-          :manual-names="wheelManualNames"
-          @update:manual-names="wheelManualNames = $event" 
+          :manual-names-arr="wheelManualNames"
           />  
-          
       <RouterView />
     </main>
   </div>
@@ -36,15 +33,12 @@
 <script setup>
   import "./style.css";
   import SubNav from "./components/SubNav/SubNav.vue";
-  import UsersDrawer from "./components/UsersDrawer/UsersDrawer.vue";
   import SidePanel from "./components/SidePanel/SidePanel.vue";
-  import Icon from "./assets/shared/Icon.vue";
   import { computed } from "vue";
   import {
     activeTool,
     showTools,
     currentRoom,
-    showSidePanel,
     roomPlayers,
     wheelManualNames,
   } from "./js/roomNav.js";

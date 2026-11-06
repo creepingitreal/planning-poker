@@ -21,12 +21,32 @@
   color: var(--secondary-green);
   box-shadow: rgba(0, 0, 0, 0.12) 0 -4px 16px;
   transition: width 350ms ease-in-out;
-  z-index: 10;
+  z-index: 20;
   overflow-y: auto  ;
   
   .side-panel-header {
-    margin-bottom: 20px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     justify-self: center;
+  }
+
+  .side-panel-content {
+    width: 100%;
+    gap: 20px;
+    
+    .content-item {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+
+      .content-title {
+        color: var(--primary-green);
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+    }
   }
 }
 
@@ -38,6 +58,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+
+  .content-item {
+    .content-title {
+      justify-content: flex-start;
+      gap: 20px;
+      cursor: unset;
+    }
   }
 }
 

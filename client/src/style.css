@@ -240,12 +240,32 @@ p {
   background-color: var(--accent);
 }
 
+/*–––––––––––––– Icon Styling ––––––––––––––*/
+.icon {
+  display: inline-flex;
+  align-self: center;
+  justify-self: center;
+  height: 25px; /* Default height */
+  width: auto; /* Adjust width proportionally */
+  fill: var(--primary-green); /* Default fill color */
+  path { fill: var(--primary-green); } /* Ensure SVG paths inherit the fill color */
+}
+
+.icon.large {
+  height: 50px; /* Larger size */
+}
+
+.icon.small {
+  height: 20px; /* Smaller size */
+}
+
+
 /*–––––––––––––– Button Styling ––––––––––––––*/
 button {
   
   cursor: pointer;
 
-  &:not(.logo, .spin-button) {
+  &:not(.logo, .spin-button, :has(.icon)) {  
   border: 2px solid var(--secondary-green);
   border-radius: 5px;
   line-height: 40px;

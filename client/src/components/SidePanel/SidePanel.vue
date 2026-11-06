@@ -1,94 +1,54 @@
 <template>
-  <div v-if="open" class="side-panel-backdrop" @click="$emit('close')"></div>
+  <div class="side-panel-backdrop" v-if="showPanel" @click="showPanel = false"></div>
   <aside
     class="side-panel"
-    :class="{ open }"
+    :class="{ 'open': showPanel }"
     aria-label="Room users"
-    :aria-hidden="!open"
+    :aria-hidden="!showPanel"
   >
     <div class="side-panel-header">
-      <button @click="showSidePanel = !showSidePanel"  class="logo">
-        <div v-if="open">
+      <button @click="showPanel = !showPanel"  class="logo">
+        <div v-if="showPanel">
           <Icon name="scrumble-logo" />
         </div>
-        <div v-else="open">
+        <div v-else="showPanel">
           <Icon name="scrumble-icon" />
         </div>
       </button>
-      <button v-if="open"
+      <button v-if="showPanel"
         class="icon-only side-panel-close"
         type="button"
         aria-label="Close side panel"
-        @click="showSidePanel = !showSidePanel"
+        @click="showPanel = !showPanel"
       >
         ✕
       </button>
     </div>
 
-    <div v-if="open" class="side-panel-content">
-      <h2>Users</h2>
-      <ul class="user-list">
-        <li v-for="player in roomUsers" :key="player.id" class="user-list-item">
-          <span
-            class="user-colour-dot"
-            :style="{ backgroundColor: participantColours[player.user] }"
-          ></span>
-          <span>{{ player.user }}</span>
-          <small>In room</small>
-        </li>
-        <li
-          v-for="name in manualNames"
-          :key="`manual-${name}`"
-          class="side-panel-list-item"
-        >
-          <span
-            class="user-colour-dot"
-            :style="{ backgroundColor: participantColours[name] }"
-          ></span>
-          <span>{{ name }}</span>
-          <button
-            v-if="allowManual"
-            class="remove-manual-user"
-            type="button"
-            :aria-label="`Remove ${name}`"
-            @click="removeManualName(name)"
-          >
-            ×
-          </button>
-        </li>
-        <li v-if="!roomUsers.length && !manualNames.length" class="empty-users">
-          No users have joined yet.
-        </li>
-      </ul>
-  
-      <form
-        v-if="allowManual"
-        class="add-user-form"
-        @submit.prevent="addManualName"
-      >
-        <input
-          v-model="newName"
-          type="text"
-          placeholder="Add someone outside the room"
-          aria-label="Add someone outside the room"
+    <div class="side-panel-content">
+        <div class="content-item">
+        <button @click="showPanel = true" class="content-title">
+          <Icon name="user-icon" class-name="icon"/>
+          <h1 v-if="showPanel">Users</h1>
+        </button>
+        
+        <Users v-if="showPanel"
+          :open="showPanel"
+          :players="roomUsers"
+          :manual-names="manualNamesArr"
+          @update:manual-names="manualNamesArr = $event" 
         />
-        <button type="submit">Add</button>
-      </form>
+      </div>
     </div>
   </aside>
 </template>
 
 <script setup>
 import { computed, ref } from "vue";
-import { allocateParticipantColors } from "../../js/colorAllocation.js";
-import { showSidePanel } from "../../js/roomNav.js";
+import Users from "../Users/Users.vue";
 import "./side-panel.css";
 
 const props = defineProps({
-  open: {
-    type: Boolean,
-    default: false,
-  },
   players: {
     type: Object,
     default: () => ({}),
@@ -97,14 +57,13 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  manualNames: {
+  manualNamesArr: {
     type: Array,
     default: () => [],
   },
 });
 
-const emit = defineEmits(["update:manualNames"]);
-const newName = ref("");
+const showPanel = ref(false);
 
 const roomUsers = computed(() =>
   Object.entries(props.players).map(([id, player]) => ({
@@ -113,43 +72,4 @@ const roomUsers = computed(() =>
     color: player.color,
   })),
 );
-
-const participantColours = computed(() => {
-  const assignedColours = Object.fromEntries(
-    roomUsers.value
-      .filter((player) => player.user && player.color)
-      .map((player) => [player.user, player.color]),
-  );
-  const participantNames = [
-    ...new Set([
-      ...roomUsers.value.map((player) => player.user).filter(Boolean),
-      ...props.manualNames,
-    ]),
-  ];
-
-  return allocateParticipantColors(participantNames, assignedColours);
-});
-
-const addManualName = () => {
-  const name = newName.value.trim();
-  const alreadyIncluded = [...roomUsers.value, ...props.manualNames].some(
-    (participant) => {
-      const participantName =
-        typeof participant === "string" ? participant : participant.user;
-      return participantName?.toLowerCase() === name.toLowerCase();
-    },
-  );
-
-  if (!name || alreadyIncluded) return;
-
-  emit("update:manualNames", [...props.manualNames, name]);
-  newName.value = "";
-};
-
-const removeManualName = (name) => {
-  emit(
-    "update:manualNames",
-    props.manualNames.filter((participant) => participant !== name),
-  );
-};
 </script>
