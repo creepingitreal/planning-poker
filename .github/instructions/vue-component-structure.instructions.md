@@ -1,7 +1,7 @@
 ---
 name: Vue component structure
 description: Use when creating or refactoring Vue components in client/src/components. Follow the simple GameBoard structure, shared controls, explicit props and events, and focused component ownership.
-applyTo: "client/src/components/**/*.vue"
+applyTo: 'client/src/components/**/*.vue'
 ---
 
 # Vue Component Structure

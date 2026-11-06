@@ -106,7 +106,7 @@
             :aria-controls="`add-card-form-${column.id}`"
             :ref="(element) => setWriteCardButton(column.id, element)"
           >
-            {{ isWriteCardOpen(column.id) ? "-" : "+" }}
+            {{ isWriteCardOpen(column.id) ? '-' : '+' }}
           </button>
 
           <RetroCard
@@ -134,251 +134,250 @@
 </template>
 
 <script setup>
-  import socket from "../../../socket.js";
-  import ButtonSection from "../ButtonSection/ButtonSection.vue";
-  import { computed, nextTick, onMounted, reactive, ref, watch } from "vue";
-  import RetroCard from "../Retro/RetroCard.vue";
-  import "./retro-board.css";
+import socket from '../../../socket.js'
+import ButtonSection from '../ButtonSection/ButtonSection.vue'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
+import RetroCard from '../Retro/RetroCard.vue'
+import './retro-board.css'
 
-  const props = defineProps({
-    room: {
-      type: Object,
-      required: true,
-    },
-    players: {
-      type: Object,
-      default: () => ({}),
-    },
-    board: {
-      type: Object,
-      default: () => ({ columns: [], cards: [], revealed: false }),
-    },
-    timer: {
-      type: Object,
-      default: () => ({ duration: 300, remaining: 300, running: false }),
-    },
-  });
+const props = defineProps({
+  room: {
+    type: Object,
+    required: true,
+  },
+  players: {
+    type: Object,
+    default: () => ({}),
+  },
+  board: {
+    type: Object,
+    default: () => ({ columns: [], cards: [], revealed: false }),
+  },
+  timer: {
+    type: Object,
+    default: () => ({ duration: 300, remaining: 300, running: false }),
+  },
+})
 
-  const emit = defineEmits(["start-timer", "pause-timer", "reset-timer"]);
+const emit = defineEmits(['start-timer', 'pause-timer', 'reset-timer'])
 
-  const newCardText = reactive({});
-  const openWriteCards = reactive({});
-  const writeCardPlacements = reactive({});
-  const writeCardControls = {};
-  const writeCardButtons = {};
-  const writeCardForms = {};
-  const cardTextElements = {};
-  const editingCardId = ref(null);
-  const editingText = ref("");
-  const editInput = ref(null);
+const newCardText = reactive({})
+const openWriteCards = reactive({})
+const writeCardPlacements = reactive({})
+const writeCardControls = {}
+const writeCardButtons = {}
+const writeCardForms = {}
+const cardTextElements = {}
+const editingCardId = ref(null)
+const editingText = ref('')
+const editInput = ref(null)
 
-  const cardActionButtons = [
-    {
-      name: "edit",
-      class: "icon-btn-edit",
-      label: "Edit card",
-      title: "Edit",
-      icon: "✎",
-    },
-    {
-      name: "delete",
-      class: "icon-btn-delete",
-      label: "Delete card",
-      title: "Delete",
-      icon: "✕",
-    },
-  ];
-  const addCardIconButtons = [
-    {
-      name: "add",
-      class: "icon-btn-add add-card-btn",
-      label: "Add card",
-      title: "Add",
-      icon: "✓",
-    },
-  ];
-  const maxCardFontSize = 16;
-  const minCardFontSize = 10;
+const cardActionButtons = [
+  {
+    name: 'edit',
+    class: 'icon-btn-edit',
+    label: 'Edit card',
+    title: 'Edit',
+    icon: '✎',
+  },
+  {
+    name: 'delete',
+    class: 'icon-btn-delete',
+    label: 'Delete card',
+    title: 'Delete',
+    icon: '✕',
+  },
+]
+const addCardIconButtons = [
+  {
+    name: 'add',
+    class: 'icon-btn-add add-card-btn',
+    label: 'Add card',
+    title: 'Add',
+    icon: '✓',
+  },
+]
+const maxCardFontSize = 16
+const minCardFontSize = 10
 
-  const myColor = computed(() => props.players?.[socket.id]?.color ?? null);
+const myColor = computed(() => props.players?.[socket.id]?.color ?? null)
 
-  const cardsForColumn = (columnId) =>
-    props.board?.cards?.filter((c) => c.columnId === columnId) ?? [];
-  const cardIconButtons = (card) =>
-    card.isOwn && editingCardId.value !== card.id ? cardActionButtons : [];
-  const setCardTextElement = (cardId, element) => {
-    if (element) {
-      cardTextElements[cardId] = element;
-    } else {
-      delete cardTextElements[cardId];
-    }
-  };
-  const setEditInput = (element) => {
-    editInput.value = element;
-    fitTextElement(element);
-  };
-  const fitTextElement = (element) => {
-    if (!element) return;
+const cardsForColumn = (columnId) =>
+  props.board?.cards?.filter((c) => c.columnId === columnId) ?? []
+const cardIconButtons = (card) =>
+  card.isOwn && editingCardId.value !== card.id ? cardActionButtons : []
+const setCardTextElement = (cardId, element) => {
+  if (element) {
+    cardTextElements[cardId] = element
+  } else {
+    delete cardTextElements[cardId]
+  }
+}
+const setEditInput = (element) => {
+  editInput.value = element
+  fitTextElement(element)
+}
+const fitTextElement = (element) => {
+  if (!element) return
 
-    element.style.fontSize = `${maxCardFontSize}px`;
-    element.style.lineHeight = "1.2";
+  element.style.fontSize = `${maxCardFontSize}px`
+  element.style.lineHeight = '1.2'
 
-    let fontSize = maxCardFontSize;
-    while (
-      fontSize > minCardFontSize &&
-      (element.scrollHeight > element.clientHeight ||
-        element.scrollWidth > element.clientWidth)
-    ) {
-      fontSize -= 1;
-      element.style.fontSize = `${fontSize}px`;
-    }
-  };
-  const fitTextInput = (event) => {
-    fitTextElement(event.target);
-  };
-  const fitCardText = () =>
-    Object.values(cardTextElements).forEach(fitTextElement);
-  const isWriteCardOpen = (columnId) => openWriteCards[columnId] === true;
-  const setWriteCardControl = (columnId, element) => {
-    if (element) {
-      writeCardControls[columnId] = element;
-    } else {
-      delete writeCardControls[columnId];
-    }
-  };
-  const setWriteCardButton = (columnId, element) => {
-    if (element) {
-      writeCardButtons[columnId] = element;
-    } else {
-      delete writeCardButtons[columnId];
-    }
-  };
-  const setWriteCardForm = (columnId, element) => {
-    const cardElement =
-      element?.cardElement?.value ??
-      element?.cardElement ??
-      element?.$el ??
-      element;
+  let fontSize = maxCardFontSize
+  while (
+    fontSize > minCardFontSize &&
+    (element.scrollHeight > element.clientHeight ||
+      element.scrollWidth > element.clientWidth)
+  ) {
+    fontSize -= 1
+    element.style.fontSize = `${fontSize}px`
+  }
+}
+const fitTextInput = (event) => {
+  fitTextElement(event.target)
+}
+const fitCardText = () =>
+  Object.values(cardTextElements).forEach(fitTextElement)
+const isWriteCardOpen = (columnId) => openWriteCards[columnId] === true
+const setWriteCardControl = (columnId, element) => {
+  if (element) {
+    writeCardControls[columnId] = element
+  } else {
+    delete writeCardControls[columnId]
+  }
+}
+const setWriteCardButton = (columnId, element) => {
+  if (element) {
+    writeCardButtons[columnId] = element
+  } else {
+    delete writeCardButtons[columnId]
+  }
+}
+const setWriteCardForm = (columnId, element) => {
+  const cardElement =
+    element?.cardElement?.value ??
+    element?.cardElement ??
+    element?.$el ??
+    element
 
-    if (cardElement) {
-      writeCardForms[columnId] = cardElement;
-    } else {
-      delete writeCardForms[columnId];
-    }
-  };
-  const positionWriteCard = (columnId) => {
-    const control = writeCardControls[columnId];
-    const form = writeCardForms[columnId];
-    const button = writeCardButtons[columnId];
+  if (cardElement) {
+    writeCardForms[columnId] = cardElement
+  } else {
+    delete writeCardForms[columnId]
+  }
+}
+const positionWriteCard = (columnId) => {
+  const control = writeCardControls[columnId]
+  const form = writeCardForms[columnId]
+  const button = writeCardButtons[columnId]
 
-    if (!control || !form) return;
+  if (!control || !form) return
 
-    if (button) {
-      control.style.setProperty(
-        "--write-card-button-width",
-        `${button.offsetWidth}px`,
-      );
-    }
+  if (button) {
+    control.style.setProperty(
+      '--write-card-button-width',
+      `${button.offsetWidth}px`,
+    )
+  }
 
-    // The form is anchored beside the button: top-aligned by default, or
-    // bottom-aligned when top-aligning would push it past the viewport.
-    const controlRect = control.getBoundingClientRect();
-    const formHeight = form.offsetHeight;
-    const wouldOverflowBottom =
-      controlRect.top + formHeight > window.innerHeight;
-    const hasRoomAbove = controlRect.bottom - formHeight >= 0;
+  // The form is anchored beside the button: top-aligned by default, or
+  // bottom-aligned when top-aligning would push it past the viewport.
+  const controlRect = control.getBoundingClientRect()
+  const formHeight = form.offsetHeight
+  const wouldOverflowBottom = controlRect.top + formHeight > window.innerHeight
+  const hasRoomAbove = controlRect.bottom - formHeight >= 0
 
-    writeCardPlacements[columnId] =
-      wouldOverflowBottom && hasRoomAbove ? "up" : "down";
-  };
-  const toggleWriteCard = async (columnId) => {
-    openWriteCards[columnId] = !isWriteCardOpen(columnId);
+  writeCardPlacements[columnId] =
+    wouldOverflowBottom && hasRoomAbove ? 'up' : 'down'
+}
+const toggleWriteCard = async (columnId) => {
+  openWriteCards[columnId] = !isWriteCardOpen(columnId)
 
-    if (openWriteCards[columnId]) {
-      writeCardPlacements[columnId] = "down";
-      await nextTick();
-      positionWriteCard(columnId);
-    }
-  };
+  if (openWriteCards[columnId]) {
+    writeCardPlacements[columnId] = 'down'
+    await nextTick()
+    positionWriteCard(columnId)
+  }
+}
 
-  const hasCards = computed(() => props.board?.cards?.length > 0);
+const hasCards = computed(() => props.board?.cards?.length > 0)
 
-  const formattedTime = computed(() => {
-    const total = Math.max(0, props.timer?.remaining ?? 0);
-    const minutes = Math.floor(total / 60);
-    const seconds = total % 60;
-    return `${minutes}:${String(seconds).padStart(2, "0")}`;
-  });
+const formattedTime = computed(() => {
+  const total = Math.max(0, props.timer?.remaining ?? 0)
+  const minutes = Math.floor(total / 60)
+  const seconds = total % 60
+  return `${minutes}:${String(seconds).padStart(2, '0')}`
+})
 
-  const updateColumnTitle = (columnId, title) => {
-    socket.emit("updateColumnTitle", {
-      roomId: props.room.roomId,
-      columnId,
-      title,
-    });
-  };
+const updateColumnTitle = (columnId, title) => {
+  socket.emit('updateColumnTitle', {
+    roomId: props.room.roomId,
+    columnId,
+    title,
+  })
+}
 
-  const addColumn = () => {
-    socket.emit("addColumn", { roomId: props.room.roomId });
-  };
+const addColumn = () => {
+  socket.emit('addColumn', { roomId: props.room.roomId })
+}
 
-  const toggleCardLike = (cardId) => {
-    socket.emit("toggleCardLike", { roomId: props.room.roomId, cardId });
-  };
+const toggleCardLike = (cardId) => {
+  socket.emit('toggleCardLike', { roomId: props.room.roomId, cardId })
+}
 
-  const addCard = (columnId) => {
-    const text = newCardText[columnId];
-    if (!text?.trim()) return;
+const addCard = (columnId) => {
+  const text = newCardText[columnId]
+  if (!text?.trim()) return
 
-    socket.emit("addCard", { roomId: props.room.roomId, columnId, text });
-    newCardText[columnId] = "";
-    openWriteCards[columnId] = false;
-    writeCardPlacements[columnId] = "down";
-  };
+  socket.emit('addCard', { roomId: props.room.roomId, columnId, text })
+  newCardText[columnId] = ''
+  openWriteCards[columnId] = false
+  writeCardPlacements[columnId] = 'down'
+}
 
-  const startEdit = (card) => {
-    editingCardId.value = card.id;
-    editingText.value = card.text;
-    nextTick(() => {
-      editInput.value?.focus();
-      fitTextElement(editInput.value);
-    });
-  };
+const startEdit = (card) => {
+  editingCardId.value = card.id
+  editingText.value = card.text
+  nextTick(() => {
+    editInput.value?.focus()
+    fitTextElement(editInput.value)
+  })
+}
 
-  const handleCardAction = (action, card) => {
-    if (action === "edit") {
-      startEdit(card);
-      return;
-    }
+const handleCardAction = (action, card) => {
+  if (action === 'edit') {
+    startEdit(card)
+    return
+  }
 
-    if (action === "delete") {
-      deleteCard(card.id);
-    }
-  };
+  if (action === 'delete') {
+    deleteCard(card.id)
+  }
+}
 
-  const saveEdit = (cardId) => {
-    if (editingCardId.value !== cardId) return;
+const saveEdit = (cardId) => {
+  if (editingCardId.value !== cardId) return
 
-    socket.emit("editCard", {
-      roomId: props.room.roomId,
-      cardId,
-      text: editingText.value,
-    });
-    editingCardId.value = null;
-    editingText.value = "";
-  };
+  socket.emit('editCard', {
+    roomId: props.room.roomId,
+    cardId,
+    text: editingText.value,
+  })
+  editingCardId.value = null
+  editingText.value = ''
+}
 
-  const deleteCard = (cardId) => {
-    socket.emit("deleteCard", { roomId: props.room.roomId, cardId });
-  };
+const deleteCard = (cardId) => {
+  socket.emit('deleteCard', { roomId: props.room.roomId, cardId })
+}
 
-  onMounted(() => {
-    nextTick(fitCardText);
-  });
+onMounted(() => {
+  nextTick(fitCardText)
+})
 
-  watch(
-    () => [props.board?.revealed, props.board?.cards, editingCardId.value],
-    () => nextTick(fitCardText),
-    { deep: true, flush: "post" },
-  );
+watch(
+  () => [props.board?.revealed, props.board?.cards, editingCardId.value],
+  () => nextTick(fitCardText),
+  { deep: true, flush: 'post' },
+)
 </script>

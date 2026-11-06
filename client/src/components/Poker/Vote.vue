@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import "./vote.css";
+import './vote.css'
 const props = defineProps({
   vote: {
     type: [Number, null],
@@ -24,5 +24,5 @@ const props = defineProps({
     type: String,
     default: null,
   },
-});
+})
 </script>

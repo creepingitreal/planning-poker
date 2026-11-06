@@ -17,7 +17,7 @@
       margin: 0 0 8px;
     }
 
-    input:not([type="checkbox"]):not([type="radio"]) {
+    input:not([type='checkbox']):not([type='radio']) {
       width: 100%;
       max-width: none;
       box-sizing: border-box;

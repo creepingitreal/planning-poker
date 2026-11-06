@@ -66,10 +66,6 @@
   }
 
   .icon-btn-timer:hover:not(:disabled) {
-    background-color: color-mix(
-      in srgb,
-      var(--accent) 15%,
-      transparent
-    );
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent);
   }
 }

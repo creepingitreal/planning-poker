@@ -78,7 +78,7 @@ Relevant files:
   - New card color:
 
     ```js
-    const myColor = computed(() => props.players?.[socket.id]?.color ?? null);
+    const myColor = computed(() => props.players?.[socket.id]?.color ?? null)
     ```
 
   - Existing cards receive `card.color`.
@@ -100,14 +100,14 @@ Relevant files:
 The server handler expects this payload:
 
 ```js
-socket.emit("createRoom", {
+socket.emit('createRoom', {
   room: {
-    roomId: "room-id",
-    roomName: "Room name",
+    roomId: 'room-id',
+    roomName: 'Room name',
     locked: false,
   },
-  user: "Username",
-});
+  user: 'Username',
+})
 ```
 
 The client currently emits this shape from `JoinRoom.vue`.
@@ -142,14 +142,14 @@ The backend health endpoint returned `OK` after restarting the current container
 Run a correctly shaped Socket.IO probe and inspect the `updateRoom` payload:
 
 ```js
-socket.emit("createRoom", {
+socket.emit('createRoom', {
   room: {
-    roomId: "probe-room-unique",
-    roomName: "Probe",
+    roomId: 'probe-room-unique',
+    roomName: 'Probe',
     locked: false,
   },
-  user: "Probe",
-});
+  user: 'Probe',
+})
 ```
 
 Confirm that the returned payload contains:

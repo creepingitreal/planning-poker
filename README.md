@@ -19,12 +19,12 @@ A real-time planning poker application for agile teams to estimate work collabor
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Vue 3 (Composition API), Vite |
-| Real-time | Socket.IO (client & server) |
-| Backend | Node.js, Express 5, Socket.IO |
-| Containerisation | Docker, Docker Compose |
+| Layer            | Technology                    |
+| ---------------- | ----------------------------- |
+| Frontend         | Vue 3 (Composition API), Vite |
+| Real-time        | Socket.IO (client & server)   |
+| Backend          | Node.js, Express 5, Socket.IO |
+| Containerisation | Docker, Docker Compose        |
 
 ---
 
@@ -89,9 +89,9 @@ The server will be available at \`http://localhost:8000\`.
 
 ## Environment Variables
 
-| Variable | Location | Default | Description |
-|---|---|---|---|
-| \`PUBLIC_BASE_URL\` | server | \`http://localhost:5173\` | Base URL used to generate room share links |
+| Variable            | Location | Default                   | Description                                |
+| ------------------- | -------- | ------------------------- | ------------------------------------------ |
+| \`PUBLIC_BASE_URL\` | server   | \`http://localhost:5173\` | Base URL used to generate room share links |
 
 ---
 
@@ -105,11 +105,11 @@ The server will be available at \`http://localhost:8000\`.
 
 ### Core Variables
 
-| Variable | Service | Example (Local Dev) | Example (Split Deployment) | Purpose |
-|---|---|---|---|---|
-| `VITE_SERVER_URL` | client | `http://localhost:8000` | `https://api.example.com` | Socket.IO/backend URL the frontend connects to. |
-| `CORS_ORIGIN` | server | `http://localhost:5173` | `https://app.example.com` | Frontend origin allowed to call and connect to the backend. |
-| `PUBLIC_BASE_URL` | server | `http://localhost:5173` | `https://app.example.com` | Frontend base URL used to generate room share links. |
+| Variable          | Service | Example (Local Dev)     | Example (Split Deployment) | Purpose                                                     |
+| ----------------- | ------- | ----------------------- | -------------------------- | ----------------------------------------------------------- |
+| `VITE_SERVER_URL` | client  | `http://localhost:8000` | `https://api.example.com`  | Socket.IO/backend URL the frontend connects to.             |
+| `CORS_ORIGIN`     | server  | `http://localhost:5173` | `https://app.example.com`  | Frontend origin allowed to call and connect to the backend. |
+| `PUBLIC_BASE_URL` | server  | `http://localhost:5173` | `https://app.example.com`  | Frontend base URL used to generate room share links.        |
 
 ### Notes For Split Frontend/Backend Deployments
 
@@ -128,16 +128,16 @@ Suggested first pass sequence:
 
 ## Socket Events
 
-| Event | Direction | Description |
-|---|---|---|
-| \`createRoom\` | Client → Server | Create a new room |
-| \`joinRoom\` | Client → Server | Join an existing room by ID or name |
-| \`getRoomName\` | Client → Server | Resolve a room name from its ID |
-| \`castVote\` | Client → Server | Submit a vote |
-| \`revealVotes\` | Client → Server | Toggle vote visibility for all players |
-| \`clearVotes\` | Client → Server | Reset all votes in a room |
-| \`roomJoined\` | Server → Client | Confirms successful room join |
-| \`updateRoom\` | Server → Client | Broadcasts current players and votes |
-| \`toggleVisibility\` | Server → Client | Broadcasts vote visibility state |
-| \`roomNameResolved\` | Server → Client | Returns the room name for a given ID |
-| \`roomError\` | Server → Client | Reports a room-level error |
+| Event                | Direction       | Description                            |
+| -------------------- | --------------- | -------------------------------------- |
+| \`createRoom\`       | Client → Server | Create a new room                      |
+| \`joinRoom\`         | Client → Server | Join an existing room by ID or name    |
+| \`getRoomName\`      | Client → Server | Resolve a room name from its ID        |
+| \`castVote\`         | Client → Server | Submit a vote                          |
+| \`revealVotes\`      | Client → Server | Toggle vote visibility for all players |
+| \`clearVotes\`       | Client → Server | Reset all votes in a room              |
+| \`roomJoined\`       | Server → Client | Confirms successful room join          |
+| \`updateRoom\`       | Server → Client | Broadcasts current players and votes   |
+| \`toggleVisibility\` | Server → Client | Broadcasts vote visibility state       |
+| \`roomNameResolved\` | Server → Client | Returns the room name for a given ID   |
+| \`roomError\`        | Server → Client | Reports a room-level error             |

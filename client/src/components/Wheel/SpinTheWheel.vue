@@ -27,10 +27,10 @@
 </template>
 
 <script>
-import VueWheelSpinner from "vue-wheel-spinner";
-import { allocateParticipantColors } from "../../js/colorAllocation.js";
-import "./spin-the-wheel.css";
-import Icon from "../../assets/shared/Icon.vue";
+import VueWheelSpinner from 'vue-wheel-spinner'
+import { allocateParticipantColors } from '../../js/colorAllocation.js'
+import './spin-the-wheel.css'
+import Icon from '../../assets/shared/Icon.vue'
 
 export default {
   components: {
@@ -49,79 +49,79 @@ export default {
   data() {
     return {
       winnerResult: null,
-      sliceFontStyle: "bold 16px Arial",
-      sliceTextPosition: "edge",
+      sliceFontStyle: 'bold 16px Arial',
+      sliceTextPosition: 'edge',
       isSpinning: false,
       defaultWinner: 0,
       cursorAngle: 0,
-      cursorPosition: "edge",
+      cursorPosition: 'edge',
       cursorDistance: 0,
       silentSounds: {
         spinning: null,
         won: null,
       },
       resizeObserver: null,
-    };
+    }
   },
   computed: {
     onlineNames() {
       return Object.values(this.players)
         .map((player) => player.user)
-        .filter(Boolean);
+        .filter(Boolean)
     },
     participantNames() {
-      return [...new Set([...this.onlineNames, ...this.manualNames])];
+      return [...new Set([...this.onlineNames, ...this.manualNames])]
     },
     assignedColors() {
       return Object.values(this.players).reduce((colors, player) => {
-        if (player.user && player.color) colors[player.user] = player.color;
-        return colors;
-      }, {});
+        if (player.user && player.color) colors[player.user] = player.color
+        return colors
+      }, {})
     },
     participantColors() {
       return allocateParticipantColors(
         this.participantNames,
         this.assignedColors,
-      );
+      )
     },
     slices() {
       return this.participantNames.map((name, index) => ({
         color: this.participantColors[name],
         text: name,
-        textColor: index % 3 === 1 ? "#ffffff" : "#000000",
-      }));
+        textColor: index % 3 === 1 ? '#ffffff' : '#000000',
+      }))
     },
     safeWinnerIndex() {
-      return Math.min(this.defaultWinner, Math.max(0, this.slices.length - 1));
+      return Math.min(this.defaultWinner, Math.max(0, this.slices.length - 1))
     },
   },
   methods: {
     handleSpinButtonClick() {
-      this.$refs.spinner.spinWheel(this.safeWinnerIndex);
+      this.$refs.spinner.spinWheel(this.safeWinnerIndex)
     },
     spinFor(index) {
-      this.defaultWinner = index;
-      this.$refs.spinner.spinWheel(index);
+      this.defaultWinner = index
+      this.$refs.spinner.spinWheel(index)
     },
     onSpinStart() {
-      this.winnerResult = null;
-      this.isSpinning = true;
+      this.winnerResult = null
+      this.isSpinning = true
     },
     onSpinEnd(winnerIndex) {
-      this.isSpinning = false;
-      this.winnerResult = this.slices[winnerIndex];
+      this.isSpinning = false
+      this.winnerResult = this.slices[winnerIndex]
     },
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(([entry]) => {
       if (entry.contentRect.width > 0) {
-        this.$refs.spinner.drawWheel();
+        this.$refs.spinner.drawWheel()
       }
-    });
-    this.resizeObserver.observe(this.$el);
+    })
+    this.resizeObserver.observe(this.$el)
   },
   beforeUnmount() {
-    this.resizeObserver?.disconnect();
+    this.resizeObserver?.disconnect()
   },
-};
+}
 </script>

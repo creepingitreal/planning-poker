@@ -1,13 +1,17 @@
 <template>
-  <div class="side-panel-backdrop" v-if="showPanel" @click="showPanel = false"></div>
+  <div
+    class="side-panel-backdrop"
+    v-if="showPanel"
+    @click="showPanel = false"
+  ></div>
   <aside
     class="side-panel"
-    :class="{ 'open': showPanel }"
+    :class="{ open: showPanel }"
     aria-label="Room users"
     :aria-hidden="!showPanel"
   >
     <div class="side-panel-header">
-      <button @click="showPanel = !showPanel"  class="logo">
+      <button @click="showPanel = !showPanel" class="logo">
         <div v-if="showPanel">
           <Icon name="scrumble-logo" />
         </div>
@@ -15,7 +19,8 @@
           <Icon name="scrumble-icon" />
         </div>
       </button>
-      <button v-if="showPanel"
+      <button
+        v-if="showPanel"
         class="icon-only side-panel-close"
         type="button"
         aria-label="Close side panel"
@@ -26,27 +31,44 @@
     </div>
 
     <div class="side-panel-content">
-        <div class="content-item">
-        <button @click="showPanel = true" class="content-title">
-          <Icon name="user-icon" class-name="icon"/>
-          <h1 v-if="showPanel">Users</h1>
-        </button>
-        
-        <Users v-if="showPanel"
+      <SidePanelContent 
+        :show-panel="showPanel"
+        icon-name="tools-icon"
+        title="Tools"
+        @open-panel="showPanel = true"
+      >
+        <SubNav
+          :show-tools="showTools"
+          :has-room="currentRoom.roomName !== ''"
+          :active-tool="activeTool"
+          :tab-names="tabNames"
+          @update:active-tool="activeTool = $event"
+        />
+      </SidePanelContent>
+      <SidePanelContent
+        :show-panel="showPanel"
+        icon-name="user-icon"
+        title="Users"
+        @open-panel="showPanel = true"
+      >
+        <Users
           :open="showPanel"
           :players="roomUsers"
           :manual-names="manualNamesArr"
-          @update:manual-names="manualNamesArr = $event" 
+          @update:manual-names="manualNamesArr = $event"
         />
-      </div>
+      </SidePanelContent>
     </div>
   </aside>
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
-import Users from "../Users/Users.vue";
-import "./side-panel.css";
+import { computed, ref } from 'vue'
+import Users from '../Users/Users.vue'
+import SubNav from '../SubNav/SubNav.vue'
+import { activeTool, showTools, currentRoom } from '../../js/roomNav.js'
+import './side-panel.css'
+import SidePanelContent from './SidePanelContent.vue'
 
 const props = defineProps({
   players: {
@@ -61,9 +83,9 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-});
+})
 
-const showPanel = ref(false);
+const showPanel = ref(false)
 
 const roomUsers = computed(() =>
   Object.entries(props.players).map(([id, player]) => ({
@@ -71,5 +93,7 @@ const roomUsers = computed(() =>
     user: player.user,
     color: player.color,
   })),
-);
+)
+
+const tabNames = ['poker', 'retro', 'wheel']
 </script>

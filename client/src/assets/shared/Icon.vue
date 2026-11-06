@@ -3,23 +3,20 @@
 </template>
 
 <script setup>
-  import { defineAsyncComponent } from 'vue';
+import { defineAsyncComponent } from 'vue'
 
-  const props = defineProps({
-    name: {
-      type: String,
-      required: true,
-    },
-    className: {
-      type: String,
-      default: 'fill-current text-current',
-    },
-  });
+const props = defineProps({
+  name: {
+    type: String,
+    required: true,
+  },
+  className: {
+    type: String,
+    default: 'fill-current text-current',
+  },
+})
 
-
-  const icon = defineAsyncComponent(() =>
-    import(`../svg/${props.name}.svg`)
-  );
+const icon = defineAsyncComponent(() => import(`../svg/${props.name}.svg`))
 </script>
 
 <style>

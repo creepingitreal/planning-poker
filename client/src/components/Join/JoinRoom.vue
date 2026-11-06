@@ -3,7 +3,7 @@
     <div class="room join-room">
       <div class="section-title">
         <h1 class="title">
-          {{ roomId ? roomName || "Join Room" : "Join or Create a Room" }}
+          {{ roomId ? roomName || 'Join Room' : 'Join or Create a Room' }}
         </h1>
 
         <input
@@ -37,9 +37,7 @@
             By checking this box, only users with the share link will be able to
             join the room
           </p>
-          <button @click="createRoom" class="accent">
-            Create Room
-          </button>
+          <button @click="createRoom" class="accent">Create Room</button>
         </div>
       </div>
     </div>
@@ -47,131 +45,130 @@
 </template>
 
 <script setup>
-  import socket from "../../../socket.js";
-  import "./join-room.css";
-  import { computed, onMounted, onUnmounted, ref } from "vue";
-  import { generateRoomId, randomNameGenerator } from "../../js/generators.js";
-  import { useRoute, useRouter } from "vue-router";
-  import { setCurrentRoom } from "../../js/roomNav.js";
+import socket from '../../../socket.js'
+import './join-room.css'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { generateRoomId, randomNameGenerator } from '../../js/generators.js'
+import { useRoute, useRouter } from 'vue-router'
+import { setCurrentRoom } from '../../js/roomNav.js'
 
-  const route = useRoute(false);
-  const router = useRouter();
+const route = useRoute(false)
+const router = useRouter()
 
-  const roomId = computed(() => route.params.roomId || "");
-  const roomName = ref("");
+const roomId = computed(() => route.params.roomId || '')
+const roomName = ref('')
 
-  const name = ref("");
-  const room = ref({
-    roomId: "",
-    roomName: "",
-  });
-  const roomNameInput = ref("");
-  const locked = ref(false);
-  const isCreating = ref(false);
-  const clientId =
-    localStorage.getItem("poker_client_id") || crypto.randomUUID();
-  localStorage.setItem("poker_client_id", clientId);
+const name = ref('')
+const room = ref({
+  roomId: '',
+  roomName: '',
+})
+const roomNameInput = ref('')
+const locked = ref(false)
+const isCreating = ref(false)
+const clientId = localStorage.getItem('poker_client_id') || crypto.randomUUID()
+localStorage.setItem('poker_client_id', clientId)
 
-  const saveSession = (roomData, userName) => {
-    localStorage.setItem(
-      `poker_session_${roomData.roomId}`,
-      JSON.stringify({
-        room: roomData,
-        name: userName,
-        clientId,
-        savedAt: Date.now(),
-      }),
-    );
-  };
-
-  const joinRoom = () => {
-    if (!name.value) {
-      alert("Please enter your name");
-      return;
-    }
-
-    if (!roomId.value && !roomNameInput.value) {
-      alert("Please enter a room name");
-      return;
-    }
-
-    isCreating.value = false;
-    socket.emit("joinRoom", {
-      room: {
-        roomId: roomId.value,
-        roomName: roomId.value ? "" : roomNameInput.value,
-      },
-      user: name.value,
+const saveSession = (roomData, userName) => {
+  localStorage.setItem(
+    `poker_session_${roomData.roomId}`,
+    JSON.stringify({
+      room: roomData,
+      name: userName,
       clientId,
-      fromLink: !!roomId.value,
-    });
-  };
+      savedAt: Date.now(),
+    }),
+  )
+}
 
-  const createRoom = () => {
-    if (!name.value) {
-      alert("Please enter your name");
-      return;
-    }
+const joinRoom = () => {
+  if (!name.value) {
+    alert('Please enter your name')
+    return
+  }
 
-    room.value.roomName = roomNameInput.value || randomNameGenerator();
-    room.value.roomId = generateRoomId();
-    isCreating.value = true;
+  if (!roomId.value && !roomNameInput.value) {
+    alert('Please enter a room name')
+    return
+  }
 
-    socket.emit("createRoom", {
-      room: { ...room.value, locked: locked.value },
-      user: name.value,
-      clientId,
-    });
+  isCreating.value = false
+  socket.emit('joinRoom', {
+    room: {
+      roomId: roomId.value,
+      roomName: roomId.value ? '' : roomNameInput.value,
+    },
+    user: name.value,
+    clientId,
+    fromLink: !!roomId.value,
+  })
+}
 
-    locked.value = false;
-  };
+const createRoom = () => {
+  if (!name.value) {
+    alert('Please enter your name')
+    return
+  }
 
-  const handleRoomJoined = ({ roomId, roomName }) => {
-    room.value.roomId = roomId;
-    room.value.roomName = roomName;
+  room.value.roomName = roomNameInput.value || randomNameGenerator()
+  room.value.roomId = generateRoomId()
+  isCreating.value = true
 
-    saveSession(room.value, name.value);
-    setCurrentRoom(roomId, roomName);
+  socket.emit('createRoom', {
+    room: { ...room.value, locked: locked.value },
+    user: name.value,
+    clientId,
+  })
 
-    if (isCreating.value) {
-      isCreating.value = false;
-      router.push({
-        path: "/dashboard",
-        query: { roomId, roomName },
-      });
-      return;
-    }
+  locked.value = false
+}
 
-    const selectedTool = route.query.tool;
-    const toolQuery = selectedTool
-      ? `?tool=${encodeURIComponent(selectedTool)}`
-      : "";
-    router.push(`/room/${roomId}${toolQuery}`);
-  };
+const handleRoomJoined = ({ roomId, roomName }) => {
+  room.value.roomId = roomId
+  room.value.roomName = roomName
 
-  const handleRoomError = ({ message }) => {
-    alert(message);
-  };
+  saveSession(room.value, name.value)
+  setCurrentRoom(roomId, roomName)
 
-  const handleRoomNameResolved = ({ roomName: resolvedName, error }) => {
-    if (!error) {
-      roomName.value = resolvedName;
-    }
-  };
+  if (isCreating.value) {
+    isCreating.value = false
+    router.push({
+      path: '/dashboard',
+      query: { roomId, roomName },
+    })
+    return
+  }
 
-  socket.on("roomJoined", handleRoomJoined);
-  socket.on("roomError", handleRoomError);
-  socket.on("roomNameResolved", handleRoomNameResolved);
+  const selectedTool = route.query.tool
+  const toolQuery = selectedTool
+    ? `?tool=${encodeURIComponent(selectedTool)}`
+    : ''
+  router.push(`/room/${roomId}${toolQuery}`)
+}
 
-  onMounted(() => {
-    if (roomId.value) {
-      socket.emit("getRoomName", roomId.value);
-    }
-  });
+const handleRoomError = ({ message }) => {
+  alert(message)
+}
 
-  onUnmounted(() => {
-    socket.off("roomJoined", handleRoomJoined);
-    socket.off("roomError", handleRoomError);
-    socket.off("roomNameResolved", handleRoomNameResolved);
-  });
+const handleRoomNameResolved = ({ roomName: resolvedName, error }) => {
+  if (!error) {
+    roomName.value = resolvedName
+  }
+}
+
+socket.on('roomJoined', handleRoomJoined)
+socket.on('roomError', handleRoomError)
+socket.on('roomNameResolved', handleRoomNameResolved)
+
+onMounted(() => {
+  if (roomId.value) {
+    socket.emit('getRoomName', roomId.value)
+  }
+})
+
+onUnmounted(() => {
+  socket.off('roomJoined', handleRoomJoined)
+  socket.off('roomError', handleRoomError)
+  socket.off('roomNameResolved', handleRoomNameResolved)
+})
 </script>

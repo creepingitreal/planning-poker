@@ -39,63 +39,63 @@
 </template>
 
 <script setup>
-  import { computed, ref } from "vue";
-  import "./retro-card.css";
+import { computed, ref } from 'vue'
+import './retro-card.css'
 
-  const props = defineProps({
-    as: {
-      type: String,
-      default: "div",
-    },
-    color: {
-      type: String,
-      default: null,
-    },
-    hidden: {
-      type: Boolean,
-      default: false,
-    },
-    iconButtons: {
-      type: Array,
-      default: () => [],
-    },
-    likes: {
-      type: Number,
-      default: 0,
-    },
-    liked: {
-      type: Boolean,
-      default: false,
-    },
-    showLike: {
-      type: Boolean,
-      default: true,
-    },
-  });
+const props = defineProps({
+  as: {
+    type: String,
+    default: 'div',
+  },
+  color: {
+    type: String,
+    default: null,
+  },
+  hidden: {
+    type: Boolean,
+    default: false,
+  },
+  iconButtons: {
+    type: Array,
+    default: () => [],
+  },
+  likes: {
+    type: Number,
+    default: 0,
+  },
+  liked: {
+    type: Boolean,
+    default: false,
+  },
+  showLike: {
+    type: Boolean,
+    default: true,
+  },
+})
 
-  const emit = defineEmits(["icon-click", "like"]);
+const emit = defineEmits(['icon-click', 'like'])
 
-  const cardElement = ref(null);
+const cardElement = ref(null)
 
-  const handleIconClick = (buttonName) => {
-    emit("icon-click", buttonName);
-  };
+const handleIconClick = (buttonName) => {
+  emit('icon-click', buttonName)
+}
 
-  const toggleLike = () => {
-    if (!props.showLike || props.hidden) return;
-    emit("like");
-  };
+const toggleLike = () => {
+  if (!props.showLike || props.hidden) return
+  emit('like')
+}
 
-  const retroCardStyle = computed(() => {
-    if (!props.color) return {};
+const retroCardStyle = computed(() => {
+  if (!props.color) return {}
 
-    return {
-      backgroundColor: props.color,
-      borderColor: props.color,
-    };
-  });
+  return {
+    backgroundColor: props.color,
+    borderColor: props.color,
+  }
+})
 
-  defineExpose({
-    cardElement,
-  });
+defineExpose({
+  cardElement,
+})
 </script>

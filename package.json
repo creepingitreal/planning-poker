@@ -4,6 +4,10 @@
     "server": "cd server && npm run dev",
     "build": "cd client && npm install && npm run build",
     "start": "node server/server.js",
-    "render:start": "npm run build && npm start"
+    "render:start": "npm run build && npm start",
+    "prettier": "npx prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "^3.9.10"
   }
 }

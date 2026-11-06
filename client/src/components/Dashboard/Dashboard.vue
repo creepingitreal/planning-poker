@@ -32,44 +32,44 @@
 </template>
 
 <script setup>
-import "./dashboard.css";
-import { computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { clearCurrentRoom } from "../../js/roomNav.js";
+import './dashboard.css'
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { clearCurrentRoom } from '../../js/roomNav.js'
 
-const route = useRoute();
-const router = useRouter();
-const roomId = computed(() => route.query.roomId);
-const roomName = computed(() => route.query.roomName);
+const route = useRoute()
+const router = useRouter()
+const roomId = computed(() => route.query.roomId)
+const roomName = computed(() => route.query.roomName)
 
 const toolLink = (toolId) =>
   roomId.value
     ? { path: `/room/${roomId.value}`, query: { tool: toolId } }
-    : { path: "/join", query: { tool: toolId } };
+    : { path: '/join', query: { tool: toolId } }
 
 const createNewRoom = () => {
-  clearCurrentRoom();
-  router.push("/");
-};
+  clearCurrentRoom()
+  router.push('/')
+}
 
 const tools = [
   {
-    id: "poker",
-    index: "01",
-    name: "Planning Poker",
-    description: "Estimate work together and reveal the room consensus.",
+    id: 'poker',
+    index: '01',
+    name: 'Planning Poker',
+    description: 'Estimate work together and reveal the room consensus.',
   },
   {
-    id: "retro",
-    index: "02",
-    name: "Retro Board",
-    description: "Collect reflections, group ideas, and choose next actions.",
+    id: 'retro',
+    index: '02',
+    name: 'Retro Board',
+    description: 'Collect reflections, group ideas, and choose next actions.',
   },
   {
-    id: "wheel",
-    index: "03",
-    name: "Spin the Wheel",
-    description: "Add a little chance when the team needs a decision.",
+    id: 'wheel',
+    index: '03',
+    name: 'Spin the Wheel',
+    description: 'Add a little chance when the team needs a decision.',
   },
-];
+]
 </script>

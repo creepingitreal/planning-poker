@@ -67,7 +67,7 @@
 
 .card-like-button:hover,
 .card-like-button.liked {
-    background-color: unset !important;
+  background-color: unset !important;
   color: #e63946;
 }
 
@@ -93,11 +93,7 @@
     align-self: center;
 
     &:hover {
-      background-color: color-mix(
-        in srgb,
-        var(--accent) 15%,
-        transparent
-      );
+      background-color: color-mix(in srgb, var(--accent) 15%, transparent);
     }
   }
 }

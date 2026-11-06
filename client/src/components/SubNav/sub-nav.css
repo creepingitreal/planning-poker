@@ -1,0 +1,39 @@
+.subnav {
+  .tool-tabs {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 5px;
+    /* background-color: var(--secondary-green); */
+    letter-spacing: 1.7%;
+  }
+
+  .tool-tab {
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    min-height: unset;
+    max-height: unset;
+    min-width: unset;
+    width: auto;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--lightest-grey);
+    cursor: pointer;
+    border-bottom: 4px solid transparent;
+    margin-bottom: -1px;
+    transition: ease-in-out 300ms;
+
+    &:hover {
+      background-color: transparent;
+      color: var(--primary-green);
+    }
+
+    &.active {
+      color: var(--primary-green);
+      background-color: var(--primary-black);
+      border-bottom-color: var(--accent);
+    }
+  }
+}
