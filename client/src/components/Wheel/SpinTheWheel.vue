@@ -19,7 +19,7 @@
           :disabled="isSpinning || !participantNames.length"
           @click="handleSpinButtonClick"
         >
-          <Icon name="spinner-arrow" />
+          <Icon name="arrow-icon" class="spinner-arrow"/>
         </button>
       </template>
     </VueWheelSpinner>

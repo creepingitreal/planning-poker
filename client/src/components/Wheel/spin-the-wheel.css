@@ -143,10 +143,10 @@
 .spin-button {
   background-color: transparent;
   transition: all 300ms ease-in-out;
-  svg {
+  .spinner-arrow {
+    width: 80px;
     path {
       fill: var(--secondary-green);
-      stroke: var(--accent);
     }
   }
 
