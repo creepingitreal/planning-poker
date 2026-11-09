@@ -50,7 +50,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { allocateParticipantColors } from '../../js/colorAllocation.js'
+import { allocateParticipantColours } from '../../../../shared/colourAllocation.mjs'
 import './users.css'
 import Icon from '../../assets/shared/Icon.vue'
 
@@ -97,7 +97,7 @@ const participantColours = computed(() => {
     ]),
   ]
 
-  return allocateParticipantColors(participantNames, assignedColours)
+  return allocateParticipantColours(participantNames, assignedColours)
 })
 
 const addManualName = () => {

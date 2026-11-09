@@ -19,7 +19,7 @@
           :disabled="isSpinning || !participantNames.length"
           @click="handleSpinButtonClick"
         >
-          <Icon name="arrow-icon" class="spinner-arrow"/>
+          <Icon name="arrow-icon" class="spinner-arrow" />
         </button>
       </template>
     </VueWheelSpinner>
@@ -28,9 +28,11 @@
 
 <script>
 import VueWheelSpinner from 'vue-wheel-spinner'
-import { allocateParticipantColors } from '../../js/colorAllocation.js'
+import {
+  allocateParticipantColours,
+  getContrastingTextColour,
+} from '../../../../shared/colourAllocation.mjs'
 import './spin-the-wheel.css'
-import Icon from '../../assets/shared/Icon.vue'
 
 export default {
   components: {
@@ -49,7 +51,7 @@ export default {
   data() {
     return {
       winnerResult: null,
-      sliceFontStyle: 'bold 16px Arial',
+      sliceFontStyle: 'bold 16px sans-serif',
       sliceTextPosition: 'edge',
       isSpinning: false,
       defaultWinner: 0,
@@ -79,16 +81,16 @@ export default {
       }, {})
     },
     participantColors() {
-      return allocateParticipantColors(
+      return allocateParticipantColours(
         this.participantNames,
         this.assignedColors,
       )
     },
     slices() {
-      return this.participantNames.map((name, index) => ({
+      return this.participantNames.map((name) => ({
         color: this.participantColors[name],
         text: name,
-        textColor: index % 3 === 1 ? '#ffffff' : '#000000',
+        textColor: getContrastingTextColour(this.participantColors[name]),
       }))
     },
     safeWinnerIndex() {
@@ -113,6 +115,13 @@ export default {
     },
   },
   mounted() {
+    const styles = getComputedStyle(this.$el)
+    const font =
+      styles.getPropertyValue('--font-wheel').trim() ||
+      styles.fontFamily ||
+      'sans-serif'
+    this.sliceFontStyle = `bold 16px ${font}`
+    document.fonts?.ready.then(() => this.$refs.spinner?.drawWheel())
     this.resizeObserver = new ResizeObserver(([entry]) => {
       if (entry.contentRect.width > 0) {
         this.$refs.spinner.drawWheel()

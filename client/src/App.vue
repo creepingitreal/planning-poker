@@ -22,7 +22,8 @@
       <SidePanel
         v-if="currentRoom.roomId"
         :players="roomPlayers"
-        :manual-names-arr="wheelManualNames"
+        :allow-manual="activeTool === 'wheel'"
+        v-model:manual-names-arr="wheelManualNames"
       />
       <RouterView />
     </main>
@@ -33,7 +34,12 @@
 import './style.css'
 import SidePanel from './components/SidePanel/SidePanel.vue'
 import { computed, ref } from 'vue'
-import { currentRoom, roomPlayers, wheelManualNames } from './js/roomNav.js'
+import {
+  activeTool,
+  currentRoom,
+  roomPlayers,
+  wheelManualNames,
+} from './js/roomNav.js'
 const shareUrl = ref('')
 const copied = ref(false)
 const shareBtnText = computed(() =>
