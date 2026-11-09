@@ -244,7 +244,7 @@ button {
       max-width: fit-content;
     }
 
-    &:hover:not(:disabled) {
+    &:hover:not(:disabled), &:focus:not(:disabled) {
       color: var(--secondary-green);
       background-color: var(--accent);
     }
@@ -334,6 +334,24 @@ button {
 }
 
 /*–––––––––––––– Input Styling ––––––––––––––*/
+
+/* :is{outline: var(--secondary-green);
+outline: 2px solid red;
+outline-style:hidden;
+
+} */
+
+:is(a, button, input, textarea, summary) {
+  --outline-size: max(2px, 0.08em);
+  --outline-style: solid;
+  --outline-color: var(--primary-green);
+}
+
+:is(a, button, input, textarea, summary):focus {
+  outline: var(--outline-size) var(--outline-style) var(--outline-color);
+  outline-offset: var(--outline-offset, var(--outline-size));
+}
+
 label {
   font-size: 0.8125rem;
   font-weight: 500;
@@ -343,6 +361,7 @@ label {
 input:not([type='checkbox']):not([type='radio']) {
   max-width: 400px;
   background-color: var(--lightest-grey);
+  color: var(--secondary-green);
   padding: 14px 15px;
   font-size: 0.8125rem;
   line-height: 1.15;
@@ -367,7 +386,6 @@ input[type='checkbox'] {
     align-items: center;
 
     &::before {
-      border: solid 1px var(--border-blue);
       margin-right: 10px;
       width: 20px;
       height: 20px;
@@ -382,7 +400,7 @@ input[type='checkbox'] {
   &:hover {
     & + label {
       &::before {
-        background-color: var(--secondary-white);
+        background-color: var(--primary-black);
       }
     }
   }

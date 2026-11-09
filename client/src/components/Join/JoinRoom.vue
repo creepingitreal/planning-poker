@@ -147,6 +147,10 @@ const handleRoomJoined = ({ roomId, roomName }) => {
 }
 
 const handleRoomError = ({ message }) => {
+  if (message.includes('Room not found')) {
+    localStorage.removeItem(`poker_session_${route.params.roomId}`)
+    router.replace('/join');
+  }
   alert(message)
 }
 

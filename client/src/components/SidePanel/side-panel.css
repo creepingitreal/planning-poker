@@ -61,6 +61,7 @@
       }
 
       .content-title {
+
         padding: 10px;
         width: 100%;
         display: flex;
@@ -86,6 +87,10 @@
           justify-content: flex-start;
           gap: 20px;
           cursor: unset;
+
+          .title {
+            text-transform: capitalize;
+          }
         }
       }
     }
