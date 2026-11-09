@@ -50,7 +50,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { allocateParticipantColours } from '../../js/colourAllocation.js'
+import { allocateParticipantColours } from '../../../../shared/colourAllocation.mjs'
 import './users.css'
 import Icon from '../../assets/shared/Icon.vue'
 

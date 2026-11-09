@@ -28,7 +28,7 @@
 
 <script>
 import VueWheelSpinner from 'vue-wheel-spinner'
-import { allocateParticipantColours } from '../../js/colourAllocation.js'
+import { allocateParticipantColours } from '../../../../shared/colourAllocation.mjs'
 import './spin-the-wheel.css'
 import Icon from '../../assets/shared/Icon.vue'
 

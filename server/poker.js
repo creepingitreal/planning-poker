@@ -10,7 +10,17 @@ import {
   newParticipant,
   participantForSocket,
 } from './state.js'
-import { nextParticipantColor } from './colorAllocation.js'
+import { generateUniqueColour } from '../shared/colourAllocation.mjs'
+
+const nextParticipantColor = (rooms, roomId) => {
+  const takenColors = new Set(
+    Object.values(rooms[roomId] ?? {})
+      .map((participant) => participant.color?.toLowerCase())
+      .filter(Boolean),
+  )
+
+  return generateUniqueColour(takenColors)
+}
 
 const ensureParticipantColors = (roomId) => {
   const takenColors = new Set()
