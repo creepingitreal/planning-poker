@@ -2,7 +2,11 @@
   <div
     class="vote"
     :class="isVisible ? 'visible' : ''"
-    :style="color ? { backgroundColor: color } : {}"
+    :style="
+      color
+        ? { backgroundColor: color, color: getContrastingTextColour(color) }
+        : {}
+    "
     v-if="vote !== null"
   >
     <p v-if="isVisible">{{ vote }}</p>
@@ -10,8 +14,9 @@
 </template>
 
 <script setup>
+import { getContrastingTextColour } from '../../../../shared/colourAllocation.mjs'
 import './vote.css'
-const props = defineProps({
+defineProps({
   vote: {
     type: [Number, null],
     required: true,

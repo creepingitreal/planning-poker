@@ -3,6 +3,15 @@ import { describe, expect, it } from 'vitest'
 import Vote from './Vote.vue'
 
 describe('Vote', () => {
+  it.each([
+    ['#123456', 'rgb(255, 255, 255)'],
+    ['#abcdef', 'rgb(0, 0, 0)'],
+  ])('uses contrasting text for participant colour %s', (color, foreground) => {
+    const wrapper = mount(Vote, { props: { vote: 8, color } })
+
+    expect(wrapper.get('.vote').element.style.color).toBe(foreground)
+  })
+
   it('does not render a card for an uncast vote', () => {
     const wrapper = mount(Vote, { props: { vote: null } })
 

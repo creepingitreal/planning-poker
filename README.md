@@ -50,6 +50,13 @@ planning-poker/
 
 ## Getting Started
 
+### Custom Branding
+
+Fork owners can replace the token sheet, app name, logos, and favicon in
+[client/src/brand/](client/src/brand/) without editing Vue components. See the
+[rebranding guide](client/README.md#rebrand-your-fork) for the token contract,
+asset requirements, and build steps.
+
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) v18+

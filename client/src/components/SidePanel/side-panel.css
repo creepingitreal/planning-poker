@@ -1,7 +1,7 @@
 .side-panel-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: var(--color-overlay);
   z-index: 9;
 }
 
@@ -12,38 +12,40 @@
   width: min(100px);
   height: calc(100vh - 10px);
   padding: 10px;
-  border-radius: 15px;
+  border-radius: var(--radius-panel);
   margin: 5px;
   box-sizing: border-box;
   overflow-y: auto;
-  background-color: var(--secondary-black);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  color: var(--primary-green);
-  box-shadow: rgba(0, 0, 0, 0.12) 0 -4px 16px;
+  background-color: var(--color-page);
+  border: 1px solid var(--color-overlay);
+  color: var(--color-text);
+  box-shadow: var(--shadow-panel);
   transition: width 350ms ease-in-out;
   z-index: 20;
   overflow-y: auto;
 
   .side-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
     padding: 20px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--color-overlay);
     justify-self: center;
 
     .logo {
       justify-self: center;
-      width: fit-content;
-      path {
-        fill: var(--primary-green);
-      }
-      @media screen and (min-width: 640px) {
-        justify-self: start;
-        img {
-          max-width: 400px;
-        }
-      }
-      * > {
-        max-height: 20px;
-      }
+      display: flex;
+      align-items: center;
+      width: 28px;
+      max-width: 100%;
+      height: 28px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      flex: 0 0 28px;
+      min-width: 0;
     }
   }
 
@@ -57,7 +59,7 @@
       width: 100%;
 
       &:has(.tools) {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid var(--color-overlay);
       }
 
       .content-title {
@@ -72,14 +74,19 @@
 
   &.open {
     width: min(250px, 85vw);
-  
+
     .side-panel-header {
       justify-self: unset;
       display: flex;
       align-items: center;
       justify-content: space-between;
+
+      .logo {
+        width: 140px;
+        flex: 0 1 140px;
+      }
     }
-  
+
     .side-panel-content {
       .content-item {
         .content-title {
@@ -92,7 +99,19 @@
   }
 }
 
-
 .side-panel-close {
-  color: var(--primary-black);
+  color: var(--color-text);
+}
+
+.brand-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.brand-logo-mark {
+  width: 28px;
+  object-position: center;
 }

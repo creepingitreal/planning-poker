@@ -13,6 +13,16 @@ describe('RetroCard', () => {
     expect(wrapper.text()).toContain('Useful feedback')
     expect(wrapper.element.style.backgroundColor).toBe('rgb(18, 52, 86)')
     expect(wrapper.element.style.borderColor).toBe('rgb(18, 52, 86)')
+    expect(wrapper.element.style.color).toBe('rgb(255, 255, 255)')
+  })
+
+  it('updates text contrast when the participant colour changes', async () => {
+    const wrapper = mount(RetroCard, { props: { color: '#123456' } })
+
+    await wrapper.setProps({ color: '#abcdef' })
+    expect(wrapper.element.style.color).toBe('rgb(0, 0, 0)')
+    await wrapper.setProps({ color: null })
+    expect(wrapper.element.style.color).toBe('')
   })
 
   it('emits the named card action', async () => {

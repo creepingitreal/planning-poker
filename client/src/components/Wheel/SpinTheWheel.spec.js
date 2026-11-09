@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import SpinTheWheel from './SpinTheWheel.vue'
+import { getContrastingTextColour } from '../../../../shared/colourAllocation.mjs'
 
 const spinnerApi = vi.hoisted(() => ({
   spinWheel: vi.fn(),
@@ -11,7 +12,7 @@ const spinnerApi = vi.hoisted(() => ({
 vi.mock('vue-wheel-spinner', () => ({
   default: {
     name: 'VueWheelSpinner',
-    props: ['slices', 'winnerIndex', 'sounds'],
+    props: ['slices', 'winnerIndex', 'sounds', 'sliceFontStyle'],
     emits: ['spin-start', 'spin-end'],
     methods: spinnerApi,
     template: '<div class="wheel-spinner"><slot /></div>',
@@ -35,6 +36,32 @@ beforeEach(() => {
 })
 
 describe('SpinTheWheel', () => {
+  it.each([
+    ['#000000', '#ffffff'],
+    ['#ffffff', '#000000'],
+    ['#123456', '#ffffff'],
+    ['#abcdef', '#000000'],
+    ['#777777', '#000000'],
+    ['#000', '#ffffff'],
+    ['#FFF', '#000000'],
+    [null, '#000000'],
+    ['invalid', '#000000'],
+  ])('chooses the highest contrast text for %s', (background, foreground) => {
+    expect(getContrastingTextColour(background)).toBe(foreground)
+  })
+
+  it('reads the canvas font from the brand token', async () => {
+    vi.spyOn(globalThis, 'getComputedStyle').mockReturnValue({
+      getPropertyValue: () => 'Georgia, serif',
+    })
+    const wrapper = mount(SpinTheWheel)
+    await nextTick()
+
+    expect(
+      wrapper.getComponent({ name: 'VueWheelSpinner' }).props('sliceFontStyle'),
+    ).toBe('bold 16px Georgia, serif')
+  })
+
   it('disables spinning when there are no participants', async () => {
     const wrapper = mount(SpinTheWheel)
     const spinner = wrapper.getComponent({ name: 'VueWheelSpinner' })
@@ -66,6 +93,8 @@ describe('SpinTheWheel', () => {
     expect(slices.map((slice) => slice.text)).toEqual(['Alex', 'Sam', 'Guest'])
     expect(slices[0].color).toBe('#123456')
     expect(slices[1].color).toBe('#abcdef')
+    expect(slices[0].textColor).toBe('#ffffff')
+    expect(slices[1].textColor).toBe('#000000')
     expect(new Set(slices.map((slice) => slice.color)).size).toBe(3)
     expect(wrapper.get('.spin-button').element.disabled).toBe(false)
   })

@@ -40,6 +40,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+import { getContrastingTextColour } from '../../../../shared/colourAllocation.mjs'
 import './retro-card.css'
 
 const props = defineProps({
@@ -92,6 +93,7 @@ const retroCardStyle = computed(() => {
   return {
     backgroundColor: props.color,
     borderColor: props.color,
+    color: getContrastingTextColour(props.color),
   }
 })
 

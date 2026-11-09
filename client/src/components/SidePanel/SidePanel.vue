@@ -11,9 +11,19 @@
     :aria-hidden="!showPanel"
   >
     <div class="side-panel-header">
-      <button @click="showPanel = !showPanel" class="logo">
-          <Icon v-if="showPanel" name="scrumble-logo" class="icon"/>
-          <Icon v-else name="scrumble-icon" class="icon"/>
+      <button
+        @click="showPanel = !showPanel"
+        class="logo"
+        type="button"
+        :aria-label="`${brand.name}: ${showPanel ? 'Close' : 'Open'} side panel`"
+        :aria-expanded="showPanel"
+      >
+        <img
+          class="brand-logo"
+          :src="showPanel ? brand.logoUrl : brand.logoMarkUrl"
+          :alt="brand.logoAlt"
+          :class="{ 'brand-logo-mark': !showPanel }"
+        />
       </button>
       <button
         v-if="showPanel"
@@ -27,7 +37,7 @@
     </div>
 
     <div class="side-panel-content">
-      <SidePanelContent 
+      <SidePanelContent
         :show-panel="showPanel"
         icon-name="tools-icon"
         title="Tools"
@@ -60,6 +70,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+import { brand } from '../../brand/index.js'
 import Users from '../Users/Users.vue'
 import SubNav from '../SubNav/SubNav.vue'
 import { activeTool, showTools, currentRoom } from '../../js/roomNav.js'

@@ -1,11 +1,12 @@
 .retro-card {
   position: relative;
-  background-color: #fff;
-  border-radius: 10px;
-  border: 2px solid var(--medium-grey, #ccc);
+  background-color: var(--color-card);
+  color: var(--color-on-surface-raised);
+  border-radius: var(--radius-card);
+  border: 2px solid var(--color-border);
   gap: 5px;
   padding: 15px 20px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+  box-shadow: var(--shadow-small);
   flex: 0 0 var(--retro-card-size, 200px);
   width: var(--retro-card-size, 200px);
   height: 170px;
@@ -57,10 +58,10 @@
   width: auto;
   padding: 2px 5px;
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--radius-control);
   background: transparent;
   box-shadow: none;
-  color: var(--dark-grey);
+  color: var(--color-text-muted);
   font-size: 0.75rem;
   line-height: 1;
 }
@@ -68,7 +69,7 @@
 .card-like-button:hover,
 .card-like-button.liked {
   background-color: unset !important;
-  color: #e63946;
+  color: var(--color-danger);
 }
 
 .retro-card-placeholder {
@@ -93,38 +94,40 @@
     align-self: center;
 
     &:hover {
-      background-color: color-mix(in srgb, var(--accent) 15%, transparent);
+      background-color: color-mix(
+        in srgb,
+        var(--color-accent) 15%,
+        transparent
+      );
     }
   }
 }
 
-/* Fun, bold icon colours using the brand palette - delete stays red as a
-   clear warning regardless of the rest of the icon-only theme. */
 .icon-btn-add,
 .icon-btn-edit {
-  color: var(--accent);
+  color: var(--color-accent);
   font-weight: 800;
   font-size: 1rem;
 }
 
 .icon-btn-add {
-  color: #2ead4f;
+  color: var(--color-success);
 }
 
 .icon-btn-add:hover:not(:disabled),
 .icon-btn-edit:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--accent) 15%, transparent);
+  background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
 }
 
 .icon-btn-add:hover:not(:disabled) {
-  background-color: color-mix(in srgb, #2ead4f 15%, transparent);
+  background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
 }
 
 .icon-btn-delete {
-  color: #e63946;
+  color: var(--color-danger);
   font-weight: 800;
 }
 
 .icon-btn-delete:hover:not(:disabled) {
-  background-color: color-mix(in srgb, #e63946 15%, transparent);
+  background-color: color-mix(in srgb, var(--color-danger) 15%, transparent);
 }
