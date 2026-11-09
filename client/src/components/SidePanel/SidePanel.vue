@@ -59,9 +59,10 @@
       >
         <Users
           :open="showPanel"
-          :players="roomUsers"
-          :manual-names="manualNamesArr"
-          @update:manual-names="manualNamesArr = $event"
+          :players="players"
+          :allow-manual="allowManual"
+          :manual-names="allowManual ? manualNamesArr : []"
+          @update:manual-names="emit('update:manualNamesArr', $event)"
         />
       </SidePanelContent>
     </div>
@@ -69,7 +70,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { brand } from '../../brand/index.js'
 import Users from '../Users/Users.vue'
 import SubNav from '../SubNav/SubNav.vue'
@@ -77,7 +78,7 @@ import { activeTool, showTools, currentRoom } from '../../js/roomNav.js'
 import './side-panel.css'
 import SidePanelContent from './SidePanelContent.vue'
 
-const props = defineProps({
+defineProps({
   players: {
     type: Object,
     default: () => ({}),
@@ -92,15 +93,8 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['update:manualNamesArr'])
 const showPanel = ref(false)
-
-const roomUsers = computed(() =>
-  Object.entries(props.players).map(([id, player]) => ({
-    id,
-    user: player.user,
-    color: player.color,
-  })),
-)
 
 const tabNames = ['poker', 'retro', 'wheel']
 </script>

@@ -1,10 +1,65 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { activeTool, currentRoom, showTools } from '../../js/roomNav.js'
+import {
+  activeTool,
+  currentRoom,
+  roomPlayers,
+  showTools,
+  wheelManualNames,
+} from '../../js/roomNav.js'
 import SidePanel from './SidePanel.vue'
+import App from '../../App.vue'
 import { brand } from '../../brand/index.js'
 
 describe('SidePanel', () => {
+  it('adds and removes wheel-only participants through the app state', async () => {
+    currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
+    activeTool.value = 'wheel'
+    roomPlayers.value = { alex: { user: 'Alex', color: '#123456' } }
+    const wrapper = mount(App, { global: { stubs: { RouterView: true } } })
+
+    await wrapper.get('.logo').trigger('click')
+    await wrapper.get('.add-user-form input').setValue('  Guest  ')
+    await wrapper.get('.add-user-form').trigger('submit')
+
+    expect(wheelManualNames.value).toEqual(['Guest'])
+    expect(
+      Object.values(roomPlayers.value).map((player) => player.user),
+    ).toEqual(['Alex'])
+    expect(wrapper.get('[aria-label="Remove Guest"]').exists()).toBe(true)
+
+    for (const tool of ['poker', 'retro']) {
+      activeTool.value = tool
+      await wrapper.vm.$nextTick()
+      expect(wrapper.find('.add-user-form').exists()).toBe(false)
+      expect(wrapper.find('[aria-label="Remove Guest"]').exists()).toBe(false)
+      expect(wrapper.get('.users-list').text()).not.toContain('Guest')
+      expect(wrapper.get('.users-list').text()).toContain('Alex')
+    }
+
+    activeTool.value = 'wheel'
+    await wrapper.vm.$nextTick()
+    expect(wrapper.get('.users-list').text()).toContain('Guest')
+    await wrapper.get('[aria-label="Remove Guest"]').trigger('click')
+    expect(wheelManualNames.value).toEqual([])
+  })
+
+  it('forwards manual-name updates without mutating its props', async () => {
+    const manualNamesArr = ['Guest']
+    const wrapper = mount(SidePanel, {
+      props: { allowManual: true, manualNamesArr },
+    })
+
+    await wrapper.get('.logo').trigger('click')
+    await wrapper.get('.add-user-form input').setValue('Sam')
+    await wrapper.get('.add-user-form').trigger('submit')
+
+    expect(wrapper.emitted('update:manualNamesArr')).toEqual([
+      [['Guest', 'Sam']],
+    ])
+    expect(manualNamesArr).toEqual(['Guest'])
+  })
+
   it('uses the brand mark and full logo without the generic icon renderer', async () => {
     const wrapper = mount(SidePanel)
 
