@@ -13,10 +13,15 @@ import {
 import { nextParticipantColor } from './colorAllocation.js'
 
 const ensureParticipantColors = (roomId) => {
+  const takenColors = new Set()
   for (const participant of Object.values(rooms[roomId] ?? {})) {
-    if (!participant.color) {
+    const color = participant.color?.toLowerCase()
+    if (!color || takenColors.has(color)) {
       participant.color = nextParticipantColor(rooms, roomId)
+    } else {
+      participant.color = color
     }
+    takenColors.add(participant.color)
   }
 }
 

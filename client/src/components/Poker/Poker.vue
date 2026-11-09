@@ -35,7 +35,7 @@ import ButtonSection from '../ButtonSection/ButtonSection.vue'
 import socket from '../../../socket.js'
 import { computed, onUnmounted, ref } from 'vue'
 import Vote from './Vote.vue'
-import { allocateParticipantColors } from '../../js/colorAllocation.js'
+import { allocateParticipantColours } from '../../js/colourAllocation.js'
 import './Poker.css'
 
 const voteOptions = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, '?']
@@ -67,7 +67,7 @@ const participantColours = computed(() => {
     ...new Set(players.map((player) => player.user).filter(Boolean)),
   ]
 
-  return allocateParticipantColors(participantNames, assignedColours)
+  return allocateParticipantColours(participantNames, assignedColours)
 })
 
 const selectedVote = ref(null)

@@ -1,11 +1,12 @@
 FROM node:18-alpine
 
-WORKDIR /app
+WORKDIR /app/server
 
-COPY package*.json ./
+COPY server/package*.json ./
 
 RUN npm install
-COPY . .
+COPY server/ ./
+COPY shared/ /app/shared/
 
 EXPOSE 8000
 
