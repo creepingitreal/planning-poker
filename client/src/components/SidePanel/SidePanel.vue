@@ -12,12 +12,8 @@
   >
     <div class="side-panel-header">
       <button @click="showPanel = !showPanel" class="logo">
-        <div v-if="showPanel">
-          <Icon name="scrumble-logo" />
-        </div>
-        <div v-else="showPanel">
-          <Icon name="scrumble-icon" />
-        </div>
+          <Icon v-if="showPanel" name="scrumble-logo" class="icon"/>
+          <Icon v-else name="scrumble-icon" class="icon"/>
       </button>
       <button
         v-if="showPanel"
