@@ -14,13 +14,13 @@
   gap: 10px;
   min-height: 26px;
   font-weight: 500;
-}
 
-.users-list-item small {
-  margin-left: auto;
-  color: var(--color-accent);
-  font-size: 0.72rem;
-  font-weight: 700;
+  small {
+    margin-left: auto;
+    color: var(--color-accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
 }
 
 .user-colour-dot {
@@ -43,11 +43,12 @@
   box-shadow: none;
   color: var(--color-text-muted);
   font-size: 1.2rem;
-}
+  line-height: 1;
 
-.remove-manual-user:hover {
-  background: transparent;
-  color: var(--color-text);
+  &:hover {
+    background: transparent;
+    color: var(--color-text);
+  }
 }
 
 .empty-users {
@@ -58,23 +59,24 @@
 .add-user-form {
   display: flex;
   gap: 8px;
-}
 
-.add-user-form input {
-  min-width: 0;
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-control);
-  font: inherit;
-}
+  input {
+    min-width: 0;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-control);
+    font: inherit;
+  }
 
-.add-user-form button {
-  min-width: auto;
-  width: auto;
-  min-height: 42px;
-  max-height: 42px;
-  padding: 8px 14px;
-  border-radius: var(--radius-control);
-  white-space: nowrap;
+  button {
+    min-width: auto;
+    width: auto;
+    min-height: 42px;
+    max-height: 42px;
+    padding: 8px 14px;
+    border-radius: var(--radius-control);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
 }

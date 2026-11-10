@@ -9,7 +9,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: min(100px);
+  width: 100px;
   height: calc(100vh - 10px);
   padding: 10px;
   border-radius: var(--radius-panel);
@@ -22,7 +22,10 @@
   box-shadow: var(--shadow-panel);
   transition: width 350ms ease-in-out;
   z-index: 20;
-  overflow-y: auto;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 
   .side-panel-header {
     display: flex;
@@ -51,24 +54,24 @@
 
   .side-panel-content {
     width: 100%;
+  }
 
-    .content-item {
-      padding: 20px 0;
-      display: flex;
-      flex-direction: column;
+  .content-item {
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    &:has(.tools) {
+      border-bottom: 1px solid var(--color-overlay);
+    }
+
+    .content-title {
+      padding: 10px;
       width: 100%;
-
-      &:has(.tools) {
-        border-bottom: 1px solid var(--color-overlay);
-      }
-
-      .content-title {
-        padding: 10px;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        cursor: pointer;
-      }
+      display: flex;
+      justify-content: center;
+      cursor: pointer;
     }
   }
 
@@ -77,8 +80,6 @@
 
     .side-panel-header {
       justify-self: unset;
-      display: flex;
-      align-items: center;
       justify-content: space-between;
 
       .logo {
@@ -87,14 +88,10 @@
       }
     }
 
-    .side-panel-content {
-      .content-item {
-        .content-title {
-          justify-content: flex-start;
-          gap: 20px;
-          cursor: unset;
-        }
-      }
+    .content-title {
+      justify-content: flex-start;
+      gap: 20px;
+      cursor: unset;
     }
   }
 }

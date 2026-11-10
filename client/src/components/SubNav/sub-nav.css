@@ -4,8 +4,7 @@
     flex-direction: column;
     justify-content: flex-end;
     gap: 5px;
-    /* background-color: var(--color-action-strong); */
-    letter-spacing: 1.7%;
+    letter-spacing: 0.017em;
   }
 
   .tool-tab {
@@ -24,7 +23,13 @@
     cursor: pointer;
     border-bottom: 2px solid transparent;
     margin-bottom: -1px;
-    transition: ease-in-out 300ms;
+    transition:
+      color 300ms ease-in-out,
+      background-color 300ms ease-in-out;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
 
     &:hover {
       background-color: transparent;
@@ -37,7 +42,6 @@
       color: var(--color-on-accent);
       padding: 10px;
       border-radius: var(--radius-input);
-      /* border-bottom: 2px solid var(--color-action); */
     }
   }
 }
