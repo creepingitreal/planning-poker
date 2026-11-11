@@ -95,7 +95,7 @@ main {
   }
 
   :where(button:not(.logo, .spin-button, .tool-tab, .icon-only, :has(.icon))) {
-    font-size: 1.625rem;
+    font-size: 1rem;
   }
 }
 
