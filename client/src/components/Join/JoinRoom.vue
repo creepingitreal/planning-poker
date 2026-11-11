@@ -65,7 +65,6 @@ const room = ref({
 })
 const roomNameInput = ref('')
 const locked = ref(false)
-const isCreating = ref(false)
 const clientId = localStorage.getItem('poker_client_id') || crypto.randomUUID()
 localStorage.setItem('poker_client_id', clientId)
 
@@ -92,7 +91,6 @@ const joinRoom = () => {
     return
   }
 
-  isCreating.value = false
   socket.emit('joinRoom', {
     room: {
       roomId: roomId.value,
@@ -112,7 +110,6 @@ const createRoom = () => {
 
   room.value.roomName = roomNameInput.value || randomNameGenerator()
   room.value.roomId = generateRoomId()
-  isCreating.value = true
 
   socket.emit('createRoom', {
     room: { ...room.value, locked: locked.value },
@@ -130,26 +127,13 @@ const handleRoomJoined = ({ roomId, roomName }) => {
   saveSession(room.value, name.value)
   setCurrentRoom(roomId, roomName)
 
-  if (isCreating.value) {
-    isCreating.value = false
-    router.push({
-      path: '/dashboard',
-      query: { roomId, roomName },
-    })
-    return
-  }
-
-  const selectedTool = route.query.tool
-  const toolQuery = selectedTool
-    ? `?tool=${encodeURIComponent(selectedTool)}`
-    : ''
-  router.push(`/room/${roomId}${toolQuery}`)
+  router.push('/dashboard')
 }
 
 const handleRoomError = ({ message }) => {
   if (message.includes('Room not found')) {
     localStorage.removeItem(`poker_session_${route.params.roomId}`)
-    router.replace('/join');
+    router.replace('/join')
   }
   alert(message)
 }

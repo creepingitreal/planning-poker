@@ -1,7 +1,9 @@
 <template>
   <section class="dashboard">
-    <div class="dashboard-heading">
-      <h1>Choose your workspace</h1>
+    <Icon name="logo" path="../../brand/logo.svg" class="xlarge" />
+    <h1>Welcome to the Scrumble</h1>
+
+    <div v-if="roomId" class="dashboard-heading">
       <p>Start a session with the tool your team needs right now.</p>
       <button
         v-if="roomId"
@@ -13,7 +15,7 @@
       </button>
     </div>
 
-    <div class="dashboard-tools">
+    <div v-if="roomId" class="dashboard-tools">
       <RouterLink
         v-for="tool in tools"
         :key="tool.id"
@@ -28,24 +30,24 @@
         <span class="dashboard-tool-arrow" aria-hidden="true">→</span>
       </RouterLink>
     </div>
+    <JoinRoom v-if="!roomId" />
   </section>
 </template>
 
 <script setup>
 import './dashboard.css'
 import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { clearCurrentRoom } from '../../js/roomNav.js'
+import { useRouter } from 'vue-router'
+import { clearCurrentRoom, currentRoom } from '../../js/roomNav.js'
+import JoinRoom from '../Join/JoinRoom.vue'
 
-const route = useRoute()
 const router = useRouter()
-const roomId = computed(() => route.query.roomId)
-const roomName = computed(() => route.query.roomName)
+const roomId = computed(() => currentRoom.value.roomId)
 
-const toolLink = (toolId) =>
-  roomId.value
-    ? { path: `/room/${roomId.value}`, query: { tool: toolId } }
-    : { path: '/join', query: { tool: toolId } }
+const toolLink = (toolId) => ({
+  path: `/room/${roomId.value}`,
+  query: { tool: toolId },
+})
 
 const createNewRoom = () => {
   clearCurrentRoom()

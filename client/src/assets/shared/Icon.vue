@@ -1,9 +1,9 @@
 <template>
-  <component :is="icon" :class="className" />
+  <component :is="icon" :class="[className, { icon: isIcon }]" />
 </template>
 
 <script setup>
-import { defineAsyncComponent } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 
 const props = defineProps({
   name: {
@@ -14,9 +14,27 @@ const props = defineProps({
     type: String,
     default: 'fill-current text-current',
   },
+  path: {
+    type: String,
+    required: false,
+  },
+  isIcon: {
+    type: Boolean,
+    default: true,
+  },
 })
 
-const icon = defineAsyncComponent(() => import(`../svg/${props.name}.svg`))
+const icons = import.meta.glob(['../svg/**/*.svg', '../../brand/**/*.svg'])
+
+const icon = computed(() => {
+  const path = props.path || `../svg/${props.name}.svg`
+
+  return defineAsyncComponent(async () => {
+    const load = icons[path]
+    if (!load) throw new Error(`Unknown icon path: ${path}`)
+    return load()
+  })
+})
 </script>
 
 <style>

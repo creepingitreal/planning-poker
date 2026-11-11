@@ -7,9 +7,9 @@ import Room from '../components/Poker/Room.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', component: JoinRoom },
+    { path: '/', component: Dashboard },
     { path: '/dashboard', component: Dashboard },
-    { path: '/join/:roomId?', component: JoinRoom },
+    { path: '/join/:roomId?', component: Dashboard },
     { path: '/room/:roomId', component: Room },
   ],
 })

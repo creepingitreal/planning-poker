@@ -153,14 +153,11 @@ describe('JoinRoom', () => {
       })
       await flushPromises()
       expect(router.currentRoute.value.path).toBe('/dashboard')
-      expect(router.currentRoute.value.query).toEqual({
-        roomId: 'generated-room',
-        roomName: expectedName,
-      })
+      expect(router.currentRoute.value.query).toEqual({})
     },
   )
 
-  it('saves a joined session and preserves the requested tool in navigation', async () => {
+  it('saves a joined session and shows the dashboard before choosing a tool', async () => {
     const { wrapper, router } = await mountJoin('/join/room-one?tool=wheel')
     await wrapper.get('[placeholder="Username *"]').setValue('Alex')
     await wrapper.get('.button-section > button').trigger('click')
@@ -171,7 +168,7 @@ describe('JoinRoom', () => {
     })
     await flushPromises()
 
-    expect(router.currentRoute.value.fullPath).toBe('/room/room-one?tool=wheel')
+    expect(router.currentRoute.value.fullPath).toBe('/dashboard')
     expect(currentRoom.value).toEqual({ roomId: 'room-one', roomName: 'Team' })
     expect(JSON.parse(localStorage.getItem('poker_session_room-one'))).toEqual({
       room: { roomId: 'room-one', roomName: 'Team' },
