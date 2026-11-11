@@ -5,7 +5,7 @@
         class="user-colour-dot"
         :style="{ backgroundColor: participantColours[player.user] }"
       ></span>
-      <span>{{ player.user }}</span>
+      <span>{{ player.user }}{{ player.isCurrentUser ? ' (you)' : '' }}</span>
       <small>In room</small>
     </li>
     <li
@@ -50,9 +50,9 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { allocateParticipantColours } from '../../../../shared/colourAllocation.mjs'
+import socket from '../../../socket.js'
+import { allocateRoomParticipantColours } from '../../js/roomNav.js'
 import './users.css'
-import Icon from '../../assets/shared/Icon.vue'
 
 const props = defineProps({
   open: {
@@ -81,6 +81,7 @@ const roomUsers = computed(() =>
     id,
     user: player.user,
     color: player.color,
+    isCurrentUser: id === socket.id,
   })),
 )
 
@@ -97,7 +98,7 @@ const participantColours = computed(() => {
     ]),
   ]
 
-  return allocateParticipantColours(participantNames, assignedColours)
+  return allocateRoomParticipantColours(participantNames, assignedColours)
 })
 
 const addManualName = () => {

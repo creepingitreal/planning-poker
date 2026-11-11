@@ -2,7 +2,7 @@ import { afterEach, beforeEach, vi } from 'vitest'
 import { config, enableAutoUnmount } from '@vue/test-utils'
 import {
   activeTool,
-  currentRoom,
+  clearCurrentRoom,
   roomPlayers,
   showTools,
   wheelManualNames,
@@ -32,7 +32,7 @@ beforeEach(() => {
   localStorage.clear()
   sessionStorage.clear()
   activeTool.value = 'poker'
-  currentRoom.value = { roomId: '', roomName: '' }
+  clearCurrentRoom()
   roomPlayers.value = {}
   showTools.value = false
   wheelManualNames.value = []

@@ -33,13 +33,22 @@
 <script setup>
 import './style.css'
 import SidePanel from './components/SidePanel/SidePanel.vue'
-import { computed, ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
+import socket from '../socket.js'
 import {
   activeTool,
   currentRoom,
   roomPlayers,
   wheelManualNames,
 } from './js/roomNav.js'
+
+const handleUpdateRoom = ({ players = {} }) => {
+  roomPlayers.value = players
+}
+
+socket.on('updateRoom', handleUpdateRoom)
+onUnmounted(() => socket.off('updateRoom', handleUpdateRoom))
+
 const shareUrl = ref('')
 const copied = ref(false)
 const shareBtnText = computed(() =>

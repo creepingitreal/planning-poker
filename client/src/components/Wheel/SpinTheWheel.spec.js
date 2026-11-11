@@ -2,6 +2,12 @@ import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import SpinTheWheel from './SpinTheWheel.vue'
+import SidePanel from '../SidePanel/SidePanel.vue'
+import {
+  allocateRoomParticipantColours,
+  clearCurrentRoom,
+  setCurrentRoom,
+} from '../../js/roomNav.js'
 import { getContrastingTextColour } from '../../../../shared/colourAllocation.mjs'
 
 const spinnerApi = vi.hoisted(() => ({
@@ -36,6 +42,82 @@ beforeEach(() => {
 })
 
 describe('SpinTheWheel', () => {
+  it('resets retained allocations when the room session changes or ends', () => {
+    setCurrentRoom('first-room', 'First team')
+    expect(
+      allocateRoomParticipantColours(['Alex'], { Alex: '#123456' }).Alex,
+    ).toBe('#123456')
+    setCurrentRoom('second-room', 'Second team')
+    expect(
+      allocateRoomParticipantColours(['Alex'], { Alex: '#abcdef' }).Alex,
+    ).toBe('#abcdef')
+    clearCurrentRoom()
+    setCurrentRoom('second-room', 'Second team')
+    expect(
+      allocateRoomParticipantColours(['Alex'], { Alex: '#654321' }).Alex,
+    ).toBe('#654321')
+  })
+
+  it('keeps sidebar and wheel colours aligned throughout participant changes', async () => {
+    setCurrentRoom('colour-room', 'Team')
+    const players = { alex: { user: 'Alex', color: '#123456' } }
+    const wheel = mount(SpinTheWheel, {
+      props: { players, manualNames: ['Guest'] },
+    })
+    const sidebar = mount(SidePanel, {
+      props: { players, allowManual: true, manualNamesArr: ['Guest'] },
+    })
+    await sidebar.get('.logo').trigger('click')
+
+    const readColours = () =>
+      Object.fromEntries(
+        wheel
+          .getComponent({ name: 'VueWheelSpinner' })
+          .props('slices')
+          .map((slice) => [slice.text, slice.color]),
+      )
+    const initialColours = readColours()
+    const expectMatchingSidebar = () => {
+      for (const [name, colour] of Object.entries(readColours())) {
+        const row = sidebar
+          .findAll('.users-list-item')
+          .find((item) => item.findAll('span')[1].text() === name)
+        const channels = colour
+          .slice(1)
+          .match(/../g)
+          .map((hex) => Number.parseInt(hex, 16))
+        expect(row.get('.user-colour-dot').element.style.backgroundColor).toBe(
+          `rgb(${channels.join(', ')})`,
+        )
+      }
+    }
+    expectMatchingSidebar()
+
+    let samColour
+    for (const manualNames of [['Guest', 'Sam'], ['Sam'], ['Sam', 'Guest']]) {
+      await sidebar.setProps({ manualNamesArr: manualNames })
+      await wheel.setProps({ manualNames })
+      samColour ??= readColours().Sam
+      expect(readColours().Sam).toBe(samColour)
+      expect(readColours().Alex).toBe(initialColours.Alex)
+      if (manualNames.includes('Guest')) {
+        expect(readColours().Guest).toBe(initialColours.Guest)
+      }
+      expectMatchingSidebar()
+    }
+
+    const retainedColours = readColours()
+    await sidebar.get('.side-panel-close').trigger('click')
+    await sidebar.get('.logo').trigger('click')
+    expectMatchingSidebar()
+    await sidebar.setProps({ players: {} })
+    await wheel.setProps({ players: {} })
+    await sidebar.setProps({ players })
+    await wheel.setProps({ players })
+    expect(readColours()).toEqual(retainedColours)
+    expectMatchingSidebar()
+  })
+
   it.each([
     ['#000000', '#ffffff'],
     ['#ffffff', '#000000'],

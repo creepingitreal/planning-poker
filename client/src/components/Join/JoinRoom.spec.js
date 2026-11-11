@@ -2,7 +2,14 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import socket from '../../../socket.js'
 import { createTestRouter, receiveSocketEvent } from '../../test/helpers.js'
-import { currentRoom } from '../../js/roomNav.js'
+import {
+  clearCurrentRoom,
+  currentRoom,
+  roomPlayers,
+  setCurrentRoom,
+  wheelManualNames,
+} from '../../js/roomNav.js'
+import App from '../../App.vue'
 import JoinRoom from './JoinRoom.vue'
 
 vi.mock('../../js/generators.js', () => ({
@@ -22,6 +29,43 @@ beforeEach(() => {
 })
 
 describe('JoinRoom', () => {
+  it('keeps the users live on the dashboard immediately after creating a room', async () => {
+    const router = await createTestRouter('/join')
+    const app = mount(App, {
+      global: { plugins: [router], stubs: { RouterView: true } },
+    })
+    const join = mount(JoinRoom, { global: { plugins: [router] } })
+    await join.get('[placeholder="Username *"]').setValue('Alex')
+    await join.get('.accent').trigger('click')
+    await receiveSocketEvent('roomJoined', {
+      roomId: 'generated-room',
+      roomName: 'Team',
+    })
+    await flushPromises()
+    expect(router.currentRoute.value.path).toBe('/dashboard')
+    join.unmount()
+
+    await receiveSocketEvent('updateRoom', {
+      players: { alex: { user: 'Alex', color: '#123456' } },
+    })
+    await app.get('.logo').trigger('click')
+    expect(app.get('.users-list').text()).toContain('Alex')
+
+    wheelManualNames.value = ['Guest']
+    setCurrentRoom('generated-room', 'Renamed Team')
+    expect(roomPlayers.value.alex.user).toBe('Alex')
+    expect(wheelManualNames.value).toEqual(['Guest'])
+    setCurrentRoom('other-room', 'Other Team')
+    expect(roomPlayers.value).toEqual({})
+    expect(wheelManualNames.value).toEqual([])
+
+    roomPlayers.value = { sam: { user: 'Sam' } }
+    wheelManualNames.value = ['Guest']
+    clearCurrentRoom()
+    expect(roomPlayers.value).toEqual({})
+    expect(wheelManualNames.value).toEqual([])
+  })
+
   it.each(['.button-section > button', '.accent'])(
     'requires a username for %s',
     async (selector) => {

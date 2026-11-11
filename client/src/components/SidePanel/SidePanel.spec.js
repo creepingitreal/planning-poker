@@ -9,9 +9,41 @@ import {
 } from '../../js/roomNav.js'
 import SidePanel from './SidePanel.vue'
 import App from '../../App.vue'
+import socket from '../../../socket.js'
+import { receiveSocketEvent } from '../../test/helpers.js'
 import { brand } from '../../brand/index.js'
 
 describe('SidePanel', () => {
+  it('shows live room participants without opening a board and cleans up its listener', async () => {
+    currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
+    const wrapper = mount(App, { global: { stubs: { RouterView: true } } })
+    const listener = socket.on.mock.calls.find(
+      ([event]) => event === 'updateRoom',
+    )[1]
+    await wrapper.get('.logo').trigger('click')
+
+    await receiveSocketEvent('updateRoom', {
+      players: { alex: { user: 'Alex', color: '#123456' } },
+    })
+    expect(wrapper.get('.users-list').text()).toContain('Alex')
+
+    await receiveSocketEvent('updateRoom', {
+      players: {
+        alex: { user: 'Alex', color: '#123456' },
+        sam: { user: 'Sam', color: '#abcdef' },
+      },
+    })
+    expect(wrapper.get('.users-list').text()).toContain('Sam')
+
+    await receiveSocketEvent('updateRoom', {
+      players: { sam: { user: 'Sam', color: '#abcdef' } },
+    })
+    expect(wrapper.get('.users-list').text()).not.toContain('Alex')
+    expect(wrapper.get('.users-list').text()).toContain('Sam')
+    wrapper.unmount()
+    expect(socket.off).toHaveBeenCalledWith('updateRoom', listener)
+  })
+
   it('adds and removes wheel-only participants through the app state', async () => {
     currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
     activeTool.value = 'wheel'

@@ -1,8 +1,26 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import socket from '../../../socket.js'
 import Users from './Users.vue'
 
 describe('Users', () => {
+  it('labels only the current participant, even when names match', () => {
+    const wrapper = mount(Users, {
+      props: {
+        players: {
+          [socket.id]: { user: 'Alex', color: '#123456' },
+          other: { user: 'Alex', color: '#abcdef' },
+        },
+        manualNames: ['Guest'],
+      },
+    })
+
+    const names = wrapper
+      .findAll('.users-list-item')
+      .map((row) => row.findAll('span')[1].text())
+    expect(names).toEqual(['Alex (you)', 'Alex', 'Guest'])
+  })
+
   it('shows the empty state and hides manual controls by default', () => {
     const wrapper = mount(Users)
 

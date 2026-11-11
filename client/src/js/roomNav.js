@@ -1,4 +1,5 @@
 import { ref, watch } from 'vue'
+import { allocateParticipantColours } from '../../../shared/colourAllocation.mjs'
 
 // Shared between Room.vue and App.vue so the tool tabs can render as a
 // full-width subnav directly under the main site nav, rather than being
@@ -12,12 +13,36 @@ export const wheelManualNames = ref([])
 // that room's dashboard instead of always resetting to the join screen.
 export const currentRoom = ref({ roomId: '', roomName: '' })
 
+let colourRoomId = null
+let participantColours = {}
+
+export const allocateRoomParticipantColours = (names, assignedColours = {}) => {
+  if (colourRoomId !== currentRoom.value.roomId) {
+    colourRoomId = currentRoom.value.roomId
+    participantColours = {}
+  }
+
+  participantColours = allocateParticipantColours(
+    [...new Set([...Object.keys(participantColours), ...names])],
+    { ...assignedColours, ...participantColours },
+  )
+  return participantColours
+}
+
 export const setCurrentRoom = (roomId, roomName) => {
+  if (currentRoom.value.roomId !== roomId) {
+    roomPlayers.value = {}
+    wheelManualNames.value = []
+  }
   currentRoom.value = { roomId, roomName }
 }
 
 export const clearCurrentRoom = () => {
   currentRoom.value = { roomId: '', roomName: '' }
+  roomPlayers.value = {}
+  wheelManualNames.value = []
+  colourRoomId = null
+  participantColours = {}
 }
 
 const ACTIVE_TOOL_KEY_PREFIX = 'poker_active_tool_'

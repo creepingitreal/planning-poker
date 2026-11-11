@@ -10,6 +10,7 @@ import {
   wheelManualNames,
 } from '../../js/roomNav.js'
 import RetroBoard from '../Retro/RetroBoard.vue'
+import App from '../../App.vue'
 import Room from './Room.vue'
 
 const createSession = (overrides = {}) => ({
@@ -27,6 +28,7 @@ const mountRoom = async ({
   if (session)
     localStorage.setItem('poker_session_room-one', JSON.stringify(session))
   const router = await createTestRouter(path)
+  shallowMount(App, { global: { plugins: [router] } })
   const wrapper = shallowMount(Room, { global: { plugins: [router] } })
   await flushPromises()
   return { wrapper, router }
@@ -175,9 +177,9 @@ describe('Room', () => {
     expect(router.currentRoute.value.path).toBe('/room/room-one')
   })
 
-  it('removes its listeners and resets transient room state on unmount', async () => {
+  it('removes its listeners but preserves room participants on unmount', async () => {
     const { wrapper } = await mountRoom()
-    const listeners = [...socket.on.mock.calls]
+    const listeners = socket.on.mock.calls.slice(1)
     await receiveSocketEvent('roomJoined', {
       roomId: 'room-one',
       roomName: 'Team',
@@ -190,8 +192,8 @@ describe('Room', () => {
     for (const [event, handler] of listeners) {
       expect(socket.off).toHaveBeenCalledWith(event, handler)
     }
-    expect(roomPlayers.value).toEqual({})
-    expect(wheelManualNames.value).toEqual([])
+    expect(roomPlayers.value).toEqual({ alex: { user: 'Alex' } })
+    expect(wheelManualNames.value).toEqual(['Guest'])
     expect(showTools.value).toBe(false)
     expect(localStorage.getItem('poker_session_room-one')).not.toBeNull()
   })

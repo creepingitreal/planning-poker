@@ -138,13 +138,10 @@ const handleRoomError = ({ message }) => {
 }
 
 const handleUpdateRoom = ({
-  players: data,
   shareUrl: url,
   roomName,
   hostId: currentHostId,
 }) => {
-  players.value = data
-
   if (url) shareUrl.value = url
   if (roomName) room.value.roomName = roomName
   hostId.value = currentHostId ?? null
@@ -199,8 +196,6 @@ onUnmounted(() => {
   socket.off('updateRoom', handleUpdateRoom)
   socket.off('updateBoard', handleUpdateBoard)
   socket.off('updateTimer', handleUpdateTimer)
-  roomPlayers.value = {}
-  wheelManualNames.value = []
   showTools.value = false
 })
 </script>

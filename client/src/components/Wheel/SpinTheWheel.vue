@@ -28,10 +28,8 @@
 
 <script>
 import VueWheelSpinner from 'vue-wheel-spinner'
-import {
-  allocateParticipantColours,
-  getContrastingTextColour,
-} from '../../../../shared/colourAllocation.mjs'
+import { getContrastingTextColour } from '../../../../shared/colourAllocation.mjs'
+import { allocateRoomParticipantColours } from '../../js/roomNav.js'
 import './spin-the-wheel.css'
 
 export default {
@@ -81,7 +79,7 @@ export default {
       }, {})
     },
     participantColors() {
-      return allocateParticipantColours(
+      return allocateRoomParticipantColours(
         this.participantNames,
         this.assignedColors,
       )
