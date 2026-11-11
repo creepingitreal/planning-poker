@@ -1,18 +1,14 @@
 <template>
-  <div
-    class="side-panel-backdrop"
-    v-if="showPanel"
-    @click="showPanel = false"
-  ></div>
+  <div class="side-panel-backdrop" v-if="showPanel" @click="closePanel"></div>
   <aside
     class="side-panel"
     :class="{ open: showPanel }"
     aria-label="Room users"
-    :aria-hidden="!showPanel"
   >
     <div class="side-panel-header">
       <button
-        @click="showPanel = !showPanel"
+        ref="logoButton"
+        @click="togglePanel"
         class="logo"
         type="button"
         :aria-label="`${brand.name}: ${showPanel ? 'Close' : 'Open'} side panel`"
@@ -30,7 +26,7 @@
         class="icon-only side-panel-close"
         type="button"
         aria-label="Close side panel"
-        @click="showPanel = !showPanel"
+        @click="closePanel"
       >
         ✕
       </button>
@@ -74,7 +70,6 @@ import { ref } from 'vue'
 import { brand } from '../../brand/index.js'
 import Users from '../Users/Users.vue'
 import SubNav from '../SubNav/SubNav.vue'
-import { activeTool, showTools, currentRoom } from '../../js/roomNav.js'
 import './side-panel.css'
 import SidePanelContent from './SidePanelContent.vue'
 
@@ -95,6 +90,20 @@ defineProps({
 
 const emit = defineEmits(['update:manualNamesArr'])
 const showPanel = ref(false)
+const logoButton = ref(null)
 
 const tabNames = ['poker', 'retro', 'wheel']
+
+function closePanel() {
+  logoButton.value?.focus()
+  showPanel.value = false
+}
+
+function togglePanel() {
+  if (showPanel.value) {
+    closePanel()
+  } else {
+    showPanel.value = true
+  }
+}
 </script>

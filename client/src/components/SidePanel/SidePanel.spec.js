@@ -107,14 +107,35 @@ describe('SidePanel', () => {
   it('opens from the logo and closes from the backdrop', async () => {
     const wrapper = mount(SidePanel)
 
-    expect(wrapper.get('aside').attributes('aria-hidden')).toBe('true')
+    expect(wrapper.get('aside').attributes('aria-hidden')).toBeUndefined()
     expect(wrapper.find('.side-panel-backdrop').exists()).toBe(false)
     await wrapper.get('.logo').trigger('click')
     expect(wrapper.get('aside').classes()).toContain('open')
-    expect(wrapper.get('aside').attributes('aria-hidden')).toBe('false')
+    expect(wrapper.get('aside').attributes('aria-hidden')).toBeUndefined()
     await wrapper.get('.side-panel-backdrop').trigger('click')
-    expect(wrapper.get('aside').attributes('aria-hidden')).toBe('true')
+    expect(wrapper.get('aside').classes()).not.toContain('open')
+    expect(wrapper.get('aside').attributes('aria-hidden')).toBeUndefined()
   })
+
+  it.each(['.logo', '.side-panel-close', '.side-panel-backdrop'])(
+    'keeps focus on the accessible logo when closing with %s',
+    async (closeSelector) => {
+      const wrapper = mount(SidePanel, { attachTo: document.body })
+      const logo = wrapper.get('.logo')
+
+      logo.element.focus()
+      expect(logo.element.closest('[aria-hidden="true"], [inert]')).toBeNull()
+      await logo.trigger('click')
+      wrapper.get('.side-panel-close').element.focus()
+      await wrapper.get(closeSelector).trigger('click')
+
+      expect(document.activeElement).toBe(logo.element)
+      expect(logo.attributes('aria-expanded')).toBe('false')
+      expect(logo.element.closest('[aria-hidden="true"], [inert]')).toBeNull()
+      expect(wrapper.find('.users-list').exists()).toBe(false)
+      expect(wrapper.find('.tool-tab').exists()).toBe(false)
+    },
+  )
 
   it('opens from a section trigger and supports the close button', async () => {
     const wrapper = mount(SidePanel)
