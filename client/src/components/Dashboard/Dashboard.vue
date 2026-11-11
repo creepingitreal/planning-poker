@@ -1,7 +1,9 @@
 <template>
   <section class="dashboard">
-    <Icon name="logo" path="../../brand/logo.svg" class="xlarge" />
-    <h1>Welcome to the Scrumble</h1>
+    <div class="dashboard-header">
+      <Icon name="logo" path="../../brand/logo.svg" class="xlarge" />
+      <h1>Welcome to the Scrumble</h1>
+    </div>
 
     <div v-if="roomId" class="dashboard-heading">
       <p>Start a session with the tool your team needs right now.</p>

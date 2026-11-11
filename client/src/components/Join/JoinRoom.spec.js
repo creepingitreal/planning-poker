@@ -11,6 +11,7 @@ import {
 } from '../../js/roomNav.js'
 import App from '../../App.vue'
 import JoinRoom from './JoinRoom.vue'
+import { currentMessage } from '../../js/messages.js'
 
 vi.mock('../../js/generators.js', () => ({
   generateRoomId: () => 'generated-room',
@@ -25,7 +26,6 @@ const mountJoin = async (path = '/join') => {
 
 beforeEach(() => {
   localStorage.setItem('poker_client_id', 'known-client')
-  vi.stubGlobal('alert', vi.fn())
 })
 
 describe('JoinRoom', () => {
@@ -73,7 +73,10 @@ describe('JoinRoom', () => {
 
       await wrapper.get(selector).trigger('click')
 
-      expect(alert).toHaveBeenCalledWith('Please enter your name')
+      expect(currentMessage.value).toMatchObject({
+        message: 'Please enter your name',
+        variant: 'warning',
+      })
       expect(socket.emit).not.toHaveBeenCalled()
     },
   )
@@ -84,7 +87,10 @@ describe('JoinRoom', () => {
 
     await wrapper.get('.button-section > button').trigger('click')
 
-    expect(alert).toHaveBeenCalledWith('Please enter a room name')
+    expect(currentMessage.value).toMatchObject({
+      message: 'Please enter a room name',
+      variant: 'warning',
+    })
     expect(socket.emit).not.toHaveBeenCalled()
   })
 
@@ -183,7 +189,10 @@ describe('JoinRoom', () => {
     const listeners = [...socket.on.mock.calls]
 
     await receiveSocketEvent('roomError', { message: 'Room not found.' })
-    expect(alert).toHaveBeenCalledWith('Room not found.')
+    expect(currentMessage.value).toMatchObject({
+      message: 'Room not found.',
+      variant: 'error',
+    })
     wrapper.unmount()
 
     for (const [event, handler] of listeners) {

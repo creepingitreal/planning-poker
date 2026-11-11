@@ -27,12 +27,22 @@
       />
       <RouterView />
     </main>
+    <MessageModal
+      :open="!!currentMessage"
+      :message="currentMessage?.message ?? ''"
+      :title="currentMessage?.title ?? ''"
+      :variant="currentMessage?.variant ?? 'info'"
+      :close-label="currentMessage?.closeLabel ?? 'OK'"
+      @dismiss="dismissMessage"
+    />
   </div>
 </template>
 
 <script setup>
 import './style.css'
 import SidePanel from './components/SidePanel/SidePanel.vue'
+import MessageModal from './components/MessageModal/MessageModal.vue'
+import { currentMessage, dismissMessage } from './js/messages.js'
 import { computed, onUnmounted, ref } from 'vue'
 import socket from '../socket.js'
 import {

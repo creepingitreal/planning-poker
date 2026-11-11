@@ -1,5 +1,5 @@
 import { flushPromises, shallowMount } from '@vue/test-utils'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import socket from '../../../socket.js'
 import { createTestRouter, receiveSocketEvent } from '../../test/helpers.js'
 import {
@@ -12,6 +12,7 @@ import {
 import RetroBoard from '../Retro/RetroBoard.vue'
 import App from '../../App.vue'
 import Room from './Room.vue'
+import { currentMessage } from '../../js/messages.js'
 
 const createSession = (overrides = {}) => ({
   room: { roomId: 'room-one', roomName: 'Team' },
@@ -36,7 +37,6 @@ const mountRoom = async ({
 
 beforeEach(() => {
   localStorage.setItem('poker_client_id', 'browser-client')
-  vi.stubGlobal('alert', vi.fn())
 })
 
 describe('Room', () => {
@@ -158,7 +158,10 @@ describe('Room', () => {
     await receiveSocketEvent('roomError', { message: 'Room not found.' })
     await flushPromises()
 
-    expect(alert).toHaveBeenCalledWith('Room not found.')
+    expect(currentMessage.value).toMatchObject({
+      message: 'Room not found.',
+      variant: 'error',
+    })
     expect(localStorage.getItem('poker_session_room-one')).toBeNull()
     expect(router.currentRoute.value.fullPath).toBe('/join/room-one?tool=retro')
   })
@@ -172,7 +175,10 @@ describe('Room', () => {
 
     await receiveSocketEvent('roomError', { message: 'Action failed.' })
 
-    expect(alert).toHaveBeenCalledWith('Action failed.')
+    expect(currentMessage.value).toMatchObject({
+      message: 'Action failed.',
+      variant: 'error',
+    })
     expect(localStorage.getItem('poker_session_room-one')).not.toBeNull()
     expect(router.currentRoute.value.path).toBe('/room/room-one')
   })

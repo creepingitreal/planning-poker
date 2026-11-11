@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, vi } from 'vitest'
 import { config, enableAutoUnmount } from '@vue/test-utils'
+import { currentMessage, dismissMessage } from '../js/messages.js'
 import {
   activeTool,
   clearCurrentRoom,
@@ -28,7 +29,15 @@ vi.mock('../assets/shared/Icon.vue', () => ({
 enableAutoUnmount(afterEach)
 config.global.stubs.Icon = true
 
+HTMLDialogElement.prototype.showModal = function () {
+  this.open = true
+}
+HTMLDialogElement.prototype.close = function () {
+  this.open = false
+}
+
 beforeEach(() => {
+  while (currentMessage.value) dismissMessage()
   localStorage.clear()
   sessionStorage.clear()
   activeTool.value = 'poker'

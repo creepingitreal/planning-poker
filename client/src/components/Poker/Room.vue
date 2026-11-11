@@ -47,6 +47,7 @@ import {
   setCurrentRoom,
 } from '../../js/roomNav.js'
 import socket from '../../../socket.js'
+import { showMessage } from '../../js/messages.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -125,7 +126,7 @@ const handleRoomJoined = ({ roomId, roomName }) => {
 }
 
 const handleRoomError = ({ message }) => {
-  alert(message)
+  showMessage(message, { variant: 'error' })
 
   if (!joined.value) {
     localStorage.removeItem(`poker_session_${route.params.roomId}`)

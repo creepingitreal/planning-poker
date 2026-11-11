@@ -10,7 +10,7 @@
           v-if="!roomId"
           v-model="roomNameInput"
           placeholder="Sprint Name"
-          @keyup.enter="joinRoom"
+          @keyup.enter="createRoom"
         />
 
         <input
@@ -18,13 +18,11 @@
           type="text"
           placeholder="Username *"
           autocomplete="given-name"
-          @keyup.enter="joinRoom"
+          @keyup.enter="createRoom"
         />
       </div>
 
       <div class="button-section">
-        <button @click="joinRoom">Join</button>
-
         <div v-if="!roomId" class="container-create-btn">
           <input
             id="invite-only"
@@ -39,6 +37,7 @@
           </p>
           <button @click="createRoom" class="accent">Create Room</button>
         </div>
+        <button @click="joinRoom">Join</button>
       </div>
     </div>
   </section>
@@ -51,6 +50,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { generateRoomId, randomNameGenerator } from '../../js/generators.js'
 import { useRoute, useRouter } from 'vue-router'
 import { setCurrentRoom } from '../../js/roomNav.js'
+import { showMessage } from '../../js/messages.js'
 
 const route = useRoute(false)
 const router = useRouter()
@@ -82,12 +82,12 @@ const saveSession = (roomData, userName) => {
 
 const joinRoom = () => {
   if (!name.value) {
-    alert('Please enter your name')
+    showMessage('Please enter your name', { variant: 'warning' })
     return
   }
 
   if (!roomId.value && !roomNameInput.value) {
-    alert('Please enter a room name')
+    showMessage('Please enter a room name', { variant: 'warning' })
     return
   }
 
@@ -104,7 +104,7 @@ const joinRoom = () => {
 
 const createRoom = () => {
   if (!name.value) {
-    alert('Please enter your name')
+    showMessage('Please enter your name', { variant: 'warning' })
     return
   }
 
@@ -135,7 +135,7 @@ const handleRoomError = ({ message }) => {
     localStorage.removeItem(`poker_session_${route.params.roomId}`)
     router.replace('/join')
   }
-  alert(message)
+  showMessage(message, { variant: 'error' })
 }
 
 const handleRoomNameResolved = ({ roomName: resolvedName, error }) => {
