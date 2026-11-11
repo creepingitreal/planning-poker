@@ -2,7 +2,7 @@
   <div class="content-item">
     <div class="content-title" :class="title.toLowerCase()" @click="$emit('openPanel')">
       <Icon :name="iconName" class-name="icon small" />
-      <h1 v-if="showPanel">{{title}}</h1>
+      <h2 v-if="showPanel" class="title">{{title}}</h2>
     </div>
 
     <slot v-if="showPanel" />

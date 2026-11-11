@@ -88,10 +88,18 @@
       }
     }
 
-    .content-title {
-      justify-content: flex-start;
-      gap: 20px;
-      cursor: unset;
+    .side-panel-content {
+      .content-item {
+        .content-title {
+          justify-content: flex-start;
+          gap: 20px;
+          cursor: unset;
+
+          .title {
+            text-transform: capitalize;
+          }
+        }
+      }
     }
   }
 }
