@@ -1,4 +1,8 @@
 {
+  "dependencies": {
+    "css-tree": "^3.1.0",
+    "culori": "^4.0.2"
+  },
   "scripts": {
     "dev": "cd client && npm run dev",
     "server": "cd server && npm run dev",

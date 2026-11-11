@@ -64,6 +64,12 @@ asset requirements, and build steps.
 
 ### Local Development
 
+Install the shared token-parsing dependencies from the repository root first:
+
+```bash
+npm install
+```
+
 **Server**
 
 ```bash

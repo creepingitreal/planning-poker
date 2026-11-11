@@ -1,3 +1,7 @@
+import { brandColours } from './brandColours.mjs'
+
+export const prohibitedColours = brandColours
+
 export const getContrastingTextColour = (colour) => {
   if (!/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(colour ?? '')) return '#000000'
 
@@ -32,7 +36,7 @@ export const generateUniqueColour = (takenColours) => {
     colour = `#${Math.floor(Math.random() * 0x1000000)
       .toString(16)
       .padStart(6, '0')}`
-  } while (normalizedColours.has(colour))
+  } while (normalizedColours.has(colour) || prohibitedColours.includes(colour))
 
   return colour
 }
@@ -48,7 +52,11 @@ export const allocateParticipantColours = (names, assignedColours = {}) => {
 
   names.forEach((name) => {
     const assignedColour = assignedColours[name]?.toLowerCase()
-    if (assignedColour && !retainedColours.has(assignedColour)) {
+    if (
+      assignedColour &&
+      !retainedColours.has(assignedColour) &&
+      !prohibitedColours.includes(assignedColour)
+    ) {
       colours[name] = assignedColour
       retainedColours.add(assignedColour)
       return

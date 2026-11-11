@@ -1,5 +1,9 @@
 FROM node:18-alpine AS builder
 
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --omit=dev
+
 WORKDIR /app/client
 
 ARG VITE_SERVER_URL

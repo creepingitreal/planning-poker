@@ -5,17 +5,18 @@ Vue 3 + Vite frontend for Planning Poker, Retro Board, and Spin the Wheel.
 ## Rebrand Your Fork
 
 All ordinary branding lives in [src/brand/](src/brand/). Replace these files, preview,
-then rebuild and deploy the frontend. No Vue component changes are needed.
+then rebuild and deploy. No Vue component changes are needed.
 
 | File                                     | Purpose                                                      |
 | ---------------------------------------- | ------------------------------------------------------------ |
-| [tokens.css](src/brand/tokens.css)       | Colours, font families, radii, and shadows                   |
+| [tokens.css](src/brand/tokens.css)       | All colours, font families, radii, and shadows               |
 | [config.json](src/brand/config.json)     | Browser title (`name`) and logo alternative text (`logoAlt`) |
 | [logo.svg](src/brand/logo.svg)           | Full logo shown when the sidebar is expanded                 |
 | [logo-mark.svg](src/brand/logo-mark.svg) | Compact mark shown when the sidebar is collapsed             |
 | [favicon.svg](src/brand/favicon.svg)     | Browser tab icon                                             |
 
 ```sh
+npm --prefix .. install
 npm install
 npm run dev
 ```
@@ -26,7 +27,7 @@ the page to update the browser title. Restart Vite if your editor does not pick 
 
 ### Token Contract
 
-Keep the variable names in `tokens.css`; change their values. Tokens describe a role,
+Keep the variable names in [tokens.css](src/brand/tokens.css); change their values. Tokens describe a role,
 not a particular brand colour. An arbitrary company token export needs a mapping to
 these names. The supplied file contains the complete supported contract:
 
@@ -65,9 +66,14 @@ Existing brand tokens can live above the app mapping in the same file:
 ```
 
 This example overrides only four values; retain the rest of the supplied sheet.
+The token sheet is the single source of truth. Participant allocation automatically
+excludes opaque custom-property colours from it on both client and server, retrying
+when a generated colour matches. Transparent colours and shadows are ignored.
+No separate palette needs updating when replacing the brand folder.
+Rebuild the frontend and restart the backend after changing the token sheet.
 Check foreground/background pairs together, including muted text and controls on
 raised surfaces. Brand tokens do not automatically guarantee accessible contrast.
-Participant colours are deliberately independent of the brand palette. Vote cards,
+Participant colours are generated separately from the brand palette. Vote cards,
 retro text, and wheel labels choose black or white based on the participant colour's
 relative luminance. The participant colour contract is hexadecimal RGB (`#rrggbb`;
 the contrast helper also accepts `#rgb`).

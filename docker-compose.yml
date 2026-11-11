@@ -24,6 +24,7 @@ services:
       - ./server:/app/server
       - /app/server/node_modules
       - ./shared:/app/shared:ro
+      - ./client/src/brand:/app/client/src/brand:ro
 
 networks:
   app-network:
