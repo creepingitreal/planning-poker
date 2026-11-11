@@ -68,6 +68,7 @@
 <script setup>
 import { ref } from 'vue'
 import { brand } from '../../brand/index.js'
+import { activeTool, currentRoom, showTools } from '../../js/roomNav.js'
 import Users from '../Users/Users.vue'
 import SubNav from '../SubNav/SubNav.vue'
 import './side-panel.css'
