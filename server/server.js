@@ -1,155 +1,66 @@
-import express from 'express';
-import http from 'http';
-import {Server} from 'socket.io';
-import cors from 'cors';
-import {fileURLToPath} from 'url';
-import path, { dirname, join } from 'path';
+import express from 'express'
+import http from 'node:http'
+import { Server } from 'socket.io'
+import cors from 'cors'
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { registerPokerHandlers, registerDisconnectHandler } from './poker.js'
+import {
+  registerRetroHandlers,
+  ensureRetroState,
+  broadcastBoard,
+  broadcastTimer,
+  cleanupRetroTimerIfRoomEmpty,
+} from './retro.js'
 
-const app = express();
+const app = express()
 
-app.use(cors({
+app.use(
+  cors({
     origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
-}));
+  }),
+)
 
 app.get('/', (req, res) => {
-    res.status(200).send('Planning Poker backend is running');
-});
+  res.status(200).send('Planning Poker backend is running')
+})
 
 app.get('/health', (req, res) => {
-    res.sendStatus(200);
-});
+  res.sendStatus(200)
+})
 
-app.use(express.static(join(__dirname, '../client/dist')));
-
-app.get('/{*path}', (req, res) => {
-    res.sendFile(join(__dirname, '../client/dist', 'index.html'));
-});
-const server = http.createServer(app);
+const server = http.createServer(app)
 
 const io = new Server(server, {
-    cors: {
-        origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
-        methods: ['GET', 'POST'],
-    },
-});
-
-const rooms = {};
-const roomNames = {};
-const lockedRooms = new Set();
+  cors: {
+    origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+    methods: ['GET', 'POST'],
+  },
+})
 
 io.on('connection', (socket) => {
-    console.log('User connected:', socket.id);
+  console.log('User connected:', socket.id)
 
-    const broadcastRoom = (roomId) => {
-        const shareUrl = `${process.env.PUBLIC_BASE_URL ?? 'http://localhost:5173'}/room/${roomId}`;
-        io.to(roomId).emit('updateRoom', {
-            players: rooms[roomId],
-            shareUrl,
-            roomName: roomNames[roomId]
-        });
-    };
+  // Every room always supports both tools, so whenever a room is created or
+  // joined we make sure retro state exists and push the current snapshot.
+  const syncRetroState = (roomId) => {
+    ensureRetroState(roomId)
+    broadcastBoard(io, roomId)
+    broadcastTimer(io, roomId)
+  }
 
-    socket.on('createRoom', ({room, user}) => {
-        if (rooms[room.roomId]) {
-            socket.emit('roomError', {message: `Room "${room.roomName}" already exists.`});
-            return;
-        }
+  registerPokerHandlers(io, socket, {
+    onRoomCreated: syncRetroState,
+    onRoomJoined: syncRetroState,
+  })
 
-        rooms[room.roomId] = {};
-        roomNames[room.roomId] = room.roomName;
+  registerRetroHandlers(io, socket)
 
-        if (room.locked) {
-            lockedRooms.add(room.roomId);
-        }
+  registerDisconnectHandler(io, socket, {
+    onParticipantLeft: cleanupRetroTimerIfRoomEmpty,
+  })
+})
 
-        rooms[room.roomId][socket.id] = {user, vote: null};
-
-        socket.join(room.roomId);
-
-        socket.emit('roomJoined', {roomId: room.roomId, roomName: room.roomName});
-
-        broadcastRoom(room.roomId);
-    });
-
-    socket.on('getRoomName', (roomId) => {
-        const roomName = roomNames[roomId];
-        if (roomName) {
-            socket.emit('roomNameResolved', {roomName});
-        } else {
-            socket.emit('roomNameResolved', {error: 'Room not found'});
-        }
-    });
-
-    socket.on('joinRoom', ({room, user, fromLink = false}) => {
-        let roomId = room.roomId;
-
-        if (!roomId && room.roomName) {
-            roomId = roomNames[room.roomName];
-            if (!roomId) {
-                socket.emit('roomError', {message: 'Room not found.'});
-                return;
-            }
-        }
-
-        if (!rooms[roomId]) {
-            socket.emit('roomError', {message: 'Room not found.'});
-            return;
-        }
-
-        if (lockedRooms.has(roomId) && !fromLink) {
-            socket.emit('roomError', {message: 'This room is invite-only.'});
-            return;
-        }
-
-        socket.join(roomId);
-        rooms[roomId][socket.id] = {user, vote: null};
-
-        socket.emit('roomJoined', {roomId, roomName: roomNames[roomId] ?? roomId});
-
-        broadcastRoom(roomId);
-    });
-
-    socket.on('castVote', ({roomId, vote}) => {
-        if (rooms[roomId]?.[socket.id]) {
-            rooms[roomId][socket.id].vote = vote;
-        }
-
-        broadcastRoom(roomId)
-    });
-
-    socket.on('revealVotes', ({roomId, visibility}) => {
-        if (rooms[roomId]) {
-            io.to(roomId).emit('toggleVisibility', visibility)
-        }
-    });
-
-    socket.on('clearVotes', ({roomId}) => {
-        Object.keys(rooms[roomId]).forEach(user => {
-            rooms[roomId][user].vote = null;
-        })
-
-        broadcastRoom(roomId)
-
-        io.to(roomId).emit('toggleVisibility', false);
-    });
-
-    socket.on('disconnect', () => {
-        for (const roomId in rooms) {
-            if (rooms[roomId][socket.id]) {
-                delete rooms[roomId][socket.id];
-                broadcastRoom(roomId)
-            }
-        }
-    });
-
-    socket.on('error', (error) => {
-        console.error('Socket error:', error);
-    });
-});
-
-const PORT = process.env.PORT ?? 8000;
+const PORT = process.env.PORT ?? 8000
 server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+  console.log(`Server is running on port ${PORT}`)
+})

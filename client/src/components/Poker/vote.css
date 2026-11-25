@@ -1,0 +1,27 @@
+.vote {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-action-strong);
+  padding: unset;
+  width: 30px;
+  height: 40px;
+  margin-bottom: 10px;
+  border-radius: var(--radius-control);
+  color: var(--color-action-subtle);
+  transition:
+    background-color 300ms ease-in-out,
+    color 300ms ease-in-out;
+
+  &.visible {
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
+    @media screen and (min-width: 640px) {
+      font-weight: 600;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
