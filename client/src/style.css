@@ -18,7 +18,6 @@ body {
   background-color: var(--color-page);
   color: var(--color-text);
   font-family: var(--font-body);
-  box-sizing: border-box;
 }
 
 .nav-bar {

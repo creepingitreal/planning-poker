@@ -41,12 +41,11 @@
     <input
       v-model="newName"
       type="text"
-      id="manual-name-input"
       class="manual-user-input"
       placeholder="Add someone outside the room"
       aria-label="Add someone outside the room"
     />
-    <button type="submit" class="icon-only">+</button>
+    <button type="submit" class="icon-only" aria-label="Add person">+</button>
   </form>
 </template>
 

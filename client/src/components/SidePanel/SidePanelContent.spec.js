@@ -9,7 +9,7 @@ describe('SidePanelContent', () => {
       slots: { default: '<p>Panel content</p>' },
     })
 
-    expect(wrapper.find('h1').exists()).toBe(false)
+    expect(wrapper.find('h2').exists()).toBe(false)
     expect(wrapper.text()).not.toContain('Panel content')
     await wrapper.get('.content-title').trigger('click')
     expect(wrapper.emitted('openPanel')).toEqual([[]])
@@ -21,8 +21,8 @@ describe('SidePanelContent', () => {
       slots: { default: '<p>Panel content</p>' },
     })
 
-    expect(wrapper.get('h1').text()).toBe('Tools')
+    expect(wrapper.get('h2').text()).toBe('Tools')
     expect(wrapper.text()).toContain('Panel content')
-    expect(wrapper.get('.content-title').classes()).toContain('tools')
+    expect(wrapper.get('.content-item').classes()).toContain('tools')
   })
 })

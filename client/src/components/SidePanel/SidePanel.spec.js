@@ -140,7 +140,7 @@ describe('SidePanel', () => {
   it('opens from a section trigger and supports the close button', async () => {
     const wrapper = mount(SidePanel)
 
-    await wrapper.get('.content-title.users').trigger('click')
+    await wrapper.get('.content-item.users .content-title').trigger('click')
     expect(wrapper.get('aside').classes()).toContain('open')
     await wrapper.get('[aria-label="Close side panel"]').trigger('click')
     expect(wrapper.get('aside').classes()).not.toContain('open')

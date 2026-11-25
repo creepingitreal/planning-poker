@@ -61,35 +61,31 @@
   gap: 8px;
 
   input.manual-user-input {
-    padding: 2px;
     min-width: 0;
     width: 100%;
+    padding: 2px;
+    border: 1px solid var(--color-border);
     background-color: transparent;
     color: var(--color-action-subtle);
+    font: inherit;
 
     &::placeholder {
-      padding: 2px;
       font-size: 0.75rem;
       color: var(--color-text-muted);
     }
 
     &:focus {
-      &::placeholder {
-        color: var(--color-text-muted);
-      }
       outline: 1px solid var(--color-action-subtle);
-    } 
+    }
   }
 
   button {
-  /* outline: 1px solid var(--color-action-subtle); */
-  border-radius: 0 var(--radius-input) var(--radius-input) 0;
-  min-width: auto;
-  width: auto;
-  min-height: 42px;
-  max-height: 42px;
-  padding: 8px 14px;
-  border-radius: var(--radius-control);
-  white-space: nowrap;
+    min-width: auto;
+    width: auto;
+    min-height: 42px;
+    max-height: 42px;
+    padding: 8px 14px;
+    border-radius: var(--radius-control);
+    white-space: nowrap;
   }
 }
