@@ -28,6 +28,37 @@ app.get('/health', (req, res) => {
   res.sendStatus(200)
 })
 
+// The combined image (root Dockerfile, e.g. Render) bundles the built client;
+// the standalone backend image (AWS) does not, so serve it only when present.
+const clientDist = fileURLToPath(new URL('../client/dist/', import.meta.url))
+
+if (existsSync(join(clientDist, 'index.html'))) {
+  const noCache = 'no-cache, no-store, must-revalidate'
+  app.use(
+    '/assets',
+    express.static(join(clientDist, 'assets'), {
+      fallthrough: false,
+      immutable: true,
+      maxAge: '1y',
+    }),
+  )
+  app.use(
+    express.static(clientDist, {
+      setHeaders(res, path) {
+        if (path.endsWith('index.html')) res.setHeader('Cache-Control', noCache)
+      },
+    }),
+  )
+  app.get('/{*path}', (req, res) => {
+    res.setHeader('Cache-Control', noCache)
+    res.sendFile(join(clientDist, 'index.html'))
+  })
+} else {
+  app.get('/', (req, res) => {
+    res.status(200).send('Tools Platform backend is running')
+  })
+}
+
 const server = http.createServer(app)
 
 const io = new Server(server, {
