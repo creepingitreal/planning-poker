@@ -1,6 +1,6 @@
 <template>
   <section class="dashboard">
-    <div v-if="roomId" class="dashboard-heading">
+    <div v-if="roomId" class="dashboard-content">
       <p>Start a session with the tool your team needs right now.</p>
       <button
         v-if="roomId"
@@ -35,8 +35,6 @@
 import './dashboard.css'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import BrandLogo from '@brand/logo.svg?component'
-import { brand } from '../../brand/index.js'
 import { clearCurrentRoom, currentRoom } from '../../js/roomNav.js'
 import JoinRoom from '../Join/JoinRoom.vue'
 

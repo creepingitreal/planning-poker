@@ -16,9 +16,6 @@ describe('Dashboard', () => {
       const wrapper = mount(Dashboard, { global: { plugins: [router] } })
 
       expect(wrapper.get('.dashboard').isVisible()).toBe(true)
-      expect(wrapper.get('.dashboard-header > h1').text()).toBe(
-        'Welcome to the Scrumble',
-      )
       expect(wrapper.findComponent(JoinRoom).exists()).toBe(true)
       expect(wrapper.findAll('.dashboard-tool')).toHaveLength(0)
       expect(wrapper.find('.dashboard-new-room').exists()).toBe(false)
