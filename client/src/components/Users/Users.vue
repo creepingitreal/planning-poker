@@ -20,7 +20,7 @@
       <span>{{ name }}</span>
       <button
         v-if="allowManual"
-        class="icon-only remove-manual-user"
+        class="icon-only user-icon-btn remove-manual-user"
         type="button"
         :aria-label="`Remove ${name}`"
         @click="removeManualName(name)"
@@ -45,7 +45,13 @@
       placeholder="Add someone outside the room"
       aria-label="Add someone outside the room"
     />
-    <button type="submit" class="icon-only" aria-label="Add person">+</button>
+    <button
+      type="submit"
+      class="icon-only user-icon-btn"
+      aria-label="Add person"
+    >
+      +
+    </button>
   </form>
 </template>
 
