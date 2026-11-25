@@ -10,10 +10,10 @@
       <button
         v-if="roomId"
         type="button"
-        class="outline dashboard-new-room"
+        class="link dashboard-new-room"
         @click="createNewRoom"
       >
-        + Create new room
+        + Start a new session
       </button>
     </div>
 

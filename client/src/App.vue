@@ -9,14 +9,14 @@
 
           <button
             v-if="currentRoom.roomName"
-            class="share-btn"
+            class="link"
             @click="copyLink"
           >
             <Icon name="link-icon" class="icon" />
             {{ shareBtnText }}
           </button>
 
-          <RouterLink v-if="isRoomRoute" to="/dashboard" class="nav-link-btn">
+          <RouterLink v-if="isRoomRoute" to="/dashboard" class="link">
             <span aria-hidden="true">←</span>
             Back to dashboard
           </RouterLink>
