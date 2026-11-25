@@ -15,8 +15,49 @@ describe('Poker', () => {
 
     expect(
       wrapper.findAll('.vote-option').map((button) => button.text()),
-    ).toEqual(['1', '2', '3', '5', '8', '13', '21', '34', '55', '89', '?'])
+    ).toEqual(['1', '2', '3', '5', '8', '13', '21', '34', '55', '89', '?', ''])
+    expect(
+      wrapper
+        .findAll('.vote-option')
+        .at(-1)
+        .find('[name="coffee-icon"]')
+        .exists(),
+    ).toBe(true)
     expect(wrapper.get('.reveal-btn').element.disabled).toBe(true)
+  })
+
+  it('sends a coffee break vote', async () => {
+    const wrapper = mountPoker()
+    const option = wrapper.findAll('.vote-option').at(-1)
+
+    await option.trigger('click')
+
+    expect(socket.emit).toHaveBeenLastCalledWith('castVote', {
+      roomId: 'room-one',
+      vote: 'coffee',
+    })
+    expect(option.classes()).toContain('selected')
+  })
+
+  it('colours the vote options with the current player colour', () => {
+    const wrapper = mountPoker({
+      'test-socket': { user: 'Alex', vote: null, color: '#123456' },
+      other: { user: 'Sam', vote: null, color: '#abcdef' },
+    })
+
+    expect(
+      wrapper
+        .findAll('.vote-option')
+        .map((option) => option.element.style.getPropertyValue('--vote-bg')),
+    ).toEqual(Array(12).fill('#123456'))
+  })
+
+  it('keeps the default option colour before the player joins', () => {
+    const wrapper = mountPoker()
+
+    expect(
+      wrapper.get('.vote-option').element.style.getPropertyValue('--vote-bg'),
+    ).toBe('')
   })
 
   it('sends the selected vote and highlights its button', async () => {
