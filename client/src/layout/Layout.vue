@@ -1,4 +1,10 @@
 <template>
+  <NavBar
+    :room-id="currentRoom.roomId"
+    :room-name="currentRoom.roomName"
+    :active-tool="activeTool"
+    :is-room-route="isRoomRoute"
+  />
   <main>
     <SidePanel
       v-if="currentRoom.roomId"
@@ -14,6 +20,7 @@
 </template>
 
 <script setup>
+import NavBar from '../components/NavBar/NavBar.vue'
 import SidePanel from '../components/SidePanel/SidePanel.vue'
 import { computed, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'

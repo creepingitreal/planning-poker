@@ -16,9 +16,6 @@ describe('Dashboard', () => {
       const wrapper = mount(Dashboard, { global: { plugins: [router] } })
 
       expect(wrapper.get('.dashboard').isVisible()).toBe(true)
-      expect(wrapper.get('.dashboard > h1').text()).toBe(
-        'Welcome to the Scrumble',
-      )
       expect(wrapper.findComponent(JoinRoom).exists()).toBe(true)
       expect(wrapper.findAll('.dashboard-tool')).toHaveLength(0)
       expect(wrapper.find('.dashboard-new-room').exists()).toBe(false)
@@ -47,7 +44,9 @@ describe('Dashboard', () => {
     const router = await createTestRouter('/dashboard?roomId=room-one')
     const wrapper = mount(Dashboard, { global: { plugins: [router] } })
 
-    await wrapper.get('.dashboard-new-room').trigger('click')
+    const newRoomButton = wrapper.get('.dashboard-new-room')
+    expect(newRoomButton.text()).toBe('+ Start a new session')
+    await newRoomButton.trigger('click')
     await flushPromises()
 
     expect(currentRoom.value).toEqual({ roomId: '', roomName: '' })
@@ -68,7 +67,7 @@ describe('Dashboard', () => {
       const wrapper = mount(App, { global: { plugins: [router] } })
 
       expect(wrapper.findComponent(Dashboard).exists()).toBe(true)
-      expect(wrapper.get('.dashboard > h1').text()).toBe(
+      expect(wrapper.get('.dashboard-header > h1').text()).toBe(
         'Welcome to the Scrumble',
       )
       expect(wrapper.findComponent(JoinRoom).exists()).toBe(true)

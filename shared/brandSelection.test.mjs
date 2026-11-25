@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
-import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readdirSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { test } from 'node:test'
 import { BRAND_FILES, DEFAULT_BRAND, resolveBrand } from './brandSelection.mjs'
 
@@ -12,8 +13,16 @@ const createBrandsRoot = (files = BRAND_FILES) => {
   return root
 }
 
-test('ships complete scrumble and procode brands', () => {
-  for (const id of ['scrumble', 'procode']) {
+test('ships complete brands, including the default', () => {
+  const brandsRoot = fileURLToPath(
+    new URL('../client/src/brand/', import.meta.url),
+  )
+  const shipped = readdirSync(brandsRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+
+  assert.ok(shipped.includes(DEFAULT_BRAND))
+  for (const id of shipped) {
     assert.equal(resolveBrand(id).id, id)
   }
 })
