@@ -1,41 +1,26 @@
 :root {
-  /* Procode palette */
-  --procode-dark-blue: #0e216d;
-  --procode-primary-blue: #122c91;
-  --procode-secondary-blue: #2a6fdb;
-  --procode-accent-blue: #48d6d1;
-  --procode-black: #111111;
-  --procode-white: #ffffff;
-  --procode-lightest-grey: #f5f5f5;
-  --procode-medium-grey: #adadad;
-  --procode-dark-grey: #5e6266;
-  --procode-soft-yellow: #faf9e4;
-  --procode-warning: #ad5000;
+  --color-page: #0e216d;
+  --color-surface: #122c91;
+  --color-surface-raised: #f5f5f5;
+  --color-card: #ffffff;
+  --color-text: #ffffff;
   /* Navy tint: keeps muted text readable on the dark-blue page */
-  --procode-slate: #8b95bf;
-
-  /* App token contract */
-  --color-page: var(--procode-dark-blue);
-  --color-surface: var(--procode-primary-blue);
-  --color-surface-raised: var(--procode-lightest-grey);
-  --color-card: var(--procode-white);
-  --color-text: var(--procode-white);
-  --color-text-muted: var(--procode-slate);
-  --color-on-surface-raised: var(--procode-black);
-  --color-action: var(--procode-white);
-  --color-on-action: var(--procode-dark-blue);
-  --color-action-strong: var(--procode-primary-blue);
-  --color-action-subtle: var(--procode-accent-blue);
-  --color-accent: var(--procode-secondary-blue);
-  --color-on-accent: var(--procode-white);
-  --color-border: var(--procode-medium-grey);
+  --color-text-muted: #8b95bf;
+  --color-on-surface-raised: #111111;
+  --color-action: #ffffff;
+  --color-on-action: #0e216d;
+  --color-action-strong: #122c91;
+  --color-action-subtle: #2a6fdb;
+  --color-accent: #48d6d1;
+  --color-on-accent: #ffffff;
+  --color-border: #adadad;
   --color-border-subtle: rgb(14 33 109 / 0.07);
   --color-overlay: rgb(0 0 0 / 0.3);
   --color-success: #2ead4f;
   --color-danger: #e63946;
-  --color-warning: var(--procode-warning);
-  --color-disabled: var(--procode-medium-grey);
-  --color-disabled-strong: var(--procode-dark-grey);
+  --color-warning: #ad5000;
+  --color-disabled: #adadad;
+  --color-disabled-strong: #5e6266;
 
   --font-body: 'Gilroy', ui-sans-serif, system-ui, sans-serif;
   --font-wheel: var(--font-body);
