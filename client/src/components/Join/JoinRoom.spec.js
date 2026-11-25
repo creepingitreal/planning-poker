@@ -9,7 +9,7 @@ import {
   setCurrentRoom,
   wheelManualNames,
 } from '../../js/roomNav.js'
-import App from '../../App.vue'
+import Layout from '../../layout/Layout.vue'
 import JoinRoom from './JoinRoom.vue'
 import { currentMessage } from '../../js/messages.js'
 
@@ -31,7 +31,7 @@ beforeEach(() => {
 describe('JoinRoom', () => {
   it('keeps the users live on the dashboard immediately after creating a room', async () => {
     const router = await createTestRouter('/join')
-    const app = mount(App, {
+    const app = mount(Layout, {
       global: { plugins: [router], stubs: { RouterView: true } },
     })
     const join = mount(JoinRoom, { global: { plugins: [router] } })

@@ -8,7 +8,7 @@ import {
   wheelManualNames,
 } from '../../js/roomNav.js'
 import SidePanel from './SidePanel.vue'
-import App from '../../App.vue'
+import Layout from '../../layout/Layout.vue'
 import socket from '../../../socket.js'
 import { receiveSocketEvent } from '../../test/helpers.js'
 import { brand } from '../../brand/index.js'
@@ -16,7 +16,7 @@ import { brand } from '../../brand/index.js'
 describe('SidePanel', () => {
   it('shows live room participants without opening a board and cleans up its listener', async () => {
     currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
-    const wrapper = mount(App, { global: { stubs: { RouterView: true } } })
+    const wrapper = mount(Layout, { global: { stubs: { RouterView: true } } })
     const listener = socket.on.mock.calls.find(
       ([event]) => event === 'updateRoom',
     )[1]
@@ -48,7 +48,7 @@ describe('SidePanel', () => {
     currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
     activeTool.value = 'wheel'
     roomPlayers.value = { alex: { user: 'Alex', color: '#123456' } }
-    const wrapper = mount(App, { global: { stubs: { RouterView: true } } })
+    const wrapper = mount(Layout, { global: { stubs: { RouterView: true } } })
 
     await wrapper.get('.logo').trigger('click')
     await wrapper.get('.add-user-form input').setValue('  Guest  ')

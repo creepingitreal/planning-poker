@@ -18,15 +18,7 @@
         </nav>
       </div>
     </div>
-    <main>
-      <SidePanel
-        v-if="currentRoom.roomId"
-        :players="roomPlayers"
-        :allow-manual="activeTool === 'wheel'"
-        v-model:manual-names-arr="wheelManualNames"
-      />
-      <RouterView />
-    </main>
+    <RouterView />
     <MessageModal
       :open="!!currentMessage"
       :message="currentMessage?.message ?? ''"
@@ -40,24 +32,10 @@
 
 <script setup>
 import './style.css'
-import SidePanel from './components/SidePanel/SidePanel.vue'
 import MessageModal from './components/MessageModal/MessageModal.vue'
 import { currentMessage, dismissMessage } from './js/messages.js'
-import { computed, onUnmounted, ref } from 'vue'
-import socket from '../socket.js'
-import {
-  activeTool,
-  currentRoom,
-  roomPlayers,
-  wheelManualNames,
-} from './js/roomNav.js'
-
-const handleUpdateRoom = ({ players = {} }) => {
-  roomPlayers.value = players
-}
-
-socket.on('updateRoom', handleUpdateRoom)
-onUnmounted(() => socket.off('updateRoom', handleUpdateRoom))
+import { computed, ref } from 'vue'
+import { currentRoom } from './js/roomNav.js'
 
 const shareUrl = ref('')
 const copied = ref(false)

@@ -10,7 +10,7 @@ import {
   wheelManualNames,
 } from '../../js/roomNav.js'
 import RetroBoard from '../Retro/RetroBoard.vue'
-import App from '../../App.vue'
+import Layout from '../../layout/Layout.vue'
 import Room from './Room.vue'
 import { currentMessage } from '../../js/messages.js'
 
@@ -29,7 +29,7 @@ const mountRoom = async ({
   if (session)
     localStorage.setItem('poker_session_room-one', JSON.stringify(session))
   const router = await createTestRouter(path)
-  shallowMount(App, { global: { plugins: [router] } })
+  shallowMount(Layout, { global: { plugins: [router] } })
   const wrapper = shallowMount(Room, { global: { plugins: [router] } })
   await flushPromises()
   return { wrapper, router }
