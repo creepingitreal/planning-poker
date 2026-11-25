@@ -32,8 +32,24 @@ app.get('/health', (req, res) => {
 const clientDist = fileURLToPath(new URL('../client/dist/', import.meta.url))
 
 if (existsSync(join(clientDist, 'index.html'))) {
-  app.use(express.static(clientDist))
+  const noCache = 'no-cache, no-store, must-revalidate'
+  app.use(
+    '/assets',
+    express.static(join(clientDist, 'assets'), {
+      fallthrough: false,
+      immutable: true,
+      maxAge: '1y',
+    }),
+  )
+  app.use(
+    express.static(clientDist, {
+      setHeaders(res, path) {
+        if (path.endsWith('index.html')) res.setHeader('Cache-Control', noCache)
+      },
+    }),
+  )
   app.get('/{*path}', (req, res) => {
+    res.setHeader('Cache-Control', noCache)
     res.sendFile(join(clientDist, 'index.html'))
   })
 } else {
