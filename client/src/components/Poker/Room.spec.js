@@ -6,7 +6,6 @@ import {
   activeTool,
   currentRoom,
   roomPlayers,
-  showTools,
   wheelManualNames,
 } from '../../js/roomNav.js'
 import RetroBoard from '../Retro/RetroBoard.vue'
@@ -81,7 +80,6 @@ describe('Room', () => {
   it('activates the requested tool only after join confirmation', async () => {
     const { wrapper } = await mountRoom()
 
-    expect(showTools.value).toBe(false)
     await receiveSocketEvent('roomJoined', {
       roomId: 'room-one',
       roomName: 'Team',
@@ -89,7 +87,6 @@ describe('Room', () => {
 
     expect(wrapper.find('.room.retro').exists()).toBe(true)
     expect(activeTool.value).toBe('retro')
-    expect(showTools.value).toBe(true)
     expect(currentRoom.value).toEqual({ roomId: 'room-one', roomName: 'Team' })
     expect(wrapper.getComponent(RetroBoard).isVisible()).toBe(true)
     expect(
@@ -200,7 +197,6 @@ describe('Room', () => {
     }
     expect(roomPlayers.value).toEqual({ alex: { user: 'Alex' } })
     expect(wheelManualNames.value).toEqual(['Guest'])
-    expect(showTools.value).toBe(false)
     expect(localStorage.getItem('poker_session_room-one')).not.toBeNull()
   })
 })

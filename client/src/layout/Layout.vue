@@ -5,7 +5,9 @@
       :players="roomPlayers"
       :allow-manual="activeTool === 'wheel'"
       :manual-names-arr="wheelManualNames"
+      :active-tool="selectedTool"
       @update:manual-names-arr="updateWheelManualNames"
+      @select-tool="selectTool"
     />
     <RouterView />
   </main>
@@ -13,7 +15,8 @@
 
 <script setup>
 import SidePanel from '../components/SidePanel/SidePanel.vue'
-import { onUnmounted } from 'vue'
+import { computed, onUnmounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import socket from '../../socket.js'
 import {
   activeTool,
@@ -21,6 +24,21 @@ import {
   roomPlayers,
   wheelManualNames,
 } from '../js/roomNav.js'
+
+const route = useRoute()
+const router = useRouter()
+
+const isRoomRoute = computed(() => route.path.startsWith('/room/'))
+const selectedTool = computed(() => (isRoomRoute.value ? activeTool.value : ''))
+
+const selectTool = (tool) => {
+  if (isRoomRoute.value) {
+    activeTool.value = tool
+    return
+  }
+
+  router.push({ path: `/room/${currentRoom.value.roomId}`, query: { tool } })
+}
 
 const handleUpdateRoom = ({ players = {} }) => {
   roomPlayers.value = players

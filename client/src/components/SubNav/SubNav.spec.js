@@ -5,7 +5,6 @@ import SubNav from './SubNav.vue'
 const mountNav = (props = {}) =>
   mount(SubNav, {
     props: {
-      showTools: true,
       hasRoom: true,
       activeTool: 'retro',
       tabNames: ['poker', 'retro', 'wheel'],
@@ -24,12 +23,9 @@ describe('SubNav', () => {
     expect(wrapper.get('.tool-tab.active').text()).toBe('Retro Board')
   })
 
-  it.each([{ showTools: false }, { hasRoom: false }])(
-    'hides tools for %j',
-    (props) => {
-      expect(mountNav(props).find('nav').exists()).toBe(false)
-    },
-  )
+  it('hides tools without a room', () => {
+    expect(mountNav({ hasRoom: false }).find('nav').exists()).toBe(false)
+  })
 
   it('emits the requested tool without changing the active prop', async () => {
     const wrapper = mountNav()

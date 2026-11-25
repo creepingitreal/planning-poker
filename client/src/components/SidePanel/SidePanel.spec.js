@@ -1,22 +1,29 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import {
   activeTool,
   currentRoom,
   roomPlayers,
-  showTools,
   wheelManualNames,
 } from '../../js/roomNav.js'
 import SidePanel from './SidePanel.vue'
 import Layout from '../../layout/Layout.vue'
 import socket from '../../../socket.js'
-import { receiveSocketEvent } from '../../test/helpers.js'
+import { createTestRouter, receiveSocketEvent } from '../../test/helpers.js'
 import { brand } from '../../brand/index.js'
+
+const mountLayout = async (path = '/room/room-one') => {
+  const router = await createTestRouter(path)
+  const wrapper = mount(Layout, {
+    global: { plugins: [router], stubs: { RouterView: true } },
+  })
+  return Object.assign(wrapper, { router })
+}
 
 describe('SidePanel', () => {
   it('shows live room participants without opening a board and cleans up its listener', async () => {
     currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
-    const wrapper = mount(Layout, { global: { stubs: { RouterView: true } } })
+    const wrapper = await mountLayout()
     const listener = socket.on.mock.calls.find(
       ([event]) => event === 'updateRoom',
     )[1]
@@ -48,7 +55,7 @@ describe('SidePanel', () => {
     currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
     activeTool.value = 'wheel'
     roomPlayers.value = { alex: { user: 'Alex', color: '#123456' } }
-    const wrapper = mount(Layout, { global: { stubs: { RouterView: true } } })
+    const wrapper = await mountLayout()
 
     await wrapper.get('.logo').trigger('click')
     await wrapper.get('.add-user-form input').setValue('  Guest  ')
@@ -146,18 +153,41 @@ describe('SidePanel', () => {
     expect(wrapper.get('aside').classes()).not.toContain('open')
   })
 
-  it('integrates tool selection with shared room navigation', async () => {
+  it('switches tools in place on a room route', async () => {
     currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
-    showTools.value = true
-    const wrapper = mount(SidePanel)
+    activeTool.value = 'poker'
+    const wrapper = await mountLayout('/room/room-one')
 
     await wrapper.get('.logo').trigger('click')
+    expect(wrapper.get('.tool-tab.active').text()).toBe('Planning Poker')
     const wheel = wrapper
       .findAll('.tool-tab')
       .find((button) => button.text() === 'Spin the Wheel')
     await wheel.trigger('click')
+    await flushPromises()
 
     expect(activeTool.value).toBe('wheel')
     expect(wrapper.get('.tool-tab.active').text()).toBe('Spin the Wheel')
+    expect(wrapper.router.currentRoute.value.path).toBe('/room/room-one')
+  })
+
+  it('keeps tools on the dashboard and opens the chosen tool in the room', async () => {
+    currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
+    activeTool.value = 'poker'
+    const wrapper = await mountLayout('/dashboard')
+
+    await wrapper.get('.logo').trigger('click')
+    expect(wrapper.findAll('.tool-tab')).toHaveLength(3)
+    expect(wrapper.find('.tool-tab.active').exists()).toBe(false)
+
+    const retro = wrapper
+      .findAll('.tool-tab')
+      .find((button) => button.text() === 'Retro Board')
+    await retro.trigger('click')
+    await flushPromises()
+
+    expect(wrapper.router.currentRoute.value.fullPath).toBe(
+      '/room/room-one?tool=retro',
+    )
   })
 })

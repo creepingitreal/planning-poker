@@ -39,7 +39,6 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   activeTool,
-  showTools,
   roomPlayers,
   wheelManualNames,
   restoreActiveTool,
@@ -99,7 +98,6 @@ const saveSession = (roomData, userName) => {
 const activateRoom = () => {
   restoreActiveTool(room.value.roomId, route.query.tool)
   persistActiveTool(room.value.roomId)
-  showTools.value = true
 }
 
 const startTimer = () => {
@@ -197,6 +195,5 @@ onUnmounted(() => {
   socket.off('updateRoom', handleUpdateRoom)
   socket.off('updateBoard', handleUpdateBoard)
   socket.off('updateTimer', handleUpdateTimer)
-  showTools.value = false
 })
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="subnav">
-    <nav class="subnav tool-tabs" v-if="showTools && hasRoom">
+    <nav class="subnav tool-tabs" v-if="hasRoom">
       <button
         v-for="tabName in tabNames"
         :key="tabName"
@@ -18,10 +18,6 @@
 import './sub-nav.css'
 
 defineProps({
-  showTools: {
-    type: Boolean,
-    required: true,
-  },
   hasRoom: {
     type: Boolean,
     default: false,

@@ -5,7 +5,6 @@ import {
   activeTool,
   clearCurrentRoom,
   roomPlayers,
-  showTools,
   wheelManualNames,
 } from '../js/roomNav.js'
 
@@ -43,7 +42,6 @@ beforeEach(() => {
   activeTool.value = 'poker'
   clearCurrentRoom()
   roomPlayers.value = {}
-  showTools.value = false
   wheelManualNames.value = []
 })
 
