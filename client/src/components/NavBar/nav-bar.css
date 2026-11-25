@@ -29,6 +29,22 @@
     }
   }
 
+  .dashboard-logo-link {
+    display: block;
+    color: inherit;
+    border-radius: 8px;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 4px;
+    }
+  }
+
   .room-name-wrapper {
     display: flex;
     flex-direction: column;

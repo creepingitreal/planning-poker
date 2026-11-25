@@ -36,16 +36,25 @@ describe('NavBar', () => {
     expect(wrapper.find('a.link').exists()).toBe(false)
   })
 
-  it('shows a back to dashboard link on room routes', async () => {
+  it('links the logo to the dashboard on room routes', async () => {
     const wrapper = await mountNav({
       roomId: 'room-one',
       roomName: 'Team',
       isRoomRoute: true,
     })
 
-    const backLink = wrapper.get('a.link')
-    expect(backLink.text()).toContain('Back to dashboard')
-    expect(backLink.attributes('href')).toBe('/dashboard')
+    const logoLink = wrapper.get('a.dashboard-logo-link')
+    expect(logoLink.attributes('href')).toBe('/dashboard')
+    expect(logoLink.attributes('title')).toBe('Go to dashboard')
+    expect(logoLink.attributes('aria-label')).toBe('Go to dashboard')
+    expect(wrapper.find('a.link').exists()).toBe(false)
+  })
+
+  it('does not link the logo outside room routes', async () => {
+    const wrapper = await mountNav({ roomId: 'room-one', roomName: 'Team' })
+
+    expect(wrapper.find('.dashboard-logo-link').exists()).toBe(false)
+    expect(wrapper.find('.dashboard-header .icon').exists()).toBe(true)
   })
 
   it.each([

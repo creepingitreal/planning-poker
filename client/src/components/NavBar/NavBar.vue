@@ -2,7 +2,16 @@
   <div class="nav-bar">
     <div class="nav-header" :class="{ 'no-session': !roomId }">
       <div class="dashboard-header">
-        <BrandLogo class="icon xlarge fill-current text-current" />
+        <RouterLink
+          v-if="isRoomRoute"
+          to="/dashboard"
+          class="dashboard-logo-link"
+          title="Go to dashboard"
+          aria-label="Go to dashboard"
+        >
+          <BrandLogo class="icon xlarge fill-current text-current" />
+        </RouterLink>
+        <BrandLogo v-else class="icon xlarge fill-current text-current" />
         <h1>{{ brand.welcome }}</h1>
       </div>
       <nav class="room-name-wrapper">
@@ -14,11 +23,6 @@
           <Icon name="link-icon" class="icon" />
           {{ shareBtnText }}
         </button>
-
-        <RouterLink v-if="isRoomRoute" to="/dashboard" class="link">
-          <span aria-hidden="true">←</span>
-          Back to dashboard
-        </RouterLink>
       </nav>
     </div>
   </div>

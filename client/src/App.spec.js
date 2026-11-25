@@ -30,16 +30,16 @@ describe('App', () => {
     expect(wrapper.get('.nav-bar + main').exists()).toBe(true)
   })
 
-  it('shows a back to dashboard link only on room routes', async () => {
+  it('links the logo back to the dashboard only on room routes', async () => {
     currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
     const { wrapper, router } = await mountApp('/room/room-one?tool=wheel')
 
-    const backLink = wrapper.get('.nav-bar a.link')
-    expect(backLink.text()).toContain('Back to dashboard')
+    const logoLink = wrapper.get('.nav-bar a.dashboard-logo-link')
+    expect(logoLink.attributes('title')).toBe('Go to dashboard')
 
-    await backLink.trigger('click')
+    await logoLink.trigger('click')
     await flushPromises()
     expect(router.currentRoute.value.path).toBe('/dashboard')
-    expect(wrapper.find('.nav-bar a.link').exists()).toBe(false)
+    expect(wrapper.find('.nav-bar a.dashboard-logo-link').exists()).toBe(false)
   })
 })
