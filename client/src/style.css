@@ -53,7 +53,8 @@ body {
     text-transform: uppercase;
   }
 
-  .share-btn {
+  .share-btn,
+  .nav-link-btn {
     background-color: transparent;
     border: none;
     padding: 0;

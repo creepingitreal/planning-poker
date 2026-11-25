@@ -15,6 +15,11 @@
             <Icon name="link-icon" class="icon" />
             {{ shareBtnText }}
           </button>
+
+          <RouterLink v-if="isRoomRoute" to="/dashboard" class="nav-link-btn">
+            <span aria-hidden="true">←</span>
+            Back to dashboard
+          </RouterLink>
         </nav>
       </div>
     </div>
@@ -35,7 +40,11 @@ import './style.css'
 import MessageModal from './components/MessageModal/MessageModal.vue'
 import { currentMessage, dismissMessage } from './js/messages.js'
 import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { currentRoom } from './js/roomNav.js'
+
+const route = useRoute()
+const isRoomRoute = computed(() => route.path.startsWith('/room/'))
 
 const shareUrl = ref('')
 const copied = ref(false)
