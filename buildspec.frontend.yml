@@ -4,6 +4,7 @@ phases:
   pre_build:
     commands:
       - ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+      - IMAGE_TAG="${IMAGE_TAG:-build-$CODEBUILD_BUILD_NUMBER}"
       - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
   build:
     commands:
