@@ -35,7 +35,7 @@ import GameBoard from './Poker.vue'
 import RetroBoard from '../Retro/RetroBoard.vue'
 import SpinTheWheel from '../Wheel/SpinTheWheel.vue'
 import './room.css'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   activeTool,
@@ -44,6 +44,7 @@ import {
   restoreActiveTool,
   persistActiveTool,
   setCurrentRoom,
+  TOOLS,
 } from '../../js/roomNav.js'
 import socket from '../../../socket.js'
 import { showMessage } from '../../js/messages.js'
@@ -95,10 +96,24 @@ const saveSession = (roomData, userName) => {
   )
 }
 
+const syncToolQuery = (tool) => {
+  if (!joined.value || route.query.tool === tool) return
+  router.replace({ query: { ...route.query, tool } })
+}
+
 const activateRoom = () => {
   restoreActiveTool(room.value.roomId, route.query.tool)
   persistActiveTool(room.value.roomId)
+  syncToolQuery(activeTool.value)
 }
+
+watch(activeTool, syncToolQuery)
+watch(
+  () => route.query.tool,
+  (tool) => {
+    if (joined.value && TOOLS.includes(tool)) activeTool.value = tool
+  },
+)
 
 const startTimer = () => {
   socket.emit('startTimer', { roomId: room.value.roomId })

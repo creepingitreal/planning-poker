@@ -94,6 +94,34 @@ describe('Room', () => {
     ).toBe('Alex')
   })
 
+  it('keeps the url in sync with the selected tool', async () => {
+    const { router } = await mountRoom()
+    await receiveSocketEvent('roomJoined', {
+      roomId: 'room-one',
+      roomName: 'Team',
+    })
+
+    activeTool.value = 'poker'
+    await flushPromises()
+    expect(router.currentRoute.value.fullPath).toBe('/room/room-one?tool=poker')
+
+    await router.replace('/room/room-one?tool=wheel')
+    await flushPromises()
+    expect(activeTool.value).toBe('wheel')
+  })
+
+  it('adds the restored tool to the url when none is requested', async () => {
+    localStorage.setItem('poker_active_tool_room-one', 'retro')
+    const { router } = await mountRoom({ path: '/room/room-one' })
+    await receiveSocketEvent('roomJoined', {
+      roomId: 'room-one',
+      roomName: 'Team',
+    })
+    await flushPromises()
+
+    expect(router.currentRoute.value.fullPath).toBe('/room/room-one?tool=retro')
+  })
+
   it('passes server participant, board, and timer updates to the retro tool', async () => {
     const { wrapper } = await mountRoom()
     await receiveSocketEvent('roomJoined', {

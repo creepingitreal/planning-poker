@@ -163,8 +163,22 @@ describe('JoinRoom', () => {
     },
   )
 
-  it('saves a joined session and shows the dashboard before choosing a tool', async () => {
+  it('takes invited users straight to the shared tool', async () => {
     const { wrapper, router } = await mountJoin('/join/room-one?tool=wheel')
+    await wrapper.get('[placeholder="Username *"]').setValue('Alex')
+    await wrapper.get('.button-section > button').trigger('click')
+
+    await receiveSocketEvent('roomJoined', {
+      roomId: 'room-one',
+      roomName: 'Team',
+    })
+    await flushPromises()
+
+    expect(router.currentRoute.value.fullPath).toBe('/room/room-one?tool=wheel')
+  })
+
+  it('saves a joined session and shows the dashboard when no tool is shared', async () => {
+    const { wrapper, router } = await mountJoin('/join/room-one')
     await wrapper.get('[placeholder="Username *"]').setValue('Alex')
     await wrapper.get('.button-section > button').trigger('click')
 

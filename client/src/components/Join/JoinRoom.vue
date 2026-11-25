@@ -49,7 +49,7 @@ import './join-room.css'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { generateRoomId, randomNameGenerator } from '../../js/generators.js'
 import { useRoute, useRouter } from 'vue-router'
-import { setCurrentRoom } from '../../js/roomNav.js'
+import { setCurrentRoom, TOOLS } from '../../js/roomNav.js'
 import { showMessage } from '../../js/messages.js'
 
 const route = useRoute(false)
@@ -126,6 +126,12 @@ const handleRoomJoined = ({ roomId, roomName }) => {
 
   saveSession(room.value, name.value)
   setCurrentRoom(roomId, roomName)
+
+  const tool = route.query?.tool
+  if (TOOLS.includes(tool)) {
+    router.push({ path: `/room/${roomId}`, query: { tool } })
+    return
+  }
 
   router.push('/dashboard')
 }

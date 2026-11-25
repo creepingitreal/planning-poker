@@ -44,12 +44,14 @@ export const clearCurrentRoom = () => {
   participantColours = {}
 }
 
+export const TOOLS = ['poker', 'retro', 'wheel']
+
 const ACTIVE_TOOL_KEY_PREFIX = 'poker_active_tool_'
 
 // Restores the previously selected tool for a room (e.g. after a page refresh)
 // and keeps localStorage in sync as the user switches tabs.
 export const restoreActiveTool = (roomId, requestedTool) => {
-  if (['poker', 'retro', 'wheel'].includes(requestedTool)) {
+  if (TOOLS.includes(requestedTool)) {
     activeTool.value = requestedTool
     return
   }

@@ -41,19 +41,22 @@ import MessageModal from './components/MessageModal/MessageModal.vue'
 import { currentMessage, dismissMessage } from './js/messages.js'
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { currentRoom } from './js/roomNav.js'
+import { activeTool, currentRoom } from './js/roomNav.js'
 
 const route = useRoute()
 const isRoomRoute = computed(() => route.path.startsWith('/room/'))
 
-const shareUrl = ref('')
 const copied = ref(false)
 const shareBtnText = computed(() =>
   copied.value ? 'Link Copied!' : 'Invite Users',
 )
 const copyLink = async () => {
-  const url = shareUrl.value || globalThis.location.href
-  await navigator.clipboard.writeText(url)
+  const url = new URL(
+    `/room/${encodeURIComponent(currentRoom.value.roomId)}`,
+    globalThis.location.origin,
+  )
+  if (isRoomRoute.value) url.searchParams.set('tool', activeTool.value)
+  await navigator.clipboard.writeText(url.toString())
   copied.value = true
   setTimeout(() => {
     copied.value = false
