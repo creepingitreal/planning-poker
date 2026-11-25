@@ -1,6 +1,9 @@
 # generated files
+.DS_Store
 target/
 generated/
+dist/
+node_modules/
 
 # dependencies
 Dependencies.toml

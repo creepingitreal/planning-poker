@@ -1,0 +1,73 @@
+import { ref, watch } from 'vue'
+import { allocateParticipantColours } from '../../../shared/colourAllocation.mjs'
+
+// Shared between Room.vue, App.vue and Layout.vue so the tool tabs can render as a
+// full-width subnav directly under the main site nav, rather than being
+// scoped inside the room's boxed content layout.
+export const activeTool = ref('poker')
+export const roomPlayers = ref({})
+export const wheelManualNames = ref([])
+
+// Tracks the room the user is currently in so the logo can route back to
+// that room's dashboard instead of always resetting to the join screen.
+export const currentRoom = ref({ roomId: '', roomName: '' })
+
+let colourRoomId = null
+let participantColours = {}
+
+export const allocateRoomParticipantColours = (names, assignedColours = {}) => {
+  if (colourRoomId !== currentRoom.value.roomId) {
+    colourRoomId = currentRoom.value.roomId
+    participantColours = {}
+  }
+
+  participantColours = allocateParticipantColours(
+    [...new Set([...Object.keys(participantColours), ...names])],
+    { ...assignedColours, ...participantColours },
+  )
+  return participantColours
+}
+
+export const setCurrentRoom = (roomId, roomName) => {
+  if (currentRoom.value.roomId !== roomId) {
+    roomPlayers.value = {}
+    wheelManualNames.value = []
+  }
+  currentRoom.value = { roomId, roomName }
+}
+
+export const clearCurrentRoom = () => {
+  currentRoom.value = { roomId: '', roomName: '' }
+  roomPlayers.value = {}
+  wheelManualNames.value = []
+  colourRoomId = null
+  participantColours = {}
+}
+
+export const TOOLS = ['poker', 'retro', 'wheel']
+
+const ACTIVE_TOOL_KEY_PREFIX = 'poker_active_tool_'
+
+// Restores the previously selected tool for a room (e.g. after a page refresh)
+// and keeps localStorage in sync as the user switches tabs.
+export const restoreActiveTool = (roomId, requestedTool) => {
+  if (TOOLS.includes(requestedTool)) {
+    activeTool.value = requestedTool
+    return
+  }
+
+  const saved =
+    roomId && localStorage.getItem(`${ACTIVE_TOOL_KEY_PREFIX}${roomId}`)
+  activeTool.value = saved === 'retro' ? 'retro' : 'poker'
+}
+
+let unwatch = null
+
+export const persistActiveTool = (roomId) => {
+  unwatch?.()
+  if (!roomId) return
+
+  unwatch = watch(activeTool, (tool) => {
+    localStorage.setItem(`${ACTIVE_TOOL_KEY_PREFIX}${roomId}`, tool)
+  })
+}

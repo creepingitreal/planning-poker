@@ -13,19 +13,18 @@ A real-time planning poker application for agile teams to estimate work collabor
 - **Fibonacci voting scale** – Vote with standard story-point values: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, or ?.
 - **Reveal / hide votes** – Reveal all votes simultaneously to avoid anchoring bias, then hide them again.
 - **Clear votes** – Reset all votes to begin a new round.
-- **Jira integration** – Pass a Jira issue key via the \`?issue=\` query parameter and it will be displayed in the room.
 - **Session persistence** – Your session is saved for 24 hours so you can rejoin a room after a page refresh.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Vue 3 (Composition API), Vite |
-| Real-time | Socket.IO (client & server) |
-| Backend | Node.js, Express 5, Socket.IO |
-| Containerisation | Docker, Docker Compose |
+| Layer            | Technology                    |
+| ---------------- | ----------------------------- |
+| Frontend         | Vue 3 (Composition API), Vite |
+| Real-time        | Socket.IO (client & server)   |
+| Backend          | Node.js, Express 5, Socket.IO |
+| Containerisation | Docker, Docker Compose        |
 
 ---
 
@@ -51,12 +50,27 @@ planning-poker/
 
 ## Getting Started
 
+### Custom Branding
+
+Each folder in [client/src/brand/](client/src/brand/) is a complete brand (token
+sheet, app name, logos, and favicon). Choose one at build time with the `BRAND`
+environment variable, for example `BRAND=procode npm run build`; it defaults to
+`scrumble`. Add a new folder to create your own brand without editing Vue components. See the
+[rebranding guide](client/README.md#rebrand-your-fork) for the token contract,
+asset requirements, and build steps.
+
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) v18+
 - [Docker](https://www.docker.com/) (optional, for containerised setup)
 
 ### Local Development
+
+Install the shared token-parsing dependencies from the repository root first:
+
+```bash
+npm install
+```
 
 **Server**
 
@@ -90,9 +104,9 @@ The server will be available at \`http://localhost:8000\`.
 
 ## Environment Variables
 
-| Variable | Location | Default | Description |
-|---|---|---|---|
-| \`PUBLIC_BASE_URL\` | server | \`http://localhost:5173\` | Base URL used to generate room share links |
+| Variable            | Location | Default                   | Description                                |
+| ------------------- | -------- | ------------------------- | ------------------------------------------ |
+| \`PUBLIC_BASE_URL\` | server   | \`http://localhost:5173\` | Base URL used to generate room share links |
 
 ---
 
@@ -104,28 +118,41 @@ The server will be available at \`http://localhost:8000\`.
 4. **Reveal** – Click **Reveal Votes** to show all votes simultaneously.
 5. **Next round** – Click **Clear Votes** to reset and start a new round.
 
-### Jira Integration
+### Core Variables
 
-Append \`?issue=<ISSUE_KEY>\` to any room URL to display the Jira issue key inside the room, e.g.:
+| Variable          | Service | Example (Local Dev)     | Example (Split Deployment) | Purpose                                                     |
+| ----------------- | ------- | ----------------------- | -------------------------- | ----------------------------------------------------------- |
+| `VITE_SERVER_URL` | client  | `http://localhost:8000` | `https://api.example.com`  | Socket.IO/backend URL the frontend connects to.             |
+| `CORS_ORIGIN`     | server  | `http://localhost:5173` | `https://app.example.com`  | Frontend origin allowed to call and connect to the backend. |
+| `PUBLIC_BASE_URL` | server  | `http://localhost:5173` | `https://app.example.com`  | Frontend base URL used to generate room share links.        |
 
-```
-http://localhost:5173/room/\<roomId\>\?issue\=PROJ-123
-```
+### Notes For Split Frontend/Backend Deployments
+
+- `CORS_ORIGIN` controls who is allowed to connect to the backend.
+- `PUBLIC_BASE_URL` is not for backend access control; it is used when generating share links shown to users.
+- Split deployments often need two configuration passes because each service URL depends on the other.
+
+Suggested first pass sequence:
+
+1. Deploy backend and get backend URL.
+2. Deploy frontend with `VITE_SERVER_URL` set to backend URL.
+3. Update backend `CORS_ORIGIN` and `PUBLIC_BASE_URL` to frontend URL.
+4. Redeploy backend.
 
 ---
 
 ## Socket Events
 
-| Event | Direction | Description |
-|---|---|---|
-| \`createRoom\` | Client → Server | Create a new room |
-| \`joinRoom\` | Client → Server | Join an existing room by ID or name |
-| \`getRoomName\` | Client → Server | Resolve a room name from its ID |
-| \`castVote\` | Client → Server | Submit a vote |
-| \`revealVotes\` | Client → Server | Toggle vote visibility for all players |
-| \`clearVotes\` | Client → Server | Reset all votes in a room |
-| \`roomJoined\` | Server → Client | Confirms successful room join |
-| \`updateRoom\` | Server → Client | Broadcasts current players and votes |
-| \`toggleVisibility\` | Server → Client | Broadcasts vote visibility state |
-| \`roomNameResolved\` | Server → Client | Returns the room name for a given ID |
-| \`roomError\` | Server → Client | Reports a room-level error |
+| Event                | Direction       | Description                            |
+| -------------------- | --------------- | -------------------------------------- |
+| \`createRoom\`       | Client → Server | Create a new room                      |
+| \`joinRoom\`         | Client → Server | Join an existing room by ID or name    |
+| \`getRoomName\`      | Client → Server | Resolve a room name from its ID        |
+| \`castVote\`         | Client → Server | Submit a vote                          |
+| \`revealVotes\`      | Client → Server | Toggle vote visibility for all players |
+| \`clearVotes\`       | Client → Server | Reset all votes in a room              |
+| \`roomJoined\`       | Server → Client | Confirms successful room join          |
+| \`updateRoom\`       | Server → Client | Broadcasts current players and votes   |
+| \`toggleVisibility\` | Server → Client | Broadcasts vote visibility state       |
+| \`roomNameResolved\` | Server → Client | Returns the room name for a given ID   |
+| \`roomError\`        | Server → Client | Reports a room-level error             |

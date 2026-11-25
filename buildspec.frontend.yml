@@ -1,0 +1,13 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+      - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+  build:
+    commands:
+      - docker build --file client/Dockerfile --tag "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" --build-arg VITE_SERVER_URL="$VITE_SERVER_URL" --build-arg BRAND="${BRAND:-scrumble}" .
+  post_build:
+    commands:
+      - docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
