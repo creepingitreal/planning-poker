@@ -1,10 +1,5 @@
 <template>
   <section class="dashboard">
-    <div class="dashboard-header">
-      <BrandLogo class="icon xlarge fill-current text-current" />
-      <h1>{{ brand.welcome }}</h1>
-    </div>
-
     <div v-if="roomId" class="dashboard-heading">
       <p>Start a session with the tool your team needs right now.</p>
       <button

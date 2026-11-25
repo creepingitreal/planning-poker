@@ -4,13 +4,13 @@ import { brandColours, extractBrandColours } from './brandColours.mjs'
 import {
   allocateParticipantColours,
   generateUniqueColour,
-  notAllowedColours,
+  prohibitedColours,
 } from './colourAllocation.mjs'
 
 test('derives forbidden colours from CSS tokens without duplicates', () => {
-  assert.deepEqual(notAllowedColours, brandColours)
-  assert.ok(notAllowedColours.includes('#b0e454'))
-  assert.equal(new Set(notAllowedColours).size, notAllowedColours.length)
+  assert.deepEqual(prohibitedColours, brandColours)
+  assert.ok(prohibitedColours.includes('#b0e454'))
+  assert.equal(new Set(prohibitedColours).size, prohibitedColours.length)
 })
 
 test('reads new opaque tokens, normalizes colours, and ignores comments and transparency', () => {
@@ -65,7 +65,7 @@ test('allows colours used only in transparent brand tokens', (context) => {
 })
 
 test('regenerates every forbidden brand colour and taken colour', (context) => {
-  const candidates = [...notAllowedColours, '#abcdef', '#123456']
+  const candidates = [...prohibitedColours, '#abcdef', '#123456']
   context.mock.method(
     Math,
     'random',

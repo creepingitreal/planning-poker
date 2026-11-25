@@ -2,16 +2,16 @@
   <div>
     <div class="nav-bar">
       <div class="nav-header">
+        <div class="dashboard-header">
+          <BrandLogo class="icon xlarge fill-current text-current" />
+          <h1>{{ brand.welcome }}</h1>
+        </div>
         <nav class="room-name-wrapper">
           <p v-if="currentRoom.roomName" class="nav-bar-room-name">
             {{ currentRoom.roomName }}
           </p>
 
-          <button
-            v-if="currentRoom.roomName"
-            class="link"
-            @click="copyLink"
-          >
+          <button v-if="currentRoom.roomName" class="link" @click="copyLink">
             <Icon name="link-icon" class="icon" />
             {{ shareBtnText }}
           </button>

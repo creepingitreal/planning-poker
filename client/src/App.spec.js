@@ -12,13 +12,13 @@ describe('App', () => {
       global: { plugins: [router], stubs: { RouterView: true } },
     })
 
-    const backLink = wrapper.get('.nav-link-btn')
+    const backLink = wrapper.get('a.link')
     expect(backLink.text()).toContain('Back to dashboard')
     expect(backLink.attributes('href')).toBe('/dashboard')
 
     await backLink.trigger('click')
     await flushPromises()
     expect(router.currentRoute.value.path).toBe('/dashboard')
-    expect(wrapper.find('.nav-link-btn').exists()).toBe(false)
+    expect(wrapper.find('a.link').exists()).toBe(false)
   })
 })

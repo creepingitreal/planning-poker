@@ -129,6 +129,27 @@ describe('JoinRoom', () => {
     })
   })
 
+  it.each(['[placeholder="Sprint Name"]', '[placeholder="Username *"]'])(
+    'creates a room when pressing enter in %s without an invite link',
+    async (selector) => {
+      const { wrapper } = await mountJoin()
+      await wrapper.get('[placeholder="Username *"]').setValue('Alex')
+      await wrapper.get('[placeholder="Sprint Name"]').setValue('Team Sprint')
+
+      await wrapper.get(selector).trigger('keyup', { key: 'Enter' })
+
+      expect(socket.emit).toHaveBeenLastCalledWith('createRoom', {
+        room: {
+          roomId: 'generated-room',
+          roomName: 'Team Sprint',
+          locked: false,
+        },
+        user: 'Alex',
+        clientId: 'known-client',
+      })
+    },
+  )
+
   it.each([
     ['', 'Generated Sprint'],
     ['Team Sprint', 'Team Sprint'],

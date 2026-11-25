@@ -18,7 +18,7 @@
           type="text"
           placeholder="Username *"
           autocomplete="given-name"
-          @keyup.enter="createRoom"
+          @keyup.enter="roomId ? joinRoom() : createRoom()"
         />
       </div>
 
