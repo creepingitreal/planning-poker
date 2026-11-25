@@ -7,32 +7,10 @@
     padding-top: 0;
   }
 
-  .dashboard-header {
-    display: flex;
-    flex-direction: column;
-    text-align: right;
-    max-width: fit-content;
-    margin-bottom: 42px;
-
-    .icon {
-      max-width: 100%;
-    }
-
-    h1 {
-      font-size: 1rem;
-    }
-
-    > p:last-child {
-      margin: 0;
-      color: var(--color-text-muted);
-      font-size: 1.05rem;
-      line-height: 1.5;
-    }
-  }
-
   .dashboard-new-room {
-    margin-top: 24px;
-  }
+    display: flex;
+    width: fit-content;
+    margin: 24px 0 24px auto  }
 
   .dashboard-tools {
     display: grid;
@@ -42,6 +20,12 @@
     @media screen and (min-width: 761px) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+  }
+
+  .dashboard-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
 
   .dashboard-tool {

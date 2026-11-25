@@ -1,28 +1,5 @@
 <template>
   <div>
-    <div class="nav-bar">
-      <div class="nav-header">
-        <nav class="room-name-wrapper">
-          <p v-if="currentRoom.roomName" class="nav-bar-room-name">
-            {{ currentRoom.roomName }}
-          </p>
-
-          <button
-            v-if="currentRoom.roomName"
-            class="share-btn"
-            @click="copyLink"
-          >
-            <Icon name="link-icon" class="icon" />
-            {{ shareBtnText }}
-          </button>
-
-          <RouterLink v-if="isRoomRoute" to="/dashboard" class="nav-link-btn">
-            <span aria-hidden="true">←</span>
-            Back to dashboard
-          </RouterLink>
-        </nav>
-      </div>
-    </div>
     <RouterView />
     <MessageModal
       :open="!!currentMessage"
@@ -39,39 +16,4 @@
 import './style.css'
 import MessageModal from './components/MessageModal/MessageModal.vue'
 import { currentMessage, dismissMessage } from './js/messages.js'
-import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { activeTool, currentRoom } from './js/roomNav.js'
-
-const route = useRoute()
-const isRoomRoute = computed(() => route.path.startsWith('/room/'))
-
-const copied = ref(false)
-const shareBtnText = computed(() =>
-  copied.value ? 'Link Copied!' : 'Invite Users',
-)
-const copyLink = async () => {
-  const url = new URL(
-    `/room/${encodeURIComponent(currentRoom.value.roomId)}`,
-    globalThis.location.origin,
-  )
-  if (isRoomRoute.value) url.searchParams.set('tool', activeTool.value)
-  await navigator.clipboard.writeText(url.toString())
-  copied.value = true
-  setTimeout(() => {
-    copied.value = false
-  }, 3000)
-}
-
-// const logoLink = computed(() =>
-//   currentRoom.value.roomId
-//     ? {
-//         path: "/dashboard",
-//         query: {
-//           roomId: currentRoom.value.roomId,
-//           roomName: currentRoom.value.roomName,
-//         },
-//       }
-//     : { path: "/" },
-// );
 </script>

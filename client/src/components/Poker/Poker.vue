@@ -17,15 +17,15 @@
     />
 
     <div class="vote-card-section">
-      <button
-        class="vote-option"
-        :class="{ selected: selectedVote === value }"
+      <Vote
         v-for="value in voteOptions"
         :key="value"
-        @click="castVote(value)"
-      >
-        {{ value }}
-      </button>
+        :vote="value"
+        :selected="selectedVote === value"
+        :color="currentPlayerColour"
+        selectable
+        @select="castVote"
+      />
     </div>
   </section>
 </template>
@@ -35,10 +35,11 @@ import ButtonSection from '../ButtonSection/ButtonSection.vue'
 import socket from '../../../socket.js'
 import { computed, onUnmounted, ref } from 'vue'
 import Vote from './Vote.vue'
+import { COFFEE_VOTE } from '../../js/votes.js'
 import { allocateParticipantColours } from '../../../../shared/colourAllocation.mjs'
 import './poker.css'
 
-const voteOptions = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, '?']
+const voteOptions = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, '?', COFFEE_VOTE]
 const isVisible = ref(false)
 
 const props = defineProps({
@@ -69,6 +70,10 @@ const participantColours = computed(() => {
 
   return allocateParticipantColours(participantNames, assignedColours)
 })
+
+const currentPlayerColour = computed(
+  () => participantColours.value[props.players[socket.id]?.user] ?? null,
+)
 
 const selectedVote = ref(null)
 

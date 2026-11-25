@@ -1,19 +1,14 @@
 <template>
   <section class="dashboard">
-    <div class="dashboard-header">
-      <BrandLogo class="icon xlarge fill-current text-current" />
-      <h1>{{ brand.welcome }}</h1>
-    </div>
-
-    <div v-if="roomId" class="dashboard-heading">
+    <div v-if="roomId" class="dashboard-content">
       <p>Start a session with the tool your team needs right now.</p>
       <button
         v-if="roomId"
         type="button"
-        class="outline dashboard-new-room"
+        class="link dashboard-new-room"
         @click="createNewRoom"
       >
-        + Create new room
+        + Start a new session
       </button>
     </div>
 
@@ -40,8 +35,6 @@
 import './dashboard.css'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import BrandLogo from '@brand/logo.svg?component'
-import { brand } from '../../brand/index.js'
 import { clearCurrentRoom, currentRoom } from '../../js/roomNav.js'
 import JoinRoom from '../Join/JoinRoom.vue'
 
