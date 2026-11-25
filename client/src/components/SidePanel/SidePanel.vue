@@ -61,6 +61,18 @@
           @update:manual-names="emit('update:manualNamesArr', $event)"
         />
       </SidePanelContent>
+      <SidePanelContent
+        :show-panel="showPanel"
+        icon-name="info-icon"
+        title="Info"
+        @open-panel="showPanel = true"
+      >
+      <p class="info-text">Find out more about the app</p>
+      <ul>
+        <li><a href="#" >More about the app</a></li>
+        <li><a href="#" >More about the author</a></li>
+      </ul>
+    </SidePanelContent>
     </div>
   </aside>
 </template>
@@ -73,6 +85,7 @@ import Users from '../Users/Users.vue'
 import SubNav from '../SubNav/SubNav.vue'
 import './side-panel.css'
 import SidePanelContent from './SidePanelContent.vue'
+import Icon from '../../assets/shared/Icon.vue'
 
 defineProps({
   players: {

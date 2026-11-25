@@ -1,6 +1,6 @@
 <template>
-  <div class="content-item">
-    <div class="content-title" :class="title.toLowerCase()" @click="$emit('openPanel')">
+  <div class="content-item" :class="title.toLowerCase()" @click="$emit('openPanel')">
+    <div class="content-title">
       <Icon :name="iconName" class-name="icon small" />
       <h2 v-if="showPanel" class="title">{{title}}</h2>
     </div>

@@ -24,7 +24,7 @@
   --font-body: ui-sans-serif, system-ui, sans-serif;
   --font-wheel: var(--font-body);
   --radius-control: 5px;
-  --radius-input: 8px;
+  --radius-input: 3px;
   --radius-card: 10px;
   --radius-panel: 15px;
   --shadow-control: 2px 2px 0 0 var(--color-action-strong);
