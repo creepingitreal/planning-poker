@@ -4,30 +4,47 @@ Vue 3 + Vite frontend for Planning Poker, Retro Board, and Spin the Wheel.
 
 ## Rebrand Your Fork
 
-All ordinary branding lives in [src/brand/](src/brand/). Replace these files, preview,
-then rebuild and deploy. No Vue component changes are needed.
+Every folder in [src/brand/](src/brand/) is a complete brand. The `BRAND` environment
+variable selects which folder is built; it defaults to `scrumble`. No Vue component
+changes are needed.
 
-| File                                     | Purpose                                                      |
-| ---------------------------------------- | ------------------------------------------------------------ |
-| [tokens.css](src/brand/tokens.css)       | All colours, font families, radii, and shadows               |
-| [config.json](src/brand/config.json)     | Browser title (`name`) and logo alternative text (`logoAlt`) |
-| [logo.svg](src/brand/logo.svg)           | Full logo shown when the sidebar is expanded                 |
-| [logo-mark.svg](src/brand/logo-mark.svg) | Compact mark shown when the sidebar is collapsed             |
-| [favicon.svg](src/brand/favicon.svg)     | Browser tab icon                                             |
+| Brand                           | Description                  |
+| ------------------------------- | ---------------------------- |
+| [scrumble](src/brand/scrumble/) | Default dark/lime Scrumble   |
+| [procode](src/brand/procode/)   | Procode navy, blue, and teal |
+
+To add a brand, copy an existing folder to `src/brand/<name>/` (letters, numbers, and
+hyphens) and replace its files:
+
+| File            | Purpose                                                                |
+| --------------- | ---------------------------------------------------------------------- |
+| `tokens.css`    | All colours, font families, radii, and shadows                         |
+| `config.json`   | Browser title (`name`), logo alt text (`logoAlt`), dashboard `welcome` |
+| `logo.svg`      | Full logo shown in the expanded sidebar and on the dashboard           |
+| `logo-mark.svg` | Compact mark shown when the sidebar is collapsed                       |
+| `favicon.svg`   | Browser tab icon                                                       |
 
 ```sh
 npm --prefix .. install
 npm install
-npm run dev
+BRAND=procode npm run dev
 ```
 
-The dev server prints its URL. The backend is still required for live rooms; see the
-[project setup](../README.md#getting-started). After editing configuration, refresh
-the page to update the browser title. Restart Vite if your editor does not pick it up.
+The build fails early with a clear message if the chosen folder is missing or
+incomplete. Only the selected brand is bundled. Code imports brand files through the
+`@brand` alias (for example `@brand/tokens.css`), so never import a brand folder
+directly. The dev server prints its URL. The backend is still required for live rooms;
+see the [project setup](../README.md#getting-started). After editing configuration,
+refresh the page to update the browser title. Restart Vite after changing `BRAND`.
+
+The backend reads the same `BRAND` variable to exclude the brand's colours from
+participant colours, so set it for both the frontend build and the server. The
+Dockerfiles, `docker-compose.yml`, and CodeBuild specs accept `BRAND` as a build
+argument (`BRAND=procode docker compose up --build`).
 
 ### Token Contract
 
-Keep the variable names in [tokens.css](src/brand/tokens.css); change their values. Tokens describe a role,
+Keep the variable names in [tokens.css](src/brand/scrumble/tokens.css); change their values. Tokens describe a role,
 not a particular brand colour. An arbitrary company token export needs a mapping to
 these names. The supplied file contains the complete supported contract:
 

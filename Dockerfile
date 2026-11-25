@@ -5,6 +5,8 @@ COPY package*.json ./
 RUN npm install --omit=dev
 WORKDIR /app/client
 COPY client/package*.json ./
+ARG BRAND=scrumble
+ENV BRAND=$BRAND
 RUN npm install
 COPY client/ ./
 COPY shared/ /app/shared/
@@ -21,7 +23,9 @@ COPY server/package*.json ./server/
 RUN cd server && npm install
 COPY server/ ./server/
 COPY shared/ ./shared/
-COPY client/src/brand/tokens.css ./client/src/brand/tokens.css
+ARG BRAND=scrumble
+ENV BRAND=$BRAND
+COPY client/src/brand/ ./client/src/brand/
 
 # Copy built Vue files from stage 1
 COPY --from=build-client /app/client/dist ./client/dist

@@ -1,31 +1,37 @@
 services:
-  client:
-    build:
-      context: .
-      dockerfile: client/Dockerfile
-    ports:
-      - '5173:80'
-    networks:
-      - app-network
-    volumes:
-      - ./client:/app/client
-      - /app/client/node_modules
-      - ./shared:/app/shared:ro
+  # client:
+  #   build:
+  #     context: .
+  #     dockerfile: client/Dockerfile
+  #     args:
+  #       BRAND: ${BRAND:-scrumble}
+  #   ports:
+  #     - '5173:80'
+  #   networks:
+  #     - app-network
+  #   volumes:
+  #     - ./client:/app/client
+  #     - /app/client/node_modules
+  #     - ./shared:/app/shared:ro
 
   server:
     build:
       context: .
       dockerfile: server/Dockerfile
+      args:
+        BRAND: ${BRAND:-scrumble}
+    environment:
+      BRAND: ${BRAND:-scrumble}
     ports:
       - '8000:8000'
-    networks:
-      - app-network
+    # networks:
+    #   - app-network
     volumes:
       - ./server:/app/server
       - /app/server/node_modules
       - ./shared:/app/shared:ro
       - ./client/src/brand:/app/client/src/brand:ro
 
-networks:
-  app-network:
-    driver: bridge
+# networks:
+#   app-network:
+#     driver: bridge

@@ -1,6 +1,5 @@
 import { readFileSync } from 'node:fs'
 
-const brandConfigUrl = new URL('./src/brand/config.json', import.meta.url)
 const escapeHtml = (value) =>
   String(value).replace(
     /[&<>"']/g,
@@ -14,20 +13,24 @@ const escapeHtml = (value) =>
       })[character],
   )
 
-export const renderBrandHtml = (html, brand) => {
+export const renderBrandHtml = (html, brand, brandId) => {
   if (typeof brand?.name !== 'string' || !brand.name.trim()) {
     throw new Error('Brand config must contain a non-empty name')
   }
-  return html.replace('%BRAND_NAME%', () => escapeHtml(brand.name))
+  return html
+    .replace('%BRAND_NAME%', () => escapeHtml(brand.name))
+    .replace('%BRAND_DIR%', () => `/src/brand/${encodeURIComponent(brandId)}`)
 }
 
-export default {
+export const createBrandHtml = (selected) => ({
   name: 'brand-html',
   transformIndexHtml: {
     order: 'pre',
     handler(html) {
-      const brand = JSON.parse(readFileSync(brandConfigUrl, 'utf8'))
-      return renderBrandHtml(html, brand)
+      const brand = JSON.parse(
+        readFileSync(selected.file('config.json'), 'utf8'),
+      )
+      return renderBrandHtml(html, brand, selected.id)
     },
   },
-}
+})

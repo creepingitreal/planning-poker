@@ -8,6 +8,8 @@ WORKDIR /app/client
 
 ARG VITE_SERVER_URL
 ENV VITE_SERVER_URL=$VITE_SERVER_URL
+ARG BRAND=scrumble
+ENV BRAND=$BRAND
 
 COPY client/ ./
 COPY shared/ /app/shared/

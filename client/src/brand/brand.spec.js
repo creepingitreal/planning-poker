@@ -3,7 +3,7 @@ import { renderBrandHtml } from '../../brandHtml.js'
 
 let brandConfig
 
-const transformHtml = (html) => renderBrandHtml(html, brandConfig)
+const transformHtml = (html) => renderBrandHtml(html, brandConfig, 'procode')
 
 beforeEach(() => {
   brandConfig = { name: 'Team Planner' }
@@ -18,12 +18,14 @@ describe('Brand metadata', () => {
     )
   })
 
-  it('uses the configured name in HTML without changing asset paths', () => {
+  it('uses the configured name and selected brand folder in HTML', () => {
     expect(
       transformHtml(
-        '<title>%BRAND_NAME%</title><link href="/src/brand/favicon.svg">',
+        '<title>%BRAND_NAME%</title><link href="%BRAND_DIR%/favicon.svg">',
       ),
-    ).toBe('<title>Team Planner</title><link href="/src/brand/favicon.svg">')
+    ).toBe(
+      '<title>Team Planner</title><link href="/src/brand/procode/favicon.svg">',
+    )
   })
 
   it('escapes the configured name as text rather than markup', () => {

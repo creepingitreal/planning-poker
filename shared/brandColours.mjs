@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { generate, parse, walk } from 'css-tree'
 import { formatHex, parse as parseColour } from 'culori'
+import { resolveBrand } from './brandSelection.mjs'
 
 export const extractBrandColours = (source) => {
   const declarations = new Map()
@@ -39,8 +40,5 @@ export const extractBrandColours = (source) => {
 }
 
 export const brandColours = extractBrandColours(
-  readFileSync(
-    new URL('../client/src/brand/tokens.css', import.meta.url),
-    'utf8',
-  ),
+  readFileSync(resolveBrand().file('tokens.css'), 'utf8'),
 )

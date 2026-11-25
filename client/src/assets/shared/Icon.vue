@@ -24,7 +24,7 @@ const props = defineProps({
   },
 })
 
-const icons = import.meta.glob(['../svg/**/*.svg', '../../brand/**/*.svg'])
+const icons = import.meta.glob('../svg/**/*.svg')
 
 const icon = computed(() => {
   const path = props.path || `../svg/${props.name}.svg`

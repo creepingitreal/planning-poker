@@ -5,12 +5,12 @@ import svgLoader from 'vite-svg-loader'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { extractBrandColours } from '../shared/brandColours.mjs'
+import { resolveBrand } from '../shared/brandSelection.mjs'
 
-import brandHtml from './brandHtml.js'
+import { createBrandHtml } from './brandHtml.js'
 
-const tokensPath = fileURLToPath(
-  new URL('./src/brand/tokens.css', import.meta.url),
-)
+const brand = resolveBrand()
+const tokensPath = brand.file('tokens.css')
 const coloursPath = fileURLToPath(
   new URL('../shared/brandColours.mjs', import.meta.url),
 )
@@ -18,8 +18,11 @@ const coloursPath = fileURLToPath(
 // https://vite.dev/config/
 export default defineConfig({
   base: '/',
+  resolve: {
+    alias: { '@brand': brand.dir },
+  },
   plugins: [
-    brandHtml,
+    createBrandHtml(brand),
     {
       name: 'brand-colour-exclusions',
       transform(source, id) {

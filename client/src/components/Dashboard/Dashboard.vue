@@ -1,8 +1,8 @@
 <template>
   <section class="dashboard">
     <div class="dashboard-header">
-      <Icon name="logo" path="../../brand/logo.svg" class="xlarge" />
-      <h1>Welcome to the Scrumble</h1>
+      <BrandLogo class="icon xlarge fill-current text-current" />
+      <h1>{{ brand.welcome }}</h1>
     </div>
 
     <div v-if="roomId" class="dashboard-heading">
@@ -40,6 +40,8 @@
 import './dashboard.css'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import BrandLogo from '@brand/logo.svg?component'
+import { brand } from '../../brand/index.js'
 import { clearCurrentRoom, currentRoom } from '../../js/roomNav.js'
 import JoinRoom from '../Join/JoinRoom.vue'
 

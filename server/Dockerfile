@@ -11,7 +11,9 @@ COPY server/package*.json ./
 RUN npm install
 COPY server/ ./
 COPY shared/ /app/shared/
-COPY client/src/brand/tokens.css /app/client/src/brand/tokens.css
+ARG BRAND=scrumble
+ENV BRAND=$BRAND
+COPY client/src/brand/ /app/client/src/brand/
 
 EXPOSE 8000
 

@@ -52,8 +52,10 @@ planning-poker/
 
 ### Custom Branding
 
-Fork owners can replace the token sheet, app name, logos, and favicon in
-[client/src/brand/](client/src/brand/) without editing Vue components. See the
+Each folder in [client/src/brand/](client/src/brand/) is a complete brand (token
+sheet, app name, logos, and favicon). Choose one at build time with the `BRAND`
+environment variable, for example `BRAND=procode npm run build`; it defaults to
+`scrumble`. Add a new folder to create your own brand without editing Vue components. See the
 [rebranding guide](client/README.md#rebrand-your-fork) for the token contract,
 asset requirements, and build steps.
 
