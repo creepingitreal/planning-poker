@@ -23,6 +23,7 @@ body {
 .nav-bar {
   padding: 30px;
   align-items: end;
+
   @media screen and (min-width: 640px) {
     align-items: center;
   }
@@ -82,11 +83,8 @@ body {
 
 main {
   padding: 0 20px;
+
   @media screen and (min-width: 640px) {
-    &.small {
-      height: 20px;
-      max-height: 20px;
-    }
     padding: 0 30px;
   }
 
@@ -304,10 +302,15 @@ button {
   flex-direction: column;
   align-items: end;
   gap: 10px;
+
   @media screen and (min-width: 640px) {
     max-width: fit-content;
     flex-direction: row;
     gap: 30px;
+  }
+
+  .reveal-btn {
+    min-width: min(191px, 100%);
   }
 }
 

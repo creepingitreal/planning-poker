@@ -7,10 +7,12 @@
 
 .side-panel {
   position: fixed;
+  /* Pinned to both edges rather than using vh so it always spans the visible
+     viewport on mobile browsers with dynamic toolbars. */
   top: 0;
+  bottom: 0;
   left: 0;
   width: 100px;
-  height: calc(100vh - 10px);
   padding: 10px;
   border-radius: var(--radius-panel);
   margin: 5px;
@@ -52,6 +54,23 @@
       background: transparent;
       flex: 0 0 28px;
       min-width: 0;
+    }
+
+    .brand-logo {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: left center;
+
+      &.brand-logo-mark {
+        width: 28px;
+        object-position: center;
+      }
+    }
+
+    .side-panel-close {
+      color: var(--color-text);
     }
   }
 
@@ -136,21 +155,4 @@
       }
     }
   }
-}
-
-.side-panel-close {
-  color: var(--color-text);
-}
-
-.brand-logo {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: left center;
-}
-
-.brand-logo-mark {
-  width: 28px;
-  object-position: center;
 }

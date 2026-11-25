@@ -36,7 +36,7 @@ import socket from '../../../socket.js'
 import { computed, onUnmounted, ref } from 'vue'
 import Vote from './Vote.vue'
 import { allocateParticipantColours } from '../../../../shared/colourAllocation.mjs'
-import './Poker.css'
+import './poker.css'
 
 const voteOptions = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, '?']
 const isVisible = ref(false)

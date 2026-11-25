@@ -1,117 +1,121 @@
 .dashboard {
   max-width: 1100px;
   margin: 0 auto;
+  padding-top: 30px;
 
-  @media screen and (max-width: 760px) {
-    padding-top: 30px;
-  }
-}
-
-.dashboard-header {
-
-  display: flex;
-  flex-direction: column;
-  text-align: right;
-  max-width: fit-content;
-  margin-bottom: 42px;
-  h1 {
-    font-size: 1rem;
+  @media screen and (min-width: 761px) {
+    padding-top: 0;
   }
 
+  .dashboard-header {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    max-width: fit-content;
+    margin-bottom: 42px;
 
-  > p:last-child {
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: 1.05rem;
-    line-height: 1.5;
+    .icon {
+      max-width: 100%;
+    }
+
+    h1 {
+      font-size: 1rem;
+    }
+
+    > p:last-child {
+      margin: 0;
+      color: var(--color-text-muted);
+      font-size: 1.05rem;
+      line-height: 1.5;
+    }
   }
-}
 
-.dashboard-new-room {
-  margin-top: 24px;
-}
+  .dashboard-new-room {
+    margin-top: 24px;
+  }
 
-.dashboard-tools {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-
-  @media screen and (max-width: 760px) {
+  .dashboard-tools {
+    display: grid;
     grid-template-columns: 1fr;
-  }
-}
+    gap: 16px;
 
-.dashboard-tool {
-  position: relative;
-  display: flex;
-  min-height: 260px;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 24px;
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-card);
-  background: var(--color-action);
-  color: var(--color-on-action);
-  text-decoration: none;
-  box-shadow: var(--shadow-card);
-  transition:
-    transform 180ms ease,
-    box-shadow 180ms ease,
-    border-color 180ms ease;
-
-  &:hover,
-  &:focus-visible {
-    border-color: var(--color-accent);
-    box-shadow: var(--shadow-card-hover);
-    transform: translateY(-4px);
+    @media screen and (min-width: 761px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
-  &:focus-visible {
-    outline: 3px solid var(--color-accent);
-    outline-offset: 3px;
-  }
-
-  @media screen and (max-width: 760px) {
+  .dashboard-tool {
+    position: relative;
+    display: flex;
     min-height: 190px;
-  }
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-card);
+    background: var(--color-action);
+    color: var(--color-on-action);
+    text-decoration: none;
+    box-shadow: var(--shadow-card);
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease;
 
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
+    @media screen and (min-width: 761px) {
+      min-height: 260px;
+    }
 
     &:hover,
     &:focus-visible {
-      transform: none;
+      border-color: var(--color-accent);
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-4px);
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--color-accent);
+      outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+
+      &:hover,
+      &:focus-visible {
+        transform: none;
+      }
     }
   }
-}
 
-.dashboard-tool-index {
-  color: var(--color-accent);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-}
-
-.dashboard-tool-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  strong {
-    color: var(--color-action-strong);
-    font-size: 1.35rem;
+  .dashboard-tool-index {
+    color: var(--color-accent);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
   }
 
-  span {
-    color: var(--color-text-muted);
-    font-size: 0.92rem;
-    line-height: 1.45;
-  }
-}
+  .dashboard-tool-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 
-.dashboard-tool-arrow {
-  align-self: flex-end;
-  color: var(--color-accent);
-  font-size: 1.7rem;
-  line-height: 1;
+    strong {
+      color: var(--color-action-strong);
+      font-size: 1.35rem;
+    }
+
+    span {
+      color: var(--color-text-muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+  }
+
+  .dashboard-tool-arrow {
+    align-self: flex-end;
+    color: var(--color-accent);
+    font-size: 1.7rem;
+    line-height: 1;
+  }
 }

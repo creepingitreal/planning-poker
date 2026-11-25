@@ -3,7 +3,7 @@
     <dialog
       ref="dialog"
       class="message-modal"
-      :class="`message-modal--${variant}`"
+      :class="variant"
       :role="
         variant === 'warning' || variant === 'error' ? 'alertdialog' : 'dialog'
       "
@@ -12,9 +12,9 @@
       :aria-describedby="`${id}-message`"
       @cancel.prevent="dismiss"
     >
-      <h2 :id="`${id}-title`" class="message-modal__title">{{ heading }}</h2>
-      <p :id="`${id}-message`" class="message-modal__message">{{ message }}</p>
-      <div class="message-modal__actions">
+      <h2 :id="`${id}-title`" class="message-modal-title">{{ heading }}</h2>
+      <p :id="`${id}-message`" class="message-modal-message">{{ message }}</p>
+      <div class="message-modal-actions">
         <button ref="closeButton" type="button" @click="dismiss">
           {{ closeLabel }}
         </button>

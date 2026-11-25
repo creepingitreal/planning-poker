@@ -9,37 +9,4 @@
   &.retro {
     max-width: 2000px;
   }
-
-  .retro-timer {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .retro-toolbar {
-    align-items: flex-start;
-    gap: 50px;
-  }
-
-  .timer-display {
-    font-size: 1.4rem;
-    font-variant-numeric: tabular-nums;
-    min-width: 3.5ch;
-    text-align: center;
-    margin-left: 6px;
-  }
-
-  .icon-btn-timer {
-    color: var(--color-accent);
-    font-weight: 800;
-    font-size: 1.3rem;
-
-    &:hover:not(:disabled) {
-      background-color: color-mix(
-        in srgb,
-        var(--color-accent) 15%,
-        transparent
-      );
-    }
-  }
 }

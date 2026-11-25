@@ -5,6 +5,10 @@
   gap: 32px;
   padding: 24px 0 40px;
 
+  @media screen and (min-width: 640px) {
+    min-height: 68vh;
+  }
+
   .section-title {
     display: flex;
     flex-direction: column;
@@ -30,44 +34,39 @@
     max-width: none;
     gap: 14px;
 
+    @media screen and (min-width: 640px) {
+      flex-direction: row;
+    }
+
     > button,
     .container-create-btn,
     .container-create-btn > button {
       width: 100%;
       max-width: none;
     }
-  }
-}
 
-.container-create-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 10px;
-
-  label {
-    align-self: flex-start;
-    margin: 0;
-  }
-
-  .confirmation-text {
-    margin: 0 0 2px;
-    text-align: left;
-  }
-}
-
-@media screen and (min-width: 640px) {
-  .join-room {
-    min-height: 68vh;
-
-    > .button-section {
-      flex-direction: row;
-      align-items: flex-end;
-
-      > button,
-      .container-create-btn {
+    > button,
+    .container-create-btn {
+      @media screen and (min-width: 640px) {
         flex: 1 1 0;
       }
+    }
+  }
+
+  .container-create-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+
+    label {
+      align-self: flex-start;
+      margin: 0;
+    }
+
+    .confirmation-text {
+      margin: 0 0 2px;
+      text-align: left;
     }
   }
 }

@@ -15,52 +15,52 @@
   color: var(--color-text);
   font-family: var(--font-body);
   box-shadow: 0 16px 48px rgb(0 0 0 / 25%);
-}
 
-.message-modal::backdrop {
-  background: rgb(0 0 0 / 45%);
-}
+  &::backdrop {
+    background: rgb(0 0 0 / 45%);
+  }
 
-.message-modal--warning {
-  border-top-color: var(--color-warning);
-}
+  &.warning {
+    border-top-color: var(--color-warning);
+  }
 
-.message-modal--error {
-  border-top-color: var(--color-danger);
-}
+  &.error {
+    border-top-color: var(--color-danger);
+  }
 
-.message-modal--success {
-  border-top-color: var(--color-success);
-}
+  &.success {
+    border-top-color: var(--color-success);
+  }
 
-.message-modal__title {
-  margin: 0 0 12px;
-  font-size: 1.25rem;
-  font-weight: 700;
-  overflow-wrap: anywhere;
-}
+  .message-modal-title {
+    margin: 0 0 12px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
 
-.message-modal__message {
-  margin: 0;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
+  .message-modal-message {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
 
-.message-modal__actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 24px;
-}
+  .message-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
 
-.message-modal__actions button {
-  width: auto;
-  max-height: none;
-  padding-inline: 20px;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-}
+    button {
+      width: auto;
+      max-height: none;
+      padding-inline: 20px;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
 
-.message-modal__actions button:focus-visible {
-  outline: 2px solid var(--color-text);
-  outline-offset: 4px;
+      &:focus-visible {
+        outline: 2px solid var(--color-text);
+        outline-offset: 4px;
+      }
+    }
+  }
 }
