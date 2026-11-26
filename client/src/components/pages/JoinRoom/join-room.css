@@ -1,0 +1,94 @@
+.join-room {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 520px);
+  min-height: min(70cqh, 620px);
+  margin: 0 auto;
+  justify-content: center;
+  gap: 32px;
+  padding: 24px 0 40px;
+
+  @media screen and (min-width: 640px) {
+    min-height: 68cqh;
+  }
+
+  .join-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+
+    .icon {
+      max-width: 100%;
+    }
+  }
+
+  .join-welcome {
+    margin: 0;
+    color: var(--color-accent);
+    font-size: 1.1rem;
+  }
+
+  .section-title {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 14px;
+    text-align: center;
+
+    .title {
+      margin: 0 0 8px;
+    }
+
+    input:not([type='checkbox']):not([type='radio']) {
+      width: 100%;
+      max-width: none;
+      box-sizing: border-box;
+    }
+  }
+
+  > .button-section {
+    align-items: flex-end;
+    width: 100%;
+    max-width: none;
+    gap: 14px;
+
+    @media screen and (min-width: 640px) {
+      flex-direction: row;
+    }
+
+    > button,
+    .container-create-btn,
+    .container-create-btn > button {
+      width: 100%;
+      max-width: none;
+    }
+
+    > button,
+    .container-create-btn {
+      @media screen and (min-width: 640px) {
+        flex: 1 1 0;
+      }
+    }
+  }
+
+  .container-create-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+
+    label {
+      align-self: flex-start;
+      margin: 0;
+    }
+
+    .confirmation-text {
+      margin: 0 0 2px;
+      text-align: left;
+    }
+  }
+}

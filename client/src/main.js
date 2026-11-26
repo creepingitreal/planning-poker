@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import router from './router/index.js'
-import Icon from './assets/shared/Icon.vue'
+import Icon from './components/atoms/Icon/Icon.vue'
 
 const app = createApp(App)
 

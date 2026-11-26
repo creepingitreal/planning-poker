@@ -14,6 +14,6 @@
 
 <script setup>
 import './style.css'
-import MessageModal from './components/MessageModal/MessageModal.vue'
+import MessageModal from './components/molecules/MessageModal/MessageModal.vue'
 import { currentMessage, dismissMessage } from './js/messages.js'
 </script>

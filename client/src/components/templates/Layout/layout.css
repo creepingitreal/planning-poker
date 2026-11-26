@@ -1,0 +1,49 @@
+/* The app is capped at a 1440x1024 desktop frame and centred in the viewport.
+   The side panel stays pinned to the viewport's left edge, so the frame is
+   pushed right only when centring would put it underneath the panel.
+   Everything is sized to fit inside it: the nav keeps its natural height and
+   main fills whatever is left, so pages never push the frame into scrolling. */
+.app-frame {
+  --side-panel-space: 0px;
+
+  position: relative;
+  max-width: 1440px;
+  height: 100dvh;
+  max-height: 1024px;
+  margin: 0 auto 0 max(var(--side-panel-space), calc((100vw - 1440px) / 2));
+  overflow: hidden;
+}
+
+.side-panel-wrapper + .app-frame {
+  --side-panel-space: 110px;
+}
+
+.app-frame-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+
+  > .nav-bar {
+    flex: 0 0 auto;
+  }
+
+  > main {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    /* Lets pages size themselves against the space left under the nav. */
+    container-type: size;
+    /* Last-resort fallback for screens too small to fit the layout. */
+    overflow-y: auto;
+
+    > :last-child {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
