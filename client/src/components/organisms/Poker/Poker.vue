@@ -14,6 +14,18 @@
       :is-visible="isVisible"
       :has-votes="hasVotes"
       :room-id="room.roomId"
+      @clear="isConfirmingClear = true"
+    />
+
+    <MessageModal
+      :open="isConfirmingClear"
+      title="Clear votes?"
+      message="This will clear everyone's votes for this round."
+      variant="warning"
+      close-label="Cancel"
+      confirm-label="Clear Votes"
+      @dismiss="isConfirmingClear = false"
+      @confirm="clearVotes"
     />
 
     <div class="vote-card-section">
@@ -32,6 +44,7 @@
 
 <script setup>
 import ButtonSection from '../../molecules/ButtonSection/ButtonSection.vue'
+import MessageModal from '../../molecules/MessageModal/MessageModal.vue'
 import socket from '../../../../socket.js'
 import { computed, onUnmounted, ref } from 'vue'
 import Vote from '../../atoms/Vote/Vote.vue'
@@ -76,10 +89,16 @@ const currentPlayerColour = computed(
 )
 
 const selectedVote = ref(null)
+const isConfirmingClear = ref(false)
 
 const castVote = (value) => {
   selectedVote.value = value
   socket.emit('castVote', { roomId: props.room.roomId, vote: value })
+}
+
+const clearVotes = () => {
+  isConfirmingClear.value = false
+  socket.emit('clearVotes', { roomId: props.room.roomId })
 }
 
 const handleToggleVisibility = (visibility) => {

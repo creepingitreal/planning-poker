@@ -35,33 +35,31 @@ describe('ButtonSection', () => {
     })
   })
 
-  it('supports retro event names and labels', async () => {
+  it('supports retro labels and emits clear intent without sending it', async () => {
     const wrapper = mountControls({
       revealEvent: 'revealCards',
-      clearEvent: 'clearBoard',
       revealLabel: 'Reveal Cards',
       clearLabel: 'Clear Board',
     })
 
     expect(wrapper.get('.reveal-btn').text()).toBe('Reveal Cards')
+    expect(wrapper.get('.accent').text()).toBe('Clear Board')
     await wrapper.get('.reveal-btn').trigger('click')
     expect(socket.emit).toHaveBeenLastCalledWith('revealCards', {
       roomId: 'room-one',
       visibility: true,
     })
     await wrapper.get('.accent').trigger('click')
-    expect(socket.emit).toHaveBeenLastCalledWith('clearBoard', {
-      roomId: 'room-one',
-    })
+    expect(wrapper.emitted('clear')).toHaveLength(1)
+    expect(socket.emit).toHaveBeenCalledTimes(1)
   })
 
   it('can hide reveal while keeping clear available', async () => {
     const wrapper = mountControls({ showReveal: false })
 
     expect(wrapper.find('.reveal-btn').exists()).toBe(false)
+    expect(wrapper.get('.accent').text()).toBe('Clear Votes')
     await wrapper.get('.accent').trigger('click')
-    expect(socket.emit).toHaveBeenCalledWith('clearVotes', {
-      roomId: 'room-one',
-    })
+    expect(wrapper.emitted('clear')).toHaveLength(1)
   })
 })

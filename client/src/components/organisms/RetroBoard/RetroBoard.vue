@@ -6,10 +6,20 @@
         :has-votes="hasCards"
         :room-id="room.roomId"
         reveal-event="revealCards"
-        clear-event="clearBoard"
         reveal-label="Reveal Cards"
         hide-label="Hide Cards"
         clear-label="Clear Board"
+        @clear="isConfirmingClear = true"
+      />
+      <MessageModal
+        :open="isConfirmingClear"
+        title="Clear board?"
+        message="This will remove every card from the board."
+        variant="warning"
+        close-label="Cancel"
+        confirm-label="Clear Board"
+        @dismiss="isConfirmingClear = false"
+        @confirm="clearBoard"
       />
       <div class="retro-timer">
         <button
@@ -136,6 +146,7 @@
 <script setup>
 import socket from '../../../../socket.js'
 import ButtonSection from '../../molecules/ButtonSection/ButtonSection.vue'
+import MessageModal from '../../molecules/MessageModal/MessageModal.vue'
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import RetroCard from '../../molecules/RetroCard/RetroCard.vue'
 import './retro-board.css'
@@ -171,6 +182,12 @@ const cardTextElements = {}
 const editingCardId = ref(null)
 const editingText = ref('')
 const editInput = ref(null)
+const isConfirmingClear = ref(false)
+
+const clearBoard = () => {
+  isConfirmingClear.value = false
+  socket.emit('clearBoard', { roomId: props.room.roomId })
+}
 
 const cardActionButtons = [
   {

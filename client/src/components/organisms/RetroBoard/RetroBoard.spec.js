@@ -131,6 +131,20 @@ describe('RetroBoard', () => {
       visibility: false,
     })
     await wrapper.get('.button-section .accent').trigger('click')
+    const dialog = document.querySelector('dialog')
+    expect(dialog.open).toBe(true)
+    expect(dialog.querySelector('h2').textContent).toBe('Clear board?')
+    expect(socket.emit).not.toHaveBeenCalledWith('clearBoard', expect.anything())
+
+    dialog.querySelector('button').click()
+    await wrapper.vm.$nextTick()
+    expect(dialog.open).toBe(false)
+    expect(socket.emit).not.toHaveBeenCalledWith('clearBoard', expect.anything())
+
+    await wrapper.get('.button-section .accent').trigger('click')
+    dialog.querySelector('.message-modal-confirm').click()
+    await wrapper.vm.$nextTick()
+    expect(dialog.open).toBe(false)
     expect(socket.emit).toHaveBeenLastCalledWith('clearBoard', {
       roomId: 'room-one',
     })

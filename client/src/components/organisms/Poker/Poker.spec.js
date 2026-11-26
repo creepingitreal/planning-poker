@@ -88,6 +88,30 @@ describe('Poker', () => {
     expect(wrapper.get('.vote').text()).toBe('3')
   })
 
+  it('asks for confirmation before clearing votes', async () => {
+    const wrapper = mountPoker()
+    const dialog = document.querySelector('dialog')
+    expect(dialog.open).toBe(false)
+
+    await wrapper.get('.button-section .accent').trigger('click')
+    expect(dialog.open).toBe(true)
+    expect(dialog.querySelector('h2').textContent).toBe('Clear votes?')
+    expect(socket.emit).not.toHaveBeenCalled()
+
+    dialog.dispatchEvent(new Event('cancel', { cancelable: true }))
+    await wrapper.vm.$nextTick()
+    expect(dialog.open).toBe(false)
+    expect(socket.emit).not.toHaveBeenCalled()
+
+    await wrapper.get('.button-section .accent').trigger('click')
+    dialog.querySelector('.message-modal-confirm').click()
+    await wrapper.vm.$nextTick()
+    expect(dialog.open).toBe(false)
+    expect(socket.emit).toHaveBeenCalledExactlyOnceWith('clearVotes', {
+      roomId: 'room-one',
+    })
+  })
+
   it('clears the local selection when the server resets votes', async () => {
     const wrapper = mountPoker()
     await wrapper.get('.vote-option').trigger('click')

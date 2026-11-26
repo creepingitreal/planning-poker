@@ -18,6 +18,14 @@
         <button ref="closeButton" type="button" @click="dismiss">
           {{ closeLabel }}
         </button>
+        <button
+          v-if="confirmLabel"
+          type="button"
+          class="accent message-modal-confirm"
+          @click="confirm"
+        >
+          {{ confirmLabel }}
+        </button>
       </div>
     </dialog>
   </Teleport>
@@ -38,8 +46,9 @@ const props = defineProps({
       ['info', 'success', 'warning', 'error'].includes(value),
   },
   closeLabel: { type: String, default: 'OK' },
+  confirmLabel: { type: String, default: '' },
 })
-const emit = defineEmits(['dismiss'])
+const emit = defineEmits(['dismiss', 'confirm'])
 const dialog = ref(null)
 const closeButton = ref(null)
 const id = useId()
@@ -58,6 +67,7 @@ const heading = computed(
 )
 
 const dismiss = () => emit('dismiss')
+const confirm = () => emit('confirm')
 
 const closeDialog = () => {
   if (!dialog.value?.open) return

@@ -92,6 +92,26 @@ describe('MessageModal', () => {
     expect(wrapper.emitted('dismiss')).toHaveLength(1)
   })
 
+  it('renders an optional confirm action and emits confirmation', () => {
+    const wrapper = mount(MessageModal, {
+      props: {
+        open: true,
+        message: 'Clear everything?',
+        closeLabel: 'Cancel',
+        confirmLabel: 'Clear',
+      },
+    })
+    const buttons = document.querySelectorAll('dialog button')
+    expect([...buttons].map((button) => button.textContent.trim())).toEqual([
+      'Cancel',
+      'Clear',
+    ])
+    expect(document.activeElement).toBe(buttons[0])
+    buttons[1].click()
+    expect(wrapper.emitted('confirm')).toHaveLength(1)
+    expect(wrapper.emitted('dismiss')).toBeUndefined()
+  })
+
   it('restores focus and scrolling on close and unmount', async () => {
     const trigger = document.createElement('button')
     document.body.append(trigger)

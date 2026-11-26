@@ -8,7 +8,7 @@
     >
       {{ isVisible ? hideLabel : revealLabel }}
     </button>
-    <button @click="clearBoard" class="accent">{{ clearLabel }}</button>
+    <button @click="emit('clear')" class="accent">{{ clearLabel }}</button>
   </div>
 </template>
 
@@ -32,10 +32,6 @@ const props = defineProps({
     type: String,
     default: 'revealVotes',
   },
-  clearEvent: {
-    type: String,
-    default: 'clearVotes',
-  },
   showReveal: {
     type: Boolean,
     default: true,
@@ -53,15 +49,12 @@ const props = defineProps({
     default: 'Clear Votes',
   },
 })
+const emit = defineEmits(['clear'])
 
 const toggleVisibility = () => {
   socket.emit(props.revealEvent, {
     roomId: props.roomId,
     visibility: !props.isVisible,
   })
-}
-
-const clearBoard = () => {
-  socket.emit(props.clearEvent, { roomId: props.roomId })
 }
 </script>
