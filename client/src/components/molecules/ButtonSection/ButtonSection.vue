@@ -4,7 +4,7 @@
       v-if="showReveal"
       @click="toggleVisibility"
       :disabled="!hasVotes"
-      class="reveal-btn"
+      class="reveal-btn outline"
     >
       {{ isVisible ? hideLabel : revealLabel }}
     </button>

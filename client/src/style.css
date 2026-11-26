@@ -160,13 +160,13 @@ button {
 }
 
 :where(button:not(.logo, .spin-button, .tool-tab, .icon-only, .link, :has(.icon))) {
-  border: 1px solid color-mix(in srgb, var(--color-action) 35%, transparent);
+  border: 1px solid var(--color-action);
   border-radius: var(--radius-control);
   line-height: 40px;
   font-size: 0.8125rem;
   font-weight: 600;
   font-family: inherit;
-  background-color: var(--color-surface);
+  background-color: transparent;
   color: var(--color-action);
   transition:
     background-color 200ms ease-in-out,
@@ -174,7 +174,6 @@ button {
     color 200ms ease-in-out,
     box-shadow 200ms ease-in-out,
     transform 200ms ease-in-out;
-  box-shadow: var(--shadow-control);
   min-height: 44px;
   max-height: 44px;
   min-width: min(120px, 100%);
@@ -190,16 +189,11 @@ button {
   }
 
   &:hover:not(:disabled) {
-    border-color: var(--color-action);
-    background-color: color-mix(
-      in srgb,
-      var(--color-action) 12%,
-      var(--color-surface)
-    );
+    color: var(--color-on-action);
+    background-color: var(--color-action);
   }
 
   &:active:not(:disabled) {
-    box-shadow: none;
     transform: translateY(1px);
   }
 
@@ -207,25 +201,19 @@ button {
     cursor: not-allowed;
     opacity: 0.5;
   }
-
+  
   &.accent {
     color: var(--color-on-accent);
     border-color: transparent;
+    box-shadow: var(--shadow-control);
 
     &:hover:not(:disabled) {
-      border-color: transparent;
+      color: var(--color-on-accent);
       background-color: color-mix(in srgb, var(--color-accent) 85%, white);
     }
-  }
 
-  &.outline {
-    color: var(--color-on-action);
-    border-color: transparent;
-    background-color: var(--color-action);
-
-    &:hover:not(:disabled) {
-      border-color: transparent;
-      background-color: color-mix(in srgb, var(--color-action) 85%, white);
+    &:active:not(:disabled) {
+      box-shadow: none;
     }
   }
 

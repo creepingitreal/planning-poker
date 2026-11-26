@@ -1,5 +1,8 @@
 import express from 'express'
 import http from 'node:http'
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { Server } from 'socket.io'
 import cors from 'cors'
 

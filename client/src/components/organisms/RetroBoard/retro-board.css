@@ -16,6 +16,8 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 50px;
+    /* main clips overflow, so leave room for button focus outlines and shadows. */
+    padding-top: 6px;
   }
 
   .retro-timer {
@@ -161,6 +163,17 @@
   .add-card-btn {
     min-width: fit-content;
     align-self: flex-end;
+  }
+
+  /* Sits on the light column surface, so use the darker green */
+  .add-card-toggle {
+    color: var(--color-action-strong);
+    border-color: var(--color-action-strong);
+
+    &:hover:not(:disabled) {
+      color: var(--color-on-action);
+      background-color: var(--color-action);
+    }
   }
 
   .add-card-form {
