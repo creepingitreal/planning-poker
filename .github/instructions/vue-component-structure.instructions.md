@@ -21,7 +21,7 @@ Every component belongs to exactly one level and lives at `client/src/components
 | **pages**     | Route components. Wire route, session, and server state into templates and organisms.  | anything below                      | ✅                             | `JoinRoom`, `Dashboard`, `Room`                                       |
 
 - Imports go downward only. A component never imports one from a higher level or from a sibling page.
-- Atoms and molecules are presentational: they don't import `socket.js`, `vue-router`, or `client/src/js/roomNav.js` state. Pass data in as props and emit events out. `ButtonSection` currently breaks this by emitting to the socket itself; don't copy that pattern, and move the socket call to its owner when refactoring it.
+- Atoms and molecules are presentational: they don't import `socket.js`, `vue-router`, or `client/src/js/roomNav.js` state. Pass data in as props and emit events out. `ButtonSection` currently breaks this by emitting reveal to the socket itself (clear is already emitted as a `clear` intent to its owner); don't copy that pattern, and move the socket call to its owner when refactoring it.
 - Pick the lowest level that fits. Promote a component (e.g. molecule → organism) only when it needs to own state or side effects, and move its folder when you do.
 - Before creating a component, check whether an existing one at the same level can be reused or extended with an optional prop.
 - Only route components go in `pages/`, and the router imports from `pages/` and `templates/` only.
