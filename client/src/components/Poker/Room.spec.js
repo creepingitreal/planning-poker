@@ -180,11 +180,11 @@ describe('Room', () => {
   it('clears a rejected session and preserves the tool when redirecting to join', async () => {
     const { router } = await mountRoom()
 
-    await receiveSocketEvent('roomError', { message: 'Room not found.' })
+    await receiveSocketEvent('roomError', { message: 'Session not found.' })
     await flushPromises()
 
     expect(currentMessage.value).toMatchObject({
-      message: 'Room not found.',
+      message: 'Session not found.',
       variant: 'error',
     })
     expect(localStorage.getItem('poker_session_room-one')).toBeNull()

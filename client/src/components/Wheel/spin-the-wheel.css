@@ -2,7 +2,9 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: center;
-  width: min(450px, 100%);
+  /* Shrinks the wheel to the height left under the nav (minus padding) so it
+     never overflows the app frame. */
+  width: min(450px, 100%, calc(100cqh - 80px));
   min-width: 0;
   flex: 0 0 auto;
   margin: 0 auto;

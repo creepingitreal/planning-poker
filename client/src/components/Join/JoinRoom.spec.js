@@ -88,7 +88,7 @@ describe('JoinRoom', () => {
     await wrapper.get('.button-section > button').trigger('click')
 
     expect(currentMessage.value).toMatchObject({
-      message: 'Please enter a room name',
+      message: 'Please enter a session name',
       variant: 'warning',
     })
     expect(socket.emit).not.toHaveBeenCalled()
@@ -223,9 +223,9 @@ describe('JoinRoom', () => {
     const { wrapper } = await mountJoin()
     const listeners = [...socket.on.mock.calls]
 
-    await receiveSocketEvent('roomError', { message: 'Room not found.' })
+    await receiveSocketEvent('roomError', { message: 'Session not found.' })
     expect(currentMessage.value).toMatchObject({
-      message: 'Room not found.',
+      message: 'Session not found.',
       variant: 'error',
     })
     wrapper.unmount()

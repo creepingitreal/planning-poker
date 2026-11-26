@@ -6,7 +6,7 @@
         :style="{ backgroundColor: participantColours[player.user] }"
       ></span>
       <span>{{ player.user }}{{ player.isCurrentUser ? ' (you)' : '' }}</span>
-      <small>In room</small>
+      <small>In session</small>
     </li>
     <li
       v-for="name in manualNames"
@@ -41,9 +41,10 @@
     <input
       v-model="newName"
       type="text"
+      autocomplete="name"
       class="manual-user-input"
-      placeholder="Add someone outside the room"
-      aria-label="Add someone outside the room"
+      placeholder="Add someone outside the session"
+      aria-label="Add someone outside the session"
     />
     <button
       type="submit"

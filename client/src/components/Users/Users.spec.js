@@ -34,7 +34,7 @@ describe('Users', () => {
     })
 
     expect(wrapper.get('.users-list-item').text()).toContain('Alex')
-    expect(wrapper.get('.users-list-item').text()).toContain('In room')
+    expect(wrapper.get('.users-list-item').text()).toContain('In session')
     expect(wrapper.get('.user-colour-dot').element.style.backgroundColor).toBe(
       'rgb(18, 52, 86)',
     )

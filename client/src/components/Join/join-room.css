@@ -1,12 +1,12 @@
 .join-room {
   width: min(100%, 520px);
-  min-height: min(70vh, 620px);
+  min-height: min(70cqh, 620px);
   justify-content: center;
   gap: 32px;
   padding: 24px 0 40px;
 
   @media screen and (min-width: 640px) {
-    min-height: 68vh;
+    min-height: 68cqh;
   }
 
   .section-title {

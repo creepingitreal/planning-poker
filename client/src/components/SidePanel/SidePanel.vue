@@ -4,7 +4,7 @@
     <aside
       class="side-panel"
       :class="{ open: showPanel }"
-      aria-label="Room users"
+      aria-label="Session users"
     >
       <div class="side-panel-header">
         <button

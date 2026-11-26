@@ -281,11 +281,14 @@ const positionWriteCard = (columnId) => {
   }
 
   // The form is anchored beside the button: top-aligned by default, or
-  // bottom-aligned when top-aligning would push it past the viewport.
+  // bottom-aligned when top-aligning would push it past the board's bounds.
   const controlRect = control.getBoundingClientRect()
+  const bounds = control.closest('.columns-container')?.getBoundingClientRect()
+  const boundsTop = bounds?.top ?? 0
+  const boundsBottom = bounds?.bottom ?? window.innerHeight
   const formHeight = form.offsetHeight
-  const wouldOverflowBottom = controlRect.top + formHeight > window.innerHeight
-  const hasRoomAbove = controlRect.bottom - formHeight >= 0
+  const wouldOverflowBottom = controlRect.top + formHeight > boundsBottom
+  const hasRoomAbove = controlRect.bottom - formHeight >= boundsTop
 
   writeCardPlacements[columnId] =
     wouldOverflowBottom && hasRoomAbove ? 'up' : 'down'

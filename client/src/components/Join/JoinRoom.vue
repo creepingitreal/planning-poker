@@ -3,7 +3,7 @@
     <div class="room join-room">
       <div class="section-title">
         <h1 class="title">
-          {{ roomId ? roomName || 'Join Room' : 'Join or Create a Room' }}
+          {{ roomId ? roomName || 'Join Session' : 'Join or start a session' }}
         </h1>
 
         <input
@@ -33,9 +33,9 @@
           <label for="invite-only"> Invite-only </label>
           <p v-if="locked" class="text-small confirmation-text">
             By checking this box, only users with the share link will be able to
-            join the room
+            join the session
           </p>
-          <button @click="createRoom" class="accent">Create Room</button>
+          <button @click="createRoom" class="accent">Start Session</button>
         </div>
         <button @click="joinRoom">Join</button>
       </div>
@@ -87,7 +87,7 @@ const joinRoom = () => {
   }
 
   if (!roomId.value && !roomNameInput.value) {
-    showMessage('Please enter a room name', { variant: 'warning' })
+    showMessage('Please enter a session name', { variant: 'warning' })
     return
   }
 
@@ -137,7 +137,7 @@ const handleRoomJoined = ({ roomId, roomName }) => {
 }
 
 const handleRoomError = ({ message }) => {
-  if (message.includes('Room not found')) {
+  if (message.includes('Session not found')) {
     localStorage.removeItem(`poker_session_${route.params.roomId}`)
     router.replace('/join')
   }

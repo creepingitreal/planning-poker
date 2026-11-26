@@ -56,7 +56,7 @@ const tools = [
     id: 'poker',
     index: '01',
     name: 'Planning Poker',
-    description: 'Estimate work together and reveal the room consensus.',
+    description: 'Estimate work together and reveal the session consensus.',
   },
   {
     id: 'retro',

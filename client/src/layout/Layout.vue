@@ -1,22 +1,26 @@
 <template>
-  <NavBar
-    :room-id="currentRoom.roomId"
-    :room-name="currentRoom.roomName"
-    :active-tool="activeTool"
-    :is-room-route="isRoomRoute"
+  <SidePanel
+    v-if="currentRoom.roomId"
+    :players="roomPlayers"
+    :allow-manual="activeTool === 'wheel'"
+    :manual-names-arr="wheelManualNames"
+    :active-tool="selectedTool"
+    @update:manual-names-arr="updateWheelManualNames"
+    @select-tool="selectTool"
   />
-  <main>
-    <SidePanel
-      v-if="currentRoom.roomId"
-      :players="roomPlayers"
-      :allow-manual="activeTool === 'wheel'"
-      :manual-names-arr="wheelManualNames"
-      :active-tool="selectedTool"
-      @update:manual-names-arr="updateWheelManualNames"
-      @select-tool="selectTool"
-    />
-    <RouterView />
-  </main>
+  <div class="app-frame">
+    <div class="app-frame-content">
+      <NavBar
+        :room-id="currentRoom.roomId"
+        :room-name="currentRoom.roomName"
+        :active-tool="activeTool"
+        :is-room-route="isRoomRoute"
+      />
+      <main>
+        <RouterView />
+      </main>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -25,6 +29,7 @@ import SidePanel from '../components/SidePanel/SidePanel.vue'
 import { computed, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import socket from '../../socket.js'
+import './layout.css'
 import {
   activeTool,
   currentRoom,

@@ -3,7 +3,8 @@
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  min-height: 70vh;
+  flex: 1 1 auto;
+  min-height: 0;
 
   .button-section {
     gap: 8px;
@@ -45,24 +46,29 @@
     }
   }
 
+  /* Each row is exactly the visible height so columns never grow with their
+     cards; the cards list inside each column scrolls instead. On narrow
+     screens columns wrap onto extra full-height rows. */
   .columns-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    grid-auto-rows: 100%;
     gap: 20px;
     width: 100%;
-    flex: 1;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
   }
 
   .retro-column-wrapper {
     --retro-card-gap: 10px;
     --retro-card-size: calc((100% - (2 * var(--retro-card-gap))) / 3);
 
-    flex: 1 1 min(100%, 320px);
     display: flex;
     flex-direction: column;
     gap: 12px;
     min-width: 0;
+    min-height: 0;
   }
 
   .retro-column {
@@ -73,7 +79,8 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    min-height: 400px;
+    flex: 1 1 auto;
+    min-height: 0;
   }
 
   .column-title {
@@ -104,7 +111,9 @@
     flex-wrap: wrap;
     align-content: flex-start;
     gap: var(--retro-card-gap);
+    flex: 1 1 auto;
     min-height: 40px;
+    overflow-y: auto;
   }
 
   /* Full width so the card keeps sizing against the column, and positioned so
