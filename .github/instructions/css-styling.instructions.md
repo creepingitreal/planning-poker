@@ -1,12 +1,12 @@
 ---
 name: CSS styling
-description: "Use when writing, editing, or refactoring CSS in client/src: component stylesheets, style.css, nested CSS, media queries, brand tokens, hover/focus states, and reduced motion."
+description: 'Use when writing, editing, or refactoring CSS in client/src: component stylesheets, style.css, nested CSS, media queries, brand tokens, hover/focus states, and reduced motion.'
 applyTo: 'client/src/**/*.css'
 ---
 
 # CSS Styling
 
-Use [retro-card.css](../../client/src/components/Retro/retro-card.css) and [sub-nav.css](../../client/src/components/SubNav/sub-nav.css) as the structural reference.
+Use [retro-card.css](../../client/src/components/molecules/RetroCard/retro-card.css) and [sub-nav.css](../../client/src/components/molecules/SubNav/sub-nav.css) as the structural reference.
 
 ## File ownership
 

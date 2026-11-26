@@ -37,4 +37,3 @@ const icon = computed(() => {
   })
 })
 </script>
-

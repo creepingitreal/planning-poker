@@ -1,12 +1,40 @@
 ---
 name: Vue component structure
-description: Use when creating or refactoring Vue components in client/src/components. Follow the simple GameBoard structure, shared controls, explicit props and events, and focused component ownership.
-applyTo: 'client/src/components/**/*.vue'
+description: 'Use when creating, moving, or refactoring Vue components in client/src/components. Covers atomic design levels (atoms, molecules, organisms, templates, pages), the Poker.vue structure, required component tests, shared controls, explicit props and events, and focused component ownership.'
+applyTo: 'client/src/components/**'
 ---
 
 # Vue Component Structure
 
-Use `client/src/components/Poker/GameBoard.vue` as the structural reference for new and refactored components.
+Use [Poker.vue](../../client/src/components/organisms/Poker/Poker.vue) as the structural reference for new and refactored components.
+
+## Atomic design
+
+Every component belongs to exactly one level and lives at `client/src/components/<level>/<ComponentName>/` with `ComponentName.vue`, `ComponentName.spec.js`, and, if it has styles, a kebab-case `component-name.css`.
+
+| Level         | Responsibility                                                                         | May import                          | Socket / router / global state | Examples                                                              |
+| ------------- | -------------------------------------------------------------------------------------- | ----------------------------------- | ------------------------------ | --------------------------------------------------------------------- |
+| **atoms**     | Smallest UI building blocks, with no domain workflow. Fully driven by props.           | nothing but other atoms (e.g. Icon) | ❌                             | `Icon`, `Vote`                                                        |
+| **molecules** | A small group of atoms with one interaction contract. Emits intent.                    | atoms                               | ❌                             | `ButtonSection`, `RetroCard`, `SubNav`, `MessageModal`                |
+| **organisms** | A self-contained section of a feature. May own its feature state and socket listeners. | atoms, molecules, organisms         | ✅                             | `Poker`, `RetroBoard`, `SpinTheWheel`, `Users`, `NavBar`, `SidePanel` |
+| **templates** | Page layout and chrome with slots or `RouterView`. No feature logic.                   | organisms and below                 | Only for chrome state          | `Layout`                                                              |
+| **pages**     | Route components. Wire route, session, and server state into templates and organisms.  | anything below                      | ✅                             | `JoinRoom`, `Dashboard`, `Room`                                       |
+
+- Imports go downward only. A component never imports one from a higher level or from a sibling page.
+- Atoms and molecules are presentational: they don't import `socket.js`, `vue-router`, or `client/src/js/roomNav.js` state. Pass data in as props and emit events out. `ButtonSection` currently breaks this by emitting to the socket itself; don't copy that pattern, and move the socket call to its owner when refactoring it.
+- Pick the lowest level that fits. Promote a component (e.g. molecule → organism) only when it needs to own state or side effects, and move its folder when you do.
+- Before creating a component, check whether an existing one at the same level can be reused or extended with an optional prop.
+- Only route components go in `pages/`, and the router imports from `pages/` and `templates/` only.
+
+## Tests are required
+
+A component isn't finished until its colocated `ComponentName.spec.js` exists and passes the 80% coverage gate (`npm test` in `client/`). Cover what fits the level:
+
+- **Atoms/molecules:** rendering for each prop variant and default, slot content, every emitted event with its payload, disabled and hidden states, keyboard interaction, and accessible names.
+- **Organisms/pages:** the above, plus the exact socket payloads emitted, handling of incoming socket events (including partial or malformed data), listener cleanup on unmount, navigation and route guards, and session restoration.
+- **Templates:** which chrome renders for each route and session state, and how events are forwarded.
+
+Stub child components (`global.stubs`) when testing a parent's contract, and test the child in its own spec. See [copilot-instructions.md](../copilot-instructions.md#testing) for the full testing rules.
 
 ## Component shape
 
@@ -53,9 +81,10 @@ Use `client/src/components/Poker/GameBoard.vue` as the structural reference for 
 
 ## Refactoring checklist
 
-1. Identify the component's owning state and remove state that belongs to its parent or child.
-2. Match the `GameBoard.vue` order: imports, props, emits, state, computed values, handlers, subscriptions, cleanup.
-3. Replace duplicated controls with a shared component where the interaction contract matches.
-4. Use explicit props and emitted events at every component boundary.
-5. Preserve existing socket event names and payload contracts unless the server is changed at the same time.
-6. Run `npm run build` from `client/` and check touched files for diagnostics.
+1. Confirm the component's atomic level and folder, and that its imports only point downward.
+2. Identify the component's owning state and remove state that belongs to its parent or child.
+3. Match the `Poker.vue` order: imports, props, emits, state, computed values, handlers, subscriptions, cleanup.
+4. Replace duplicated controls with a shared component where the interaction contract matches.
+5. Use explicit props and emitted events at every component boundary.
+6. Preserve existing socket event names and payload contracts unless the server is changed at the same time.
+7. Add or update the colocated spec, then run `npm test` (including the 80% coverage gate) and `npm run build` from `client/`.

@@ -131,6 +131,16 @@
       display: flex;
       justify-content: center;
       cursor: pointer;
+
+      /* Every icon gets the same square slot: narrow icons (e.g. tools, users)
+         would otherwise get fractional widths/positions and have an edge
+         clipped by the SVG's pixel-snapped overflow box. */
+      .icon {
+        flex: 0 0 20px;
+        width: 20px;
+        height: 20px;
+        overflow: visible;
+      }
     }
 
     /* Only the users list scrolls, so the panel itself never does. */

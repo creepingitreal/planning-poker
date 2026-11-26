@@ -151,9 +151,12 @@ npm test
 npm run test:watch
 ```
 
-Run one component suite with `npm test -- src/components/Retro/RetroBoard.spec.js`.
+`npm test` also reports coverage and fails if statements, branches, functions,
+or lines drop below 80%. An HTML report is written to `coverage/`. Run one
+component suite with `npx vitest run src/components/organisms/RetroBoard/RetroBoard.spec.js`.
 
-Each Vue component under `src/components/` has a colocated Vitest suite using
+Components are organised by atomic design level (`atoms`, `molecules`,
+`organisms`, `templates`, `pages`). Each Vue component under `src/components/` has a colocated Vitest suite using
 Vue Test Utils and jsdom. Tests cover rendered states, user interactions,
 socket payloads, session restoration, and navigation with an in-memory router.
 Shared setup resets browser storage and room state between tests and unmounts

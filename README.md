@@ -34,11 +34,12 @@ A real-time planning poker application for agile teams to estimate work collabor
 planning-poker/
 ├── client/          # Vue 3 frontend
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── JoinRoom.vue   # Room creation & joining flow
-│   │   │   ├── Room.vue       # Room wrapper & share link
-│   │   │   ├── GameBoard.vue  # Voting controls & player list
-│   │   │   └── Vote.vue       # Individual vote card
+│   │   ├── components/        # Atomic design: each component folder has .vue, .css, .spec.js
+│   │   │   ├── atoms/         # Icon, Vote
+│   │   │   ├── molecules/     # ButtonSection, RetroCard, SubNav, SidePanelContent, MessageModal
+│   │   │   ├── organisms/     # Poker, RetroBoard, SpinTheWheel, Users, NavBar, SidePanel
+│   │   │   ├── templates/     # Layout (side panel, nav bar, router view)
+│   │   │   └── pages/         # JoinRoom, Dashboard, Room (route components)
 │   │   ├── router/            # Vue Router configuration
 │   │   ├── js/                # Utility generators (room IDs, names)
 │   │   └── socket.js          # Socket.IO client instance
@@ -104,8 +105,8 @@ The server will be available at \`http://localhost:8000\`.
 
 ## Environment Variables
 
-| Variable            | Location | Default                   | Description                                |
-| ------------------- | -------- | ------------------------- | ------------------------------------------ |
+| Variable            | Location | Default                   | Description                                   |
+| ------------------- | -------- | ------------------------- | --------------------------------------------- |
 | \`PUBLIC_BASE_URL\` | server   | \`http://localhost:5173\` | Base URL used to generate session share links |
 
 ---
@@ -124,7 +125,7 @@ The server will be available at \`http://localhost:8000\`.
 | ----------------- | ------- | ----------------------- | -------------------------- | ----------------------------------------------------------- |
 | `VITE_SERVER_URL` | client  | `http://localhost:8000` | `https://api.example.com`  | Socket.IO/backend URL the frontend connects to.             |
 | `CORS_ORIGIN`     | server  | `http://localhost:5173` | `https://app.example.com`  | Frontend origin allowed to call and connect to the backend. |
-| `PUBLIC_BASE_URL` | server  | `http://localhost:5173` | `https://app.example.com`  | Frontend base URL used to generate session share links.        |
+| `PUBLIC_BASE_URL` | server  | `http://localhost:5173` | `https://app.example.com`  | Frontend base URL used to generate session share links.     |
 
 ### Notes For Split Frontend/Backend Deployments
 
