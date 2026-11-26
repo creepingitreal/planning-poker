@@ -11,6 +11,7 @@ import {
   nextColumnId,
   stopRetroTimerInterval,
   participantForSocket,
+  MAX_TIMER_DURATION,
 } from './state.js'
 
 export const ensureRetroState = (roomId) => {
@@ -233,7 +234,11 @@ export const registerRetroHandlers = (io, socket) => {
 
     stopRetroTimerInterval(roomId)
 
-    if (Number.isFinite(duration) && duration > 0) {
+    if (
+      Number.isInteger(duration) &&
+      duration > 0 &&
+      duration <= MAX_TIMER_DURATION
+    ) {
       timer.duration = duration
     }
 

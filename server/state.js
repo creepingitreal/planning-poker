@@ -36,6 +36,7 @@ const DEFAULT_RETRO_COLUMNS = () => [
 export const retroBoards = {}
 
 export const DEFAULT_TIMER_DURATION = 5 * 60 // 5 minutes, in seconds
+export const MAX_TIMER_DURATION = 99 * 60 + 59 // 99:59, in seconds
 
 // roomId -> { duration, remaining, running }
 export const retroTimers = {}

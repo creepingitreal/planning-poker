@@ -193,4 +193,45 @@ describe('RetroBoard', () => {
     )
     expect(wrapper.get('.timer-display').text()).toBe('0:00')
   })
+
+  it('lets users type a custom time and emits it in seconds', async () => {
+    const wrapper = mountBoard({
+      timer: { duration: 300, remaining: 65, running: false },
+    })
+    const editTimer = async (text, key = 'enter') => {
+      await wrapper.get('[aria-label="Edit timer duration"]').trigger('click')
+      const input = wrapper.get('.timer-input')
+      expect(input.element.value).toBe('1:05')
+      await input.setValue(text)
+      await input.trigger(`keydown.${key}`)
+    }
+
+    await editTimer('10')
+    await editTimer('7:30')
+    await editTimer('0:45')
+    expect(wrapper.emitted('set-timer')).toEqual([[600], [450], [45]])
+
+    for (const invalid of ['', 'abc', '0', '1:75', '100', '0:00']) {
+      await editTimer(invalid)
+    }
+    await editTimer('3', 'esc')
+    expect(wrapper.emitted('set-timer')).toHaveLength(3)
+    expect(wrapper.find('.timer-input').exists()).toBe(false)
+
+    await wrapper.get('[aria-label="Edit timer duration"]').trigger('click')
+    await wrapper.get('.timer-input').setValue('2')
+    await wrapper.get('.timer-input').trigger('blur')
+    expect(wrapper.emitted('set-timer').at(-1)).toEqual([120])
+  })
+
+  it('does not allow editing the time while the timer is running', async () => {
+    const wrapper = mountBoard({
+      timer: { duration: 300, remaining: 65, running: true },
+    })
+    const editButton = wrapper.get('[aria-label="Edit timer duration"]')
+
+    expect(editButton.element.disabled).toBe(true)
+    await editButton.trigger('click')
+    expect(wrapper.find('.timer-input').exists()).toBe(false)
+  })
 })

@@ -48,7 +48,30 @@
         >
           ↺
         </button>
-        <span class="timer-display">{{ formattedTime }}</span>
+        <input
+          v-if="isEditingTimer"
+          :ref="setTimerInput"
+          v-model="timerInputText"
+          class="timer-display timer-input"
+          type="text"
+          inputmode="numeric"
+          maxlength="5"
+          placeholder="mm:ss"
+          aria-label="Timer duration in minutes and seconds"
+          @keydown.enter.prevent="commitTimerEdit"
+          @keydown.esc.prevent="cancelTimerEdit"
+          @blur="commitTimerEdit"
+        />
+        <button
+          v-else
+          class="timer-display timer-edit-btn"
+          :disabled="timer.running"
+          aria-label="Edit timer duration"
+          :title="timer.running ? 'Pause to edit the time' : 'Set time'"
+          @click="startTimerEdit"
+        >
+          {{ formattedTime }}
+        </button>
       </div>
     </div>
 
@@ -170,7 +193,12 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['start-timer', 'pause-timer', 'reset-timer'])
+const emit = defineEmits([
+  'start-timer',
+  'pause-timer',
+  'reset-timer',
+  'set-timer',
+])
 
 const newCardText = reactive({})
 const openWriteCards = reactive({})
@@ -183,6 +211,10 @@ const editingCardId = ref(null)
 const editingText = ref('')
 const editInput = ref(null)
 const isConfirmingClear = ref(false)
+const isEditingTimer = ref(false)
+const timerInputText = ref('')
+const timerInput = ref(null)
+const maxTimerSeconds = 99 * 60 + 59
 
 const clearBoard = () => {
   isConfirmingClear.value = false
@@ -328,6 +360,36 @@ const formattedTime = computed(() => {
   const seconds = total % 60
   return `${minutes}:${String(seconds).padStart(2, '0')}`
 })
+
+// Accepts "m", "mm", "m:ss" or "mm:ss"; a bare number is treated as minutes.
+const parseTimerInput = (text) => {
+  const match = /^\s*(\d{1,2})(?::([0-5]\d))?\s*$/.exec(text ?? '')
+  if (!match) return null
+
+  const total = Number(match[1]) * 60 + Number(match[2] ?? 0)
+  return total > 0 && total <= maxTimerSeconds ? total : null
+}
+const setTimerInput = (element) => {
+  timerInput.value = element
+}
+const startTimerEdit = async () => {
+  if (props.timer?.running) return
+  timerInputText.value = formattedTime.value
+  isEditingTimer.value = true
+  await nextTick()
+  timerInput.value?.focus()
+  timerInput.value?.select()
+}
+const cancelTimerEdit = () => {
+  isEditingTimer.value = false
+}
+const commitTimerEdit = () => {
+  if (!isEditingTimer.value) return
+  isEditingTimer.value = false
+
+  const duration = parseTimerInput(timerInputText.value)
+  if (duration !== null) emit('set-timer', duration)
+}
 
 const updateColumnTitle = (columnId, title) => {
   socket.emit('updateColumnTitle', {
