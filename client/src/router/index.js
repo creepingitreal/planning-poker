@@ -1,9 +1,9 @@
 // router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
-import Dashboard from '../components/Dashboard/Dashboard.vue'
-import JoinRoom from '../components/Join/JoinRoom.vue'
-import Room from '../components/Poker/Room.vue'
-import Layout from '../layout/Layout.vue'
+import Dashboard from '../components/pages/Dashboard/Dashboard.vue'
+import JoinRoom from '../components/pages/JoinRoom/JoinRoom.vue'
+import Room from '../components/pages/Room/Room.vue'
+import Layout from '../components/templates/Layout/Layout.vue'
 import { currentRoom } from '../js/roomNav.js'
 
 // "/" is always the join / start-a-session screen (invite details travel in

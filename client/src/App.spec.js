@@ -2,7 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import App from './App.vue'
-import NavBar from './components/NavBar/NavBar.vue'
+import NavBar from './components/organisms/NavBar/NavBar.vue'
 import { currentRoom } from './js/roomNav.js'
 import appRouter from './router/index.js'
 

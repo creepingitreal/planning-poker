@@ -9,6 +9,7 @@ node_modules/
 Dependencies.toml
 **/node_modules/
 **/dist/
+**/coverage/
 
 # config files
 Config.toml

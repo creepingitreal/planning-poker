@@ -1,0 +1,5 @@
+/* Ensure the SVG respects the class height */
+svg {
+  width: auto;
+  height: auto;
+}
