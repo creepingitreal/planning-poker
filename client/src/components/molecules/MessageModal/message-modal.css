@@ -10,12 +10,12 @@
   margin: auto;
   overflow: auto;
   padding: 28px;
-  border: 3px solid var(--modal-accent);
+  border: 3px solid var(--color-accent);
   border-radius: var(--radius-panel);
   background:
     radial-gradient(
         120% 60% at 50% 0%,
-        color-mix(in srgb, var(--modal-accent) 10%, transparent),
+        color-mix(in srgb, var(--color-accent) 10%, transparent),
         transparent 70%
       )
       no-repeat,
@@ -104,6 +104,18 @@
       &:focus-visible {
         outline: 2px solid var(--color-on-surface-raised);
         outline-offset: 4px;
+      }
+    }
+
+    button:not(.message-modal-confirm) {
+      background-color: var(--color-action);
+      color: var(--color-on-action);
+      border-color: var(--color-action-strong);
+      box-shadow: var(--shadow-control);
+
+      &:hover:not(:disabled) {
+        background-color: var(--color-action-strong);
+        color: var(--color-action-subtle);
       }
     }
   }
