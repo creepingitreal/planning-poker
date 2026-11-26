@@ -10,7 +10,7 @@
    Closing: text fades out first, then the panel narrows, so nothing wraps or
    reflows mid-animation. */
 .side-panel-wrapper {
-  --side-panel-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --side-panel-ease: var(--motion-ease);
   --side-panel-duration: 500ms;
   --side-panel-fade-out: 150ms;
   --side-panel-fade-in: 250ms;
@@ -169,9 +169,35 @@
       }
     }
 
+    /* Matches the add/remove manual name buttons in the users list. */
     .side-panel-close {
+      flex: 0 0 auto;
       margin-left: auto;
+      width: 28px;
+      min-width: 28px;
+      height: 28px;
+      min-height: 28px;
+      max-height: 28px;
+      border-radius: 50%;
       color: var(--color-text);
+      font-size: 1.25rem;
+      line-height: 1;
+
+      /* Leaves the side-panel-fade transition in charge while it runs. */
+      &:not(.side-panel-fade-enter-active, .side-panel-fade-leave-active) {
+        transition:
+          background-color var(--motion-duration-fast) var(--motion-ease),
+          color var(--motion-duration-fast) var(--motion-ease);
+
+        @media (prefers-reduced-motion: reduce) {
+          transition: none;
+        }
+      }
+
+      &:hover:not(:disabled) {
+        background-color: var(--color-surface-raised);
+        color: var(--color-on-surface-raised);
+      }
     }
   }
 

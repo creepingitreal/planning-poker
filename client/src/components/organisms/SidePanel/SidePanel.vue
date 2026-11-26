@@ -35,7 +35,7 @@
             aria-label="Close side panel"
             @click="closePanel"
           >
-            ✕
+            ×
           </button>
         </Transition>
       </div>
@@ -83,7 +83,7 @@
             @update:manual-names="emit('update:manualNamesArr', $event)"
           />
         </SidePanelContent>
-        <!-- <SidePanelContent
+        <SidePanelContent
           :show-panel="showPanel"
           icon-name="info-icon"
           title="Info"
@@ -94,7 +94,7 @@
             <li><a href="#">More about the app</a></li>
             <li><a href="#">More about the author</a></li>
           </ul>
-        </SidePanelContent> -->
+        </SidePanelContent>
       </div>
     </aside>
   </div>
