@@ -17,7 +17,7 @@ vi.mock('../../socket.js', () => ({
   },
 }))
 
-vi.mock('../assets/shared/Icon.vue', () => ({
+vi.mock('../components/atoms/Icon/Icon.vue', () => ({
   default: {
     name: 'Icon',
     props: ['icon'],

@@ -1,0 +1,154 @@
+.retro-board {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+
+  .button-section {
+    gap: 8px;
+  }
+
+  .retro-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 50px;
+  }
+
+  .retro-timer {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .timer-display {
+    font-size: 1.4rem;
+    font-variant-numeric: tabular-nums;
+    min-width: 3.5ch;
+    text-align: center;
+    margin-left: 6px;
+  }
+
+  .icon-btn-timer {
+    color: var(--color-accent);
+    font-weight: 800;
+    font-size: 1.3rem;
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(
+        in srgb,
+        var(--color-accent) 15%,
+        transparent
+      );
+    }
+  }
+
+  /* Each row is exactly the visible height so columns never grow with their
+     cards; the cards list inside each column scrolls instead. On narrow
+     screens columns wrap onto extra full-height rows. */
+  .columns-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    grid-auto-rows: 100%;
+    gap: 20px;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .retro-column-wrapper {
+    --retro-card-gap: 10px;
+    --retro-card-size: calc((100% - (2 * var(--retro-card-gap))) / 3);
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .retro-column {
+    background-color: var(--color-surface-raised);
+    color: var(--color-on-surface-raised);
+    border-radius: var(--radius-panel);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .column-title {
+    display: block;
+    min-height: unset;
+    width: 100%;
+    max-width: none;
+    padding: 4px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-control);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 700;
+    text-align: center;
+
+    &:hover,
+    &:focus {
+      border-color: var(--color-border);
+      background: var(--color-action);
+      color: var(--color-on-action);
+    }
+  }
+
+  .cards-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: var(--retro-card-gap);
+    flex: 1 1 auto;
+    min-height: 40px;
+    overflow-y: auto;
+  }
+
+  /* Full width so the card keeps sizing against the column, and positioned so
+     the absolutely placed form never shifts the toggle button. */
+  .write-card-control {
+    position: relative;
+    align-self: flex-end;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+
+  .add-card-toggle,
+  .add-card-btn {
+    min-width: fit-content;
+    align-self: flex-end;
+  }
+
+  .add-card-form {
+    position: absolute;
+    top: 0;
+    right: calc(var(--write-card-button-width, 0px) + 8px);
+    z-index: 5;
+
+    &.open-up {
+      top: auto;
+      bottom: 0;
+    }
+
+    textarea {
+      width: 100%;
+      flex: 1;
+      resize: none;
+      overflow: hidden;
+      height: 100%;
+    }
+  }
+}

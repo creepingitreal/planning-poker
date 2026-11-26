@@ -1,0 +1,54 @@
+.wheel-tool {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  /* Shrinks the wheel to the height left under the nav (minus padding) so it
+     never overflows the app frame. */
+  width: min(450px, 100%, calc(100cqh - 80px));
+  min-width: 0;
+  flex: 0 0 auto;
+  margin: 0 auto;
+  padding: 24px 0 56px;
+
+  .wheel-wrapper {
+    overflow: hidden;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 50%;
+    background: var(--color-action);
+    box-shadow: var(--shadow-wheel);
+  }
+
+  .spin-button {
+    background-color: transparent;
+    transition: transform 300ms ease-in-out;
+
+    .spinner-arrow {
+      width: 80px;
+
+      path {
+        fill: var(--color-action-strong);
+      }
+    }
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      pointer-events: none;
+
+      path {
+        fill: var(--color-disabled);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+
+      &:hover {
+        transform: none;
+      }
+    }
+  }
+}

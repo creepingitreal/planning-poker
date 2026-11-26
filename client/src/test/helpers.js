@@ -2,18 +2,16 @@ import { nextTick } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import socket from '../../socket.js'
 
-export const createTestRouter = async (path = '/') => {
+export const createTestRouter = async (path = '/', state) => {
   const router = createRouter({
     history: createMemoryHistory(),
-    routes: ['/', '/dashboard', '/join/:roomId?', '/room/:roomId'].map(
-      (routePath) => ({
-        path: routePath,
-        component: { template: '<div />' },
-      }),
-    ),
+    routes: ['/', '/dashboard', '/room/:roomId'].map((routePath) => ({
+      path: routePath,
+      component: { template: '<div />' },
+    })),
   })
 
-  await router.push(path)
+  await router.push(state ? { path, state } : path)
   await router.isReady()
   return router
 }

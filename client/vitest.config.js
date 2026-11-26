@@ -12,6 +12,18 @@ export default mergeConfig(
       environmentOptions: {
         jsdom: { url: 'http://localhost:5173' },
       },
+      coverage: {
+        provider: 'v8',
+        include: ['src/**/*.{js,vue}'],
+        exclude: ['src/**/*.spec.js', 'src/test/**', 'src/main.js'],
+        reporter: ['text', 'html'],
+        thresholds: {
+          statements: 80,
+          branches: 80,
+          functions: 80,
+          lines: 80,
+        },
+      },
     },
   }),
 )

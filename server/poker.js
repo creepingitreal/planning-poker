@@ -61,14 +61,14 @@ export const registerPokerHandlers = (
   socket.on('createRoom', ({ room, user, clientId } = {}) => {
     if (!room?.roomId || !room?.roomName || !user?.trim()) {
       socket.emit('roomError', {
-        message: 'Room name and username are required.',
+        message: 'Session name and username are required.',
       })
       return
     }
 
     if (rooms[room.roomId]) {
       socket.emit('roomError', {
-        message: `Room "${room.roomName}" already exists.`,
+        message: `Session "${room.roomName}" already exists.`,
       })
       return
     }
@@ -107,7 +107,7 @@ export const registerPokerHandlers = (
     if (roomName) {
       socket.emit('roomNameResolved', { roomName })
     } else {
-      socket.emit('roomNameResolved', { error: 'Room not found' })
+      socket.emit('roomNameResolved', { error: 'Session not found' })
     }
   })
 
@@ -117,18 +117,18 @@ export const registerPokerHandlers = (
     if (!roomId && room.roomName) {
       roomId = roomNames[room.roomName]
       if (!roomId) {
-        socket.emit('roomError', { message: 'Room not found.' })
+        socket.emit('roomError', { message: 'Session not found.' })
         return
       }
     }
 
     if (!rooms[roomId]) {
-      socket.emit('roomError', { message: 'Room not found.' })
+      socket.emit('roomError', { message: 'Session not found.' })
       return
     }
 
     if (lockedRooms.has(roomId) && !fromLink) {
-      socket.emit('roomError', { message: 'This room is invite-only.' })
+      socket.emit('roomError', { message: 'This session is invite-only.' })
       return
     }
 

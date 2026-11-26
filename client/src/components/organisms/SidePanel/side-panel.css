@@ -1,0 +1,306 @@
+.side-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-overlay);
+  z-index: 9;
+}
+
+/* Shared motion timings for the panel, its backdrop and its contents.
+   Opening: the panel widens first, then text fades in once there's room.
+   Closing: text fades out first, then the panel narrows, so nothing wraps or
+   reflows mid-animation. */
+.side-panel-wrapper {
+  --side-panel-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --side-panel-duration: 500ms;
+  --side-panel-fade-out: 150ms;
+  --side-panel-fade-in: 250ms;
+  /* Text starts fading in as the width animation is easing to a stop. */
+  --side-panel-fade-in-delay: 300ms;
+}
+
+.side-panel-backdrop-enter-active,
+.side-panel-backdrop-leave-active {
+  transition: opacity var(--side-panel-duration) var(--side-panel-ease);
+}
+
+.side-panel-fade-enter-active {
+  transition:
+    opacity var(--side-panel-fade-in) var(--side-panel-ease)
+      var(--side-panel-fade-in-delay),
+    transform var(--side-panel-fade-in) var(--side-panel-ease)
+      var(--side-panel-fade-in-delay);
+}
+
+.side-panel-fade-leave-active {
+  transition:
+    opacity var(--side-panel-fade-out) var(--side-panel-ease),
+    transform var(--side-panel-fade-out) var(--side-panel-ease);
+}
+
+/* Section bodies also grow/shrink in height alongside the panel width. */
+.side-panel-expand-enter-active {
+  overflow: hidden;
+  transition:
+    height var(--side-panel-duration) var(--side-panel-ease),
+    opacity var(--side-panel-fade-in) var(--side-panel-ease)
+      var(--side-panel-fade-in-delay),
+    transform var(--side-panel-fade-in) var(--side-panel-ease)
+      var(--side-panel-fade-in-delay);
+}
+
+.side-panel-expand-leave-active {
+  overflow: hidden;
+  transition:
+    height var(--side-panel-duration) var(--side-panel-ease),
+    opacity var(--side-panel-fade-out) var(--side-panel-ease),
+    transform var(--side-panel-fade-out) var(--side-panel-ease);
+}
+
+.side-panel-logo-enter-active {
+  transition: opacity var(--side-panel-fade-in) var(--side-panel-ease);
+}
+
+.side-panel-logo-leave-active {
+  transition: opacity var(--side-panel-fade-out) var(--side-panel-ease);
+}
+
+.side-panel-backdrop-enter-from,
+.side-panel-backdrop-leave-to,
+.side-panel-logo-enter-from,
+.side-panel-logo-leave-to {
+  opacity: 0;
+}
+
+.side-panel-fade-enter-from,
+.side-panel-fade-leave-to,
+.side-panel-expand-enter-from,
+.side-panel-expand-leave-to {
+  opacity: 0;
+  transform: translateX(-12px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side-panel-backdrop-enter-active,
+  .side-panel-backdrop-leave-active,
+  .side-panel-fade-enter-active,
+  .side-panel-fade-leave-active,
+  .side-panel-expand-enter-active,
+  .side-panel-expand-leave-active,
+  .side-panel-logo-enter-active,
+  .side-panel-logo-leave-active {
+    transition: none;
+  }
+}
+
+.side-panel {
+  --side-panel-open-width: min(300px, 85vw);
+  position: fixed;
+  /* Pinned to both edges rather than using vh so it always spans the visible
+     viewport on mobile browsers with dynamic toolbars. */
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100px;
+  padding: 10px;
+  border-radius: var(--radius-panel);
+  margin: 5px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--color-page);
+  border: 1px solid var(--color-overlay);
+  color: var(--color-text);
+  box-shadow: var(--shadow-panel);
+  transition: width var(--side-panel-duration) var(--side-panel-ease)
+    var(--side-panel-fade-out);
+  will-change: width;
+  z-index: 20;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    .logo {
+      transition: none !important;
+    }
+  }
+
+  /* Left-aligned in both states, with padding that centres the logo in the
+     collapsed panel (78px inner width), so it never jumps sideways. */
+  .side-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    padding: 20px 20px 20px 25px;
+    border-bottom: 1px solid var(--color-overlay);
+
+    .logo {
+      transition:
+        width var(--side-panel-duration) var(--side-panel-ease)
+          var(--side-panel-fade-out),
+        flex-basis var(--side-panel-duration) var(--side-panel-ease)
+          var(--side-panel-fade-out);
+      justify-self: center;
+      display: flex;
+      align-items: center;
+      width: 28px;
+      max-width: 100%;
+      height: 28px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      flex: 0 0 28px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: left center;
+
+      &.brand-logo-mark {
+        width: 28px;
+        object-position: center;
+      }
+    }
+
+    .side-panel-close {
+      margin-left: auto;
+      color: var(--color-text);
+    }
+  }
+
+  .side-panel-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    font-size: 0.875rem;
+  }
+
+  .content-item {
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    width: 100%;
+
+    &.tools {
+      border-bottom: 1px solid var(--color-overlay);
+    }
+
+    /* A plain router button rather than an expandable section. */
+    &.dashboard {
+      border-bottom: 1px solid var(--color-overlay);
+      color: inherit;
+      text-decoration: none;
+
+      .title {
+        font-weight: 700;
+      }
+
+      &:hover > .content-title {
+        color: var(--color-accent);
+
+        .icon,
+        .icon path {
+          fill: var(--color-accent);
+        }
+      }
+    }
+
+    /* Sections that are a screen (dashboard, tools) show the accent while that
+       screen is on display. */
+    &.active > .content-title,
+    &.dashboard.router-link-exact-active > .content-title {
+      color: var(--color-accent);
+
+      .icon,
+      .icon path {
+        fill: var(--color-accent);
+      }
+    }
+
+    /* Left padding centres the 20px icon in the collapsed panel (78px inner
+       width) and keeps it in the same spot when the panel opens. */
+    .content-title {
+      padding: 10px 10px 10px 29px;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 20px;
+      cursor: pointer;
+
+      .title {
+        font-size: 1rem;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      /* Every icon gets the same square slot: narrow icons (e.g. tools, users)
+         would otherwise get fractional widths/positions and have an edge
+         clipped by the SVG's pixel-snapped overflow box. */
+      .icon {
+        flex: 0 0 20px;
+        width: 20px;
+        height: 20px;
+        overflow: visible;
+      }
+    }
+
+    /* Laid out at the open width from the start so it doesn't rewrap while
+       the panel is still widening or narrowing. */
+    .content-body {
+      width: calc(var(--side-panel-open-width) - 22px);
+      box-sizing: border-box;
+    }
+
+    /* Only the users list scrolls, so the panel itself never does. */
+    &.users {
+      flex: 0 1 auto;
+      min-height: 0;
+
+      > * {
+        flex-shrink: 0;
+      }
+
+      .users-list {
+        flex-shrink: 1;
+        min-height: 0;
+        overflow-y: auto;
+      }
+    }
+
+    &.info {
+      margin-top: auto;
+
+      .info-text {
+        font-size: small;
+        color: var(--color-text-muted);
+      }
+    }
+  }
+
+  &.open {
+    width: var(--side-panel-open-width);
+    transition-delay: 0ms;
+
+    .side-panel-header .logo {
+      width: 140px;
+      flex: 0 1 140px;
+      transition-delay: 0ms;
+    }
+
+    .side-panel-content .content-item .content-title {
+      cursor: unset;
+    }
+  }
+}

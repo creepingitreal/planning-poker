@@ -6,14 +6,14 @@ This repository is being used for a first learning session. The current code and
 
 ## Current Status
 
-- **Create or join rooms** – Create a named room or join an existing one by room name.
-- **Invite-only rooms** – Lock a room so that only users with the share link can join.
+- **Start or join sessions** – Start a named session or join an existing one by session name.
+- **Invite-only sessions** – Lock a session so that only users with the share link can join.
 - **Share link** – Copy a direct invite link to your clipboard and send it to teammates.
 - **Real-time voting** – All connected players see votes update live via WebSockets.
 - **Fibonacci voting scale** – Vote with standard story-point values: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, or ?.
 - **Reveal / hide votes** – Reveal all votes simultaneously to avoid anchoring bias, then hide them again.
 - **Clear votes** – Reset all votes to begin a new round.
-- **Session persistence** – Your session is saved for 24 hours so you can rejoin a room after a page refresh.
+- **Session persistence** – Your session is saved for 24 hours so you can rejoin a session after a page refresh.
 
 ---
 
@@ -48,11 +48,12 @@ This repository is being used for a first learning session. The current code and
 planning-poker/
 ├── client/          # Vue 3 frontend
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── JoinRoom.vue   # Room creation & joining flow
-│   │   │   ├── Room.vue       # Room wrapper & share link
-│   │   │   ├── GameBoard.vue  # Voting controls & player list
-│   │   │   └── Vote.vue       # Individual vote card
+│   │   ├── components/        # Atomic design: each component folder has .vue, .css, .spec.js
+│   │   │   ├── atoms/         # Icon, Vote
+│   │   │   ├── molecules/     # ButtonSection, RetroCard, SubNav, SidePanelContent, MessageModal
+│   │   │   ├── organisms/     # Poker, RetroBoard, SpinTheWheel, Users, NavBar, SidePanel
+│   │   │   ├── templates/     # Layout (side panel, nav bar, router view)
+│   │   │   └── pages/         # JoinRoom, Dashboard, Room (route components)
 │   │   ├── router/            # Vue Router configuration
 │   │   ├── js/                # Utility generators (room IDs, names)
 │   │   └── socket.js          # Socket.IO client instance
@@ -124,9 +125,9 @@ Use this workspace to learn how the example app is structured, how the client an
 
 ## Environment Variables
 
-| Variable            | Location | Default                   | Description                                |
-| ------------------- | -------- | ------------------------- | ------------------------------------------ |
-| \`PUBLIC_BASE_URL\` | server   | \`http://localhost:5173\` | Base URL used to generate room share links |
+| Variable            | Location | Default                   | Description                                   |
+| ------------------- | -------- | ------------------------- | --------------------------------------------- |
+| \`PUBLIC_BASE_URL\` | server   | \`http://localhost:5173\` | Base URL used to generate session share links |
 
 | Variable | Service | Example (Local Dev) | Example (Split Deployment) | Purpose |
 |---|---|---|---|---|
@@ -151,7 +152,7 @@ Suggested first pass sequence:
 
 ## Usage
 
-1. **Create a room** – Enter your name and click **Create Room**. A unique room name and ID are generated automatically.
+1. **Start a session** – Enter your name and click **Start Session**. A unique session name and ID are generated automatically.
 2. **Invite teammates** – Click **Invite People** to copy the share link.
 3. **Vote** – Each player clicks a card value to cast their vote.
 4. **Reveal** – Click **Reveal Votes** to show all votes simultaneously.
@@ -163,7 +164,7 @@ Suggested first pass sequence:
 | ----------------- | ------- | ----------------------- | -------------------------- | ----------------------------------------------------------- |
 | `VITE_SERVER_URL` | client  | `http://localhost:8000` | `https://api.example.com`  | Socket.IO/backend URL the frontend connects to.             |
 | `CORS_ORIGIN`     | server  | `http://localhost:5173` | `https://app.example.com`  | Frontend origin allowed to call and connect to the backend. |
-| `PUBLIC_BASE_URL` | server  | `http://localhost:5173` | `https://app.example.com`  | Frontend base URL used to generate room share links.        |
+| `PUBLIC_BASE_URL` | server  | `http://localhost:5173` | `https://app.example.com`  | Frontend base URL used to generate session share links.     |
 
 ### Notes For Split Frontend/Backend Deployments
 

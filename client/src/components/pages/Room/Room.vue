@@ -1,0 +1,215 @@
+<template>
+  <section>
+    <section
+      v-if="joined"
+      class="room"
+      :class="{ retro: activeTool === 'retro' }"
+    >
+      <RetroBoard
+        v-show="activeTool === 'retro'"
+        class="full-width-section"
+        :room="room"
+        :players="players"
+        :board="board"
+        :timer="timer"
+        @start-timer="startTimer"
+        @pause-timer="pauseTimer"
+        @reset-timer="resetTimer"
+      />
+      <GameBoard
+        v-show="activeTool === 'poker'"
+        :room="room"
+        :players="players"
+      />
+      <SpinTheWheel
+        v-show="activeTool === 'wheel'"
+        :players="players"
+        :manual-names="wheelManualNames"
+      />
+    </section>
+  </section>
+</template>
+
+<script setup>
+import GameBoard from '../../organisms/Poker/Poker.vue'
+import RetroBoard from '../../organisms/RetroBoard/RetroBoard.vue'
+import SpinTheWheel from '../../organisms/SpinTheWheel/SpinTheWheel.vue'
+import './room.css'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import {
+  activeTool,
+  roomPlayers,
+  wheelManualNames,
+  restoreActiveTool,
+  persistActiveTool,
+  setCurrentRoom,
+  TOOLS,
+} from '../../../js/roomNav.js'
+import socket from '../../../../socket.js'
+import { showMessage } from '../../../js/messages.js'
+
+const route = useRoute()
+const router = useRouter()
+
+const joined = ref(false)
+const name = ref('')
+const room = ref({
+  roomId: route.params.roomId,
+  roomName: '',
+})
+const shareUrl = ref('')
+const players = roomPlayers
+const hostId = ref(null)
+const createEmptyBoard = () => ({
+  columns: [
+    { id: 'went-well', title: 'Went Well' },
+    { id: 'to-improve', title: 'To Improve' },
+    { id: 'action-items', title: 'Action Items' },
+  ],
+  cards: [],
+  revealed: false,
+})
+const board = ref(createEmptyBoard())
+const timer = ref({ duration: 300, remaining: 300, running: false })
+
+const copied = ref(false)
+const clientId = localStorage.getItem('poker_client_id') || crypto.randomUUID()
+localStorage.setItem('poker_client_id', clientId)
+
+const formattedTime = computed(() => {
+  const total = Math.max(0, timer.value?.remaining ?? 0)
+  const minutes = Math.floor(total / 60)
+  const seconds = total % 60
+  return `${minutes}:${String(seconds).padStart(2, '0')}`
+})
+
+const saveSession = (roomData, userName) => {
+  localStorage.setItem(
+    `poker_session_${roomData.roomId}`,
+    JSON.stringify({
+      room: roomData,
+      name: userName,
+      clientId,
+      savedAt: Date.now(),
+    }),
+  )
+}
+
+const syncToolQuery = (tool) => {
+  if (!joined.value || route.query.tool === tool) return
+  router.replace({ query: { ...route.query, tool } })
+}
+
+const activateRoom = () => {
+  restoreActiveTool(room.value.roomId, route.query.tool)
+  persistActiveTool(room.value.roomId)
+  syncToolQuery(activeTool.value)
+}
+
+watch(activeTool, syncToolQuery)
+watch(
+  () => route.query.tool,
+  (tool) => {
+    if (joined.value && TOOLS.includes(tool)) activeTool.value = tool
+  },
+)
+
+const startTimer = () => {
+  socket.emit('startTimer', { roomId: room.value.roomId })
+}
+
+const pauseTimer = () => {
+  socket.emit('pauseTimer', { roomId: room.value.roomId })
+}
+
+const resetTimer = () => {
+  socket.emit('resetTimer', { roomId: room.value.roomId })
+}
+
+const handleRoomJoined = ({ roomId, roomName }) => {
+  room.value.roomId = roomId
+  room.value.roomName = roomName
+
+  saveSession(room.value, name.value)
+  setCurrentRoom(roomId, roomName)
+
+  joined.value = true
+  activateRoom()
+}
+
+const redirectToJoin = () => {
+  const inviteTool = TOOLS.includes(route.query.tool) ? route.query.tool : ''
+  router.replace({
+    path: '/',
+    state: { inviteRoomId: route.params.roomId, inviteTool },
+  })
+}
+
+const handleRoomError = ({ message }) => {
+  showMessage(message, { variant: 'error' })
+
+  if (!joined.value) {
+    localStorage.removeItem(`poker_session_${route.params.roomId}`)
+    redirectToJoin()
+  }
+}
+
+const handleUpdateRoom = ({
+  shareUrl: url,
+  roomName,
+  hostId: currentHostId,
+}) => {
+  if (url) shareUrl.value = url
+  if (roomName) room.value.roomName = roomName
+  hostId.value = currentHostId ?? null
+}
+
+const handleUpdateBoard = ({ board: boardData }) => {
+  board.value = boardData ?? createEmptyBoard()
+}
+
+const handleUpdateTimer = ({ timer: timerData }) => {
+  if (timerData) timer.value = timerData
+}
+
+socket.on('roomJoined', handleRoomJoined)
+socket.on('roomError', handleRoomError)
+socket.on('updateRoom', handleUpdateRoom)
+socket.on('updateBoard', handleUpdateBoard)
+socket.on('updateTimer', handleUpdateTimer)
+
+onMounted(() => {
+  const saved = localStorage.getItem(`poker_session_${route.params.roomId}`)
+
+  if (saved) {
+    const session = JSON.parse(saved)
+    const twentyFourHours = 24 * 60 * 60 * 1000
+
+    if (Date.now() - session.savedAt < twentyFourHours) {
+      room.value = session.room
+      name.value = session.name
+
+      socket.emit('joinRoom', {
+        room: session.room,
+        user: session.name,
+        clientId: session.clientId || clientId,
+        fromLink: true,
+      })
+      return
+    }
+
+    localStorage.removeItem(`poker_session_${route.params.roomId}`)
+  }
+
+  redirectToJoin()
+})
+
+onUnmounted(() => {
+  socket.off('roomJoined', handleRoomJoined)
+  socket.off('roomError', handleRoomError)
+  socket.off('updateRoom', handleUpdateRoom)
+  socket.off('updateBoard', handleUpdateBoard)
+  socket.off('updateTimer', handleUpdateTimer)
+})
+</script>
