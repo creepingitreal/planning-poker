@@ -50,6 +50,7 @@
           :show-panel="showPanel"
           icon-name="tools-icon"
           title="Tools"
+          :active="activeTool !== ''"
           @open-panel="showPanel = true"
         >
           <SubNav

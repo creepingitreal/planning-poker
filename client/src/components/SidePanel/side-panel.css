@@ -103,14 +103,25 @@
         font-weight: 700;
       }
 
-      &:hover,
-      &.router-link-exact-active {
+      &:hover > .content-title {
         color: var(--color-accent);
 
         .icon,
         .icon path {
           fill: var(--color-accent);
         }
+      }
+    }
+
+    /* Sections that are a screen (dashboard, tools) show the accent while that
+       screen is on display. */
+    &.active > .content-title,
+    &.dashboard.router-link-exact-active > .content-title {
+      color: var(--color-accent);
+
+      .icon,
+      .icon path {
+        fill: var(--color-accent);
       }
     }
 

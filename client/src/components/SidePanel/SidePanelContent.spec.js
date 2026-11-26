@@ -24,5 +24,19 @@ describe('SidePanelContent', () => {
     expect(wrapper.get('h2').text()).toBe('Tools')
     expect(wrapper.text()).toContain('Panel content')
     expect(wrapper.get('.content-item').classes()).toContain('tools')
+    expect(wrapper.get('.content-item').classes()).not.toContain('active')
+  })
+
+  it('marks itself active when it represents the current screen', () => {
+    const wrapper = mount(SidePanelContent, {
+      props: {
+        showPanel: false,
+        iconName: 'tools-icon',
+        title: 'Tools',
+        active: true,
+      },
+    })
+
+    expect(wrapper.get('.content-item').classes()).toContain('active')
   })
 })

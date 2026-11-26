@@ -197,6 +197,30 @@ describe('SidePanel', () => {
     expect(wrapper.get('aside').classes()).not.toContain('open')
   })
 
+  it.each([
+    ['/room/room-one', 'tools'],
+    ['/dashboard', 'dashboard'],
+  ])(
+    'highlights only the screen section on %s',
+    async (path, activeSection) => {
+      currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
+      activeTool.value = 'retro'
+      const wrapper = await mountLayout(path)
+
+      const isActive = (section) => {
+        const item = wrapper.get(`.content-item.${section}`)
+        return (
+          item.classes().includes('active') ||
+          item.classes().includes('router-link-exact-active')
+        )
+      }
+
+      expect(['dashboard', 'tools', 'users', 'info'].filter(isActive)).toEqual([
+        activeSection,
+      ])
+    },
+  )
+
   it('keeps tools on the dashboard and opens the chosen tool in the room', async () => {
     currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
     activeTool.value = 'poker'
