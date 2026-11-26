@@ -138,16 +138,20 @@ const handleRoomJoined = ({ roomId, roomName }) => {
   activateRoom()
 }
 
+const redirectToJoin = () => {
+  const inviteTool = TOOLS.includes(route.query.tool) ? route.query.tool : ''
+  router.replace({
+    path: '/',
+    state: { inviteRoomId: route.params.roomId, inviteTool },
+  })
+}
+
 const handleRoomError = ({ message }) => {
   showMessage(message, { variant: 'error' })
 
   if (!joined.value) {
     localStorage.removeItem(`poker_session_${route.params.roomId}`)
-
-    const toolQuery = route.query.tool
-      ? `?tool=${encodeURIComponent(route.query.tool)}`
-      : ''
-    router.replace(`/join/${route.params.roomId}${toolQuery}`)
+    redirectToJoin()
   }
 }
 
@@ -198,10 +202,7 @@ onMounted(() => {
     localStorage.removeItem(`poker_session_${route.params.roomId}`)
   }
 
-  const toolQuery = route.query.tool
-    ? `?tool=${encodeURIComponent(route.query.tool)}`
-    : ''
-  router.replace(`/join/${route.params.roomId}${toolQuery}`)
+  redirectToJoin()
 })
 
 onUnmounted(() => {

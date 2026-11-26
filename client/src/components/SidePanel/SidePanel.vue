@@ -34,6 +34,18 @@
       </div>
 
       <div class="side-panel-content">
+        <RouterLink
+          to="/dashboard"
+          class="content-item dashboard"
+          title="Go to dashboard"
+          aria-label="Go to dashboard"
+          @click="showPanel = false"
+        >
+          <span class="content-title">
+            <Icon name="dashboard-icon" class-name="icon small" />
+            <span v-if="showPanel" class="title">Dashboard</span>
+          </span>
+        </RouterLink>
         <SidePanelContent
           :show-panel="showPanel"
           icon-name="tools-icon"

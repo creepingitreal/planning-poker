@@ -1,24 +1,27 @@
 <template>
-  <SidePanel
-    v-if="currentRoom.roomId"
-    :players="roomPlayers"
-    :allow-manual="activeTool === 'wheel'"
-    :manual-names-arr="wheelManualNames"
-    :active-tool="selectedTool"
-    @update:manual-names-arr="updateWheelManualNames"
-    @select-tool="selectTool"
-  />
-  <div class="app-frame">
-    <div class="app-frame-content">
-      <NavBar
-        :room-id="currentRoom.roomId"
-        :room-name="currentRoom.roomName"
-        :active-tool="activeTool"
-        :is-room-route="isRoomRoute"
-      />
-      <main>
-        <RouterView />
-      </main>
+  <div>
+    <SidePanel
+      v-if="inSession"
+      :players="roomPlayers"
+      :allow-manual="activeTool === 'wheel'"
+      :manual-names-arr="wheelManualNames"
+      :active-tool="selectedTool"
+      @update:manual-names-arr="updateWheelManualNames"
+      @select-tool="selectTool"
+    />
+    <div class="app-frame">
+      <div class="app-frame-content">
+        <NavBar
+          v-if="inSession"
+          :room-id="currentRoom.roomId"
+          :room-name="currentRoom.roomName"
+          :active-tool="activeTool"
+          :is-room-route="isRoomRoute"
+        />
+        <main>
+          <RouterView />
+        </main>
+      </div>
     </div>
   </div>
 </template>
@@ -41,6 +44,11 @@ const route = useRoute()
 const router = useRouter()
 
 const isRoomRoute = computed(() => route.path.startsWith('/room/'))
+// The join screen ("/") never shows session chrome, even if a session is still
+// remembered from earlier in the tab.
+const inSession = computed(
+  () => !!currentRoom.value.roomId && route.path !== '/',
+)
 const selectedTool = computed(() => (isRoomRoute.value ? activeTool.value : ''))
 
 const selectTool = (tool) => {

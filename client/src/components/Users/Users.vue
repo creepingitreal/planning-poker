@@ -1,59 +1,61 @@
 <template>
-  <ul class="users-list">
-    <li v-for="player in roomUsers" :key="player.id" class="users-list-item">
-      <span
-        class="user-colour-dot"
-        :style="{ backgroundColor: participantColours[player.user] }"
-      ></span>
-      <span>{{ player.user }}{{ player.isCurrentUser ? ' (you)' : '' }}</span>
-      <small>In session</small>
-    </li>
-    <li
-      v-for="name in manualNames"
-      :key="`manual-${name}`"
-      class="users-list-item"
-    >
-      <span
-        class="user-colour-dot"
-        :style="{ backgroundColor: participantColours[name] }"
-      ></span>
-      <span>{{ name }}</span>
-      <button
-        v-if="allowManual"
-        class="icon-only user-icon-btn remove-manual-user"
-        type="button"
-        :aria-label="`Remove ${name}`"
-        @click="removeManualName(name)"
+  <div>
+    <ul class="users-list">
+      <li v-for="player in roomUsers" :key="player.id" class="users-list-item">
+        <span
+          class="user-colour-dot"
+          :style="{ backgroundColor: participantColours[player.user] }"
+        ></span>
+        <span>{{ player.user }}{{ player.isCurrentUser ? ' (you)' : '' }}</span>
+        <small>In session</small>
+      </li>
+      <li
+        v-for="name in manualNames"
+        :key="`manual-${name}`"
+        class="users-list-item"
       >
-        ×
-      </button>
-    </li>
-    <li v-if="!roomUsers.length && !manualNames.length" class="empty-users">
-      No users have joined yet.
-    </li>
-  </ul>
+        <span
+          class="user-colour-dot"
+          :style="{ backgroundColor: participantColours[name] }"
+        ></span>
+        <span>{{ name }}</span>
+        <button
+          v-if="allowManual"
+          class="icon-only user-icon-btn remove-manual-user"
+          type="button"
+          :aria-label="`Remove ${name}`"
+          @click="removeManualName(name)"
+        >
+          ×
+        </button>
+      </li>
+      <li v-if="!roomUsers.length && !manualNames.length" class="empty-users">
+        No users have joined yet.
+      </li>
+    </ul>
 
-  <form
-    v-if="allowManual"
-    class="add-user-form"
-    @submit.prevent="addManualName"
-  >
-    <input
-      v-model="newName"
-      type="text"
-      autocomplete="name"
-      class="manual-user-input"
-      placeholder="Add someone outside the session"
-      aria-label="Add someone outside the session"
-    />
-    <button
-      type="submit"
-      class="icon-only user-icon-btn"
-      aria-label="Add person"
+    <form
+      v-if="allowManual"
+      class="add-user-form"
+      @submit.prevent="addManualName"
     >
-      +
-    </button>
-  </form>
+      <input
+        v-model="newName"
+        type="text"
+        autocomplete="name"
+        class="manual-user-input"
+        placeholder="Add someone outside the session"
+        aria-label="Add someone outside the session"
+      />
+      <button
+        type="submit"
+        class="icon-only user-icon-btn"
+        aria-label="Add person"
+      >
+        +
+      </button>
+    </form>
+  </div>
 </template>
 
 <script setup>

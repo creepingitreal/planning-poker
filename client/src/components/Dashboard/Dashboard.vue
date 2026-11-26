@@ -1,9 +1,8 @@
 <template>
   <section class="dashboard">
-    <div v-if="roomId" class="dashboard-content">
+    <div class="dashboard-content">
       <p>Start a session with the tool your team needs right now.</p>
       <button
-        v-if="roomId"
         type="button"
         class="link dashboard-new-room"
         @click="createNewRoom"
@@ -12,7 +11,7 @@
       </button>
     </div>
 
-    <div v-if="roomId" class="dashboard-tools">
+    <div class="dashboard-tools">
       <RouterLink
         v-for="tool in tools"
         :key="tool.id"
@@ -27,7 +26,6 @@
         <span class="dashboard-tool-arrow" aria-hidden="true">→</span>
       </RouterLink>
     </div>
-    <JoinRoom v-if="!roomId" />
   </section>
 </template>
 
@@ -36,7 +34,6 @@ import './dashboard.css'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { clearCurrentRoom, currentRoom } from '../../js/roomNav.js'
-import JoinRoom from '../Join/JoinRoom.vue'
 
 const router = useRouter()
 const roomId = computed(() => currentRoom.value.roomId)
@@ -46,9 +43,9 @@ const toolLink = (toolId) => ({
   query: { tool: toolId },
 })
 
-const createNewRoom = () => {
+const createNewRoom = async () => {
+  await router.push('/')
   clearCurrentRoom()
-  router.push('/')
 }
 
 const tools = [

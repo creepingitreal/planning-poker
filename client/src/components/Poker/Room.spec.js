@@ -69,9 +69,11 @@ describe('Room', () => {
           : createSession({ savedAt: Date.now() - 24 * 60 * 60 * 1000 - 1 })
       const { router } = await mountRoom({ session })
 
-      expect(router.currentRoute.value.fullPath).toBe(
-        '/join/room-one?tool=retro',
-      )
+      expect(router.currentRoute.value.fullPath).toBe('/')
+      expect(router.options.history.state).toMatchObject({
+        inviteRoomId: 'room-one',
+        inviteTool: 'retro',
+      })
       expect(localStorage.getItem('poker_session_room-one')).toBeNull()
       expect(socket.emit).not.toHaveBeenCalled()
     },
@@ -188,7 +190,11 @@ describe('Room', () => {
       variant: 'error',
     })
     expect(localStorage.getItem('poker_session_room-one')).toBeNull()
-    expect(router.currentRoute.value.fullPath).toBe('/join/room-one?tool=retro')
+    expect(router.currentRoute.value.fullPath).toBe('/')
+    expect(router.options.history.state).toMatchObject({
+      inviteRoomId: 'room-one',
+      inviteTool: 'retro',
+    })
   })
 
   it('does not discard an active session for subsequent room errors', async () => {

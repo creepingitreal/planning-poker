@@ -66,6 +66,7 @@ describe('SpinTheWheel', () => {
     })
     const sidebar = mount(SidePanel, {
       props: { players, allowManual: true, manualNamesArr: ['Guest'] },
+      global: { stubs: { RouterLink: true } },
     })
     await sidebar.get('.logo').trigger('click')
 

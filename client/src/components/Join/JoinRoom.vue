@@ -1,6 +1,11 @@
 <template>
   <section>
-    <div class="room join-room">
+    <div class="join-room">
+      <header class="join-brand">
+        <BrandLogo class="icon xlarge fill-current text-current" />
+        <p class="join-welcome">{{ brand.welcome }}</p>
+      </header>
+
       <div class="section-title">
         <h1 class="title">
           {{ roomId ? roomName || 'Join Session' : 'Join or start a session' }}
@@ -46,16 +51,20 @@
 <script setup>
 import socket from '../../../socket.js'
 import './join-room.css'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import BrandLogo from '@brand/logo.svg?component'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { generateRoomId, randomNameGenerator } from '../../js/generators.js'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { setCurrentRoom, TOOLS } from '../../js/roomNav.js'
 import { showMessage } from '../../js/messages.js'
+import { brand } from '../../brand/index.js'
 
-const route = useRoute(false)
 const router = useRouter()
 
-const roomId = computed(() => route.params.roomId || '')
+// Invite links land here on "/" with the session to join kept in history state.
+const invite = router.options.history.state ?? {}
+const roomId = ref(invite.inviteRoomId || '')
+let inviteTool = invite.inviteTool
 const roomName = ref('')
 
 const name = ref('')
@@ -127,7 +136,7 @@ const handleRoomJoined = ({ roomId, roomName }) => {
   saveSession(room.value, name.value)
   setCurrentRoom(roomId, roomName)
 
-  const tool = route.query?.tool
+  const tool = inviteTool
   if (TOOLS.includes(tool)) {
     router.push({ path: `/room/${roomId}`, query: { tool } })
     return
@@ -138,8 +147,11 @@ const handleRoomJoined = ({ roomId, roomName }) => {
 
 const handleRoomError = ({ message }) => {
   if (message.includes('Session not found')) {
-    localStorage.removeItem(`poker_session_${route.params.roomId}`)
-    router.replace('/join')
+    localStorage.removeItem(`poker_session_${roomId.value}`)
+    roomId.value = ''
+    roomName.value = ''
+    inviteTool = ''
+    router.replace({ path: '/', force: true })
   }
   showMessage(message, { variant: 'error' })
 }

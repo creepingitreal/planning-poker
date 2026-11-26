@@ -18,8 +18,8 @@ vi.mock('../../js/generators.js', () => ({
   randomNameGenerator: () => 'Generated Sprint',
 }))
 
-const mountJoin = async (path = '/join') => {
-  const router = await createTestRouter(path)
+const mountJoin = async (invite) => {
+  const router = await createTestRouter('/', invite)
   const wrapper = mount(JoinRoom, { global: { plugins: [router] } })
   return { wrapper, router }
 }
@@ -30,7 +30,7 @@ beforeEach(() => {
 
 describe('JoinRoom', () => {
   it('keeps the users live on the dashboard immediately after creating a room', async () => {
-    const router = await createTestRouter('/join')
+    const router = await createTestRouter('/')
     const app = mount(Layout, {
       global: { plugins: [router], stubs: { RouterView: true } },
     })
@@ -110,7 +110,7 @@ describe('JoinRoom', () => {
   })
 
   it('resolves invite room names and allows joining with enter', async () => {
-    const { wrapper } = await mountJoin('/join/room-one?tool=retro')
+    const { wrapper } = await mountJoin({ inviteRoomId: 'room-one', inviteTool: 'retro' })
 
     expect(socket.emit).toHaveBeenCalledWith('getRoomName', 'room-one')
     await receiveSocketEvent('roomNameResolved', { roomName: 'Team Sprint' })
@@ -185,7 +185,7 @@ describe('JoinRoom', () => {
   )
 
   it('takes invited users straight to the shared tool', async () => {
-    const { wrapper, router } = await mountJoin('/join/room-one?tool=wheel')
+    const { wrapper, router } = await mountJoin({ inviteRoomId: 'room-one', inviteTool: 'wheel' })
     await wrapper.get('[placeholder="Username *"]').setValue('Alex')
     await wrapper.get('.button-section > button').trigger('click')
 
@@ -199,7 +199,7 @@ describe('JoinRoom', () => {
   })
 
   it('saves a joined session and shows the dashboard when no tool is shared', async () => {
-    const { wrapper, router } = await mountJoin('/join/room-one')
+    const { wrapper, router } = await mountJoin({ inviteRoomId: 'room-one' })
     await wrapper.get('[placeholder="Username *"]').setValue('Alex')
     await wrapper.get('.button-section > button').trigger('click')
 
@@ -217,6 +217,24 @@ describe('JoinRoom', () => {
       clientId: 'known-client',
       savedAt: expect.any(Number),
     })
+  })
+
+  it('brands the join screen with the welcome message', async () => {
+    const { wrapper } = await mountJoin()
+
+    expect(wrapper.get('.join-welcome').text()).toBe('Welcome to the Scrumble')
+    expect(wrapper.get('h1').text()).toBe('Join or start a session')
+  })
+
+  it('drops a missing invite and stays on the root route', async () => {
+    const { wrapper, router } = await mountJoin({ inviteRoomId: 'room-one' })
+
+    await receiveSocketEvent('roomError', { message: 'Session not found.' })
+    await flushPromises()
+
+    expect(router.currentRoute.value.fullPath).toBe('/')
+    expect(wrapper.get('h1').text()).toBe('Join or start a session')
+    expect(wrapper.find('[placeholder="Sprint Name"]').exists()).toBe(true)
   })
 
   it('shows room errors and removes registered listeners on unmount', async () => {

@@ -15,46 +15,19 @@ const stubClipboard = () => {
 }
 
 describe('NavBar', () => {
-  it('shows only the brand header without a room', async () => {
-    const wrapper = await mountNav()
-
-    expect(wrapper.get('.dashboard-header > h1').text()).toBe(
-      'Welcome to the Scrumble',
-    )
-    expect(wrapper.get('.nav-header').classes()).toContain('no-session')
-    expect(wrapper.find('.nav-bar-room-name').exists()).toBe(false)
-    expect(wrapper.find('button.link').exists()).toBe(false)
-    expect(wrapper.find('a.link').exists()).toBe(false)
-  })
-
   it('shows the room name and invite button for an active room', async () => {
     const wrapper = await mountNav({ roomId: 'room-one', roomName: 'Team' })
 
-    expect(wrapper.get('.nav-header').classes()).not.toContain('no-session')
     expect(wrapper.get('.nav-bar-room-name').text()).toBe('Team')
     expect(wrapper.get('button.link').text()).toBe('Invite Users')
     expect(wrapper.find('a.link').exists()).toBe(false)
   })
 
-  it('links the logo to the dashboard on room routes', async () => {
-    const wrapper = await mountNav({
-      roomId: 'room-one',
-      roomName: 'Team',
-      isRoomRoute: true,
-    })
-
-    const logoLink = wrapper.get('a.dashboard-logo-link')
-    expect(logoLink.attributes('href')).toBe('/dashboard')
-    expect(logoLink.attributes('title')).toBe('Go to dashboard')
-    expect(logoLink.attributes('aria-label')).toBe('Go to dashboard')
-    expect(wrapper.find('a.link').exists()).toBe(false)
-  })
-
-  it('does not link the logo outside room routes', async () => {
+  it('does not render the brand logo or welcome', async () => {
     const wrapper = await mountNav({ roomId: 'room-one', roomName: 'Team' })
 
-    expect(wrapper.find('.dashboard-logo-link').exists()).toBe(false)
-    expect(wrapper.find('.dashboard-header .icon').exists()).toBe(true)
+    expect(wrapper.find('.icon.xlarge').exists()).toBe(false)
+    expect(wrapper.find('h1').exists()).toBe(false)
   })
 
   it.each([

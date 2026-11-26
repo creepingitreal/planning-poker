@@ -1,52 +1,11 @@
 .nav-bar {
+  display: flex;
+  justify-content: flex-end;
   width: 100%;
   max-width: 1160px;
   margin: 0 auto;
   padding: 30px;
-  align-items: end;
-
-  @media screen and (min-width: 640px) {
-    align-items: center;
-  }
-
-  .nav-header {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: end;
-    gap: 24px;
-
-    &.no-session {
-      align-items: start;
-    }
-  }
-
-  .dashboard-header {
-    display: flex;
-    flex-direction: column;
-    max-width: fit-content;
-    text-align: right;
-
-    .icon {
-      max-width: 100%;
-    }
-  }
-
-  .dashboard-logo-link {
-    display: block;
-    color: inherit;
-    border-radius: 8px;
-    transition: opacity 0.2s ease;
-
-    &:hover {
-      opacity: 0.8;
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--color-accent);
-      outline-offset: 4px;
-    }
-  }
+  box-sizing: border-box;
 
   .room-name-wrapper {
     display: flex;

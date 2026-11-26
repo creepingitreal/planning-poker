@@ -12,6 +12,9 @@ import socket from '../../../socket.js'
 import { createTestRouter, receiveSocketEvent } from '../../test/helpers.js'
 import { brand } from '../../brand/index.js'
 
+// Unit tests of the panel alone don't need real navigation.
+const routerLinkStub = { stubs: { RouterLink: true } }
+
 const mountLayout = async (path = '/room/room-one') => {
   const router = await createTestRouter(path)
   const wrapper = mount(Layout, {
@@ -87,6 +90,7 @@ describe('SidePanel', () => {
     const manualNamesArr = ['Guest']
     const wrapper = mount(SidePanel, {
       props: { allowManual: true, manualNamesArr },
+      global: routerLinkStub,
     })
 
     await wrapper.get('.logo').trigger('click')
@@ -100,7 +104,7 @@ describe('SidePanel', () => {
   })
 
   it('uses the brand mark and full logo without the generic icon renderer', async () => {
-    const wrapper = mount(SidePanel)
+    const wrapper = mount(SidePanel, { global: routerLinkStub })
 
     expect(wrapper.get('.brand-logo').attributes('src')).toBe(brand.logoMarkUrl)
     expect(wrapper.get('.brand-logo').attributes('alt')).toBe(brand.logoAlt)
@@ -112,7 +116,7 @@ describe('SidePanel', () => {
   })
 
   it('opens from the logo and closes from the backdrop', async () => {
-    const wrapper = mount(SidePanel)
+    const wrapper = mount(SidePanel, { global: routerLinkStub })
 
     expect(wrapper.get('aside').attributes('aria-hidden')).toBeUndefined()
     expect(wrapper.find('.side-panel-backdrop').exists()).toBe(false)
@@ -127,7 +131,10 @@ describe('SidePanel', () => {
   it.each(['.logo', '.side-panel-close', '.side-panel-backdrop'])(
     'keeps focus on the accessible logo when closing with %s',
     async (closeSelector) => {
-      const wrapper = mount(SidePanel, { attachTo: document.body })
+      const wrapper = mount(SidePanel, {
+        attachTo: document.body,
+        global: routerLinkStub,
+      })
       const logo = wrapper.get('.logo')
 
       logo.element.focus()
@@ -145,7 +152,7 @@ describe('SidePanel', () => {
   )
 
   it('opens from a section trigger and supports the close button', async () => {
-    const wrapper = mount(SidePanel)
+    const wrapper = mount(SidePanel, { global: routerLinkStub })
 
     await wrapper.get('.content-item.users .content-title').trigger('click')
     expect(wrapper.get('aside').classes()).toContain('open')
@@ -169,6 +176,25 @@ describe('SidePanel', () => {
     expect(activeTool.value).toBe('wheel')
     expect(wrapper.get('.tool-tab.active').text()).toBe('Spin the Wheel')
     expect(wrapper.router.currentRoute.value.path).toBe('/room/room-one')
+  })
+
+  it('navigates to the dashboard from its sidebar button without expanding a section', async () => {
+    currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
+    const wrapper = await mountLayout('/room/room-one')
+
+    const dashboard = wrapper.get('a.content-item.dashboard')
+    expect(dashboard.attributes('href')).toBe('/dashboard')
+    expect(dashboard.find('.title').exists()).toBe(false)
+    await wrapper.get('.logo').trigger('click')
+    expect(wrapper.get('a.content-item.dashboard .title').text()).toBe(
+      'Dashboard',
+    )
+
+    await wrapper.get('a.content-item.dashboard').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.router.currentRoute.value.path).toBe('/dashboard')
+    expect(wrapper.get('aside').classes()).not.toContain('open')
   })
 
   it('keeps tools on the dashboard and opens the chosen tool in the room', async () => {

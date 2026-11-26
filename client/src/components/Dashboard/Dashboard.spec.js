@@ -9,16 +9,25 @@ import JoinRoom from '../Join/JoinRoom.vue'
 import Dashboard from './Dashboard.vue'
 
 describe('Dashboard', () => {
-  it.each(['/', '/dashboard', '/dashboard?roomId=unjoined-room'])(
-    'shows the join form without an active room at %s',
-    async (path) => {
-      const router = await createTestRouter(path)
-      const wrapper = mount(Dashboard, { global: { plugins: [router] } })
+  const mountApp = async (path) => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: appRouter.options.routes,
+    })
+    await router.push(path)
+    await router.isReady()
+    const wrapper = mount(App, { global: { plugins: [router] } })
+    return { wrapper, router }
+  }
 
-      expect(wrapper.get('.dashboard').isVisible()).toBe(true)
+  it.each(['/dashboard', '/dashboard?roomId=unjoined-room', '/join/room-one'])(
+    'sends %s to the join screen on "/" without an active session',
+    async (path) => {
+      const { wrapper, router } = await mountApp(path)
+
+      expect(router.currentRoute.value.fullPath).toBe('/')
       expect(wrapper.findComponent(JoinRoom).exists()).toBe(true)
-      expect(wrapper.findAll('.dashboard-tool')).toHaveLength(0)
-      expect(wrapper.find('.dashboard-new-room').exists()).toBe(false)
+      expect(wrapper.findComponent(Dashboard).exists()).toBe(false)
     },
   )
 
@@ -39,10 +48,9 @@ describe('Dashboard', () => {
     expect(router.currentRoute.value.fullPath).toBe('/room/room-one?tool=retro')
   })
 
-  it('clears the current room before navigating to create a new one', async () => {
+  it('leaves for the join screen before clearing the session to start a new one', async () => {
     currentRoom.value = { roomId: 'room-one', roomName: 'Team' }
-    const router = await createTestRouter('/dashboard?roomId=room-one')
-    const wrapper = mount(Dashboard, { global: { plugins: [router] } })
+    const { wrapper, router } = await mountApp('/dashboard')
 
     const newRoomButton = wrapper.get('.dashboard-new-room')
     expect(newRoomButton.text()).toBe('+ Start a new session')
@@ -52,26 +60,20 @@ describe('Dashboard', () => {
     expect(currentRoom.value).toEqual({ roomId: '', roomName: '' })
     expect(router.currentRoute.value.path).toBe('/')
     expect(wrapper.findComponent(JoinRoom).exists()).toBe(true)
-    expect(wrapper.findAll('.dashboard-tool')).toHaveLength(0)
   })
 
   it.each(['create', 'join'])(
     'shows the dashboard tools after a successful %s from the root route',
     async (action) => {
-      const router = createRouter({
-        history: createMemoryHistory(),
-        routes: appRouter.options.routes,
-      })
-      await router.push('/')
-      await router.isReady()
-      const wrapper = mount(App, { global: { plugins: [router] } })
+      const { wrapper, router } = await mountApp('/')
 
-      expect(wrapper.findComponent(Dashboard).exists()).toBe(true)
-      expect(wrapper.get('.dashboard-header > h1').text()).toBe(
+      expect(wrapper.findComponent(Dashboard).exists()).toBe(false)
+      expect(wrapper.get('.join-welcome').text()).toBe(
         'Welcome to the Scrumble',
       )
       expect(wrapper.findComponent(JoinRoom).exists()).toBe(true)
-      expect(wrapper.findAll('.dashboard-tool')).toHaveLength(0)
+      expect(wrapper.find('.nav-bar').exists()).toBe(false)
+      expect(wrapper.find('.side-panel').exists()).toBe(false)
       await wrapper.get('[placeholder="Username *"]').setValue('Alex')
       await wrapper.get('[placeholder="Sprint Name"]').setValue('Team')
       await wrapper

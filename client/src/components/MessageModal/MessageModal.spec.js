@@ -7,7 +7,7 @@ import { currentMessage, showMessage } from '../../js/messages.js'
 
 describe('MessageModal', () => {
   it('shows queued messages in order and preserves them across navigation', async () => {
-    const router = await createTestRouter('/join')
+    const router = await createTestRouter('/')
     mount(App, {
       global: {
         plugins: [router],
