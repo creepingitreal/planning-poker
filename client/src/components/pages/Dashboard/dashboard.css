@@ -43,9 +43,9 @@
     text-decoration: none;
     box-shadow: var(--shadow-card);
     transition:
-      transform 180ms ease,
-      box-shadow 180ms ease,
-      border-color 180ms ease;
+      transform var(--motion-duration) var(--motion-ease),
+      box-shadow var(--motion-duration) var(--motion-ease),
+      border-color var(--motion-duration-fast) var(--motion-ease);
 
     @media screen and (min-width: 761px) {
       min-height: 260px;

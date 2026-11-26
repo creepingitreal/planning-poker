@@ -3,7 +3,10 @@
     :is="as"
     ref="cardElement"
     class="retro-card"
-    :class="{ 'retro-card-hidden': hidden }"
+    :class="{
+      'retro-card-hidden': hidden,
+      'retro-card-row': row,
+    }"
     :style="retroCardStyle"
   >
     <div v-if="iconButtons.length" class="card-actions">
@@ -17,7 +20,14 @@
         :aria-label="button.label"
         :title="button.title"
       >
-        {{ button.icon }}
+        <Icon
+          v-if="button.iconName"
+          :name="button.iconName"
+          class-name="card-icon-svg"
+          :is-icon="false"
+          aria-hidden="true"
+        />
+        <template v-else>{{ button.icon }}</template>
       </button>
     </div>
 
@@ -32,7 +42,7 @@
         title="Remove one of your likes"
         @click="unlikeCard"
       >
-        −
+        <span aria-hidden="true">♡</span>
       </button>
       <button
         type="button"
@@ -42,7 +52,9 @@
         :title="likeLabel"
         @click="likeCard"
       >
-        <span aria-hidden="true">{{ myLikes > 0 ? '♥' : '♡' }}</span>
+        <span class="card-like-heart" aria-hidden="true">{{
+          myLikes > 0 ? '♥' : '♡'
+        }}</span>
         <span>{{ likes }}</span>
       </button>
     </div>
@@ -51,6 +63,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+import Icon from '../../atoms/Icon/Icon.vue'
 import { getContrastingTextColour } from '../../../../../shared/colourAllocation.mjs'
 import './retro-card.css'
 
@@ -70,6 +83,10 @@ const props = defineProps({
   iconButtons: {
     type: Array,
     default: () => [],
+  },
+  row: {
+    type: Boolean,
+    default: false,
   },
   likes: {
     type: Number,

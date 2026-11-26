@@ -55,7 +55,11 @@
     background-color: transparent;
     color: var(--color-action-subtle);
     font: inherit;
-    transition: border-color 0.15s ease;
+    transition: border-color var(--motion-duration-fast) var(--motion-ease);
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
 
     &::placeholder {
       font-size: 0.6875rem;
@@ -87,8 +91,12 @@
   font-size: 1.25rem;
   line-height: 1;
   transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+    background-color var(--motion-duration-fast) var(--motion-ease),
+    color var(--motion-duration-fast) var(--motion-ease);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 
   &:hover:not(:disabled) {
     background-color: var(--color-surface-raised);

@@ -87,4 +87,36 @@ describe('RetroCard', () => {
     await wrapper.setProps({ showLike: false })
     expect(wrapper.find('.card-like-button').exists()).toBe(false)
   })
+
+  it('switches to the compact row layout only when requested', async () => {
+    const wrapper = mount(RetroCard, {
+      slots: { default: '<span class="card-text">Row text</span>' },
+    })
+
+    expect(wrapper.classes()).not.toContain('retro-card-row')
+    await wrapper.setProps({ row: true })
+    expect(wrapper.classes()).toContain('retro-card-row')
+    expect(wrapper.get('.card-text').text()).toBe('Row text')
+  })
+
+  it('renders an SVG icon for tool buttons that name one', async () => {
+    const wrapper = mount(RetroCard, {
+      props: {
+        iconButtons: [
+          { name: 'edit', label: 'Edit card', title: 'Edit', iconName: 'edit-icon' },
+          { name: 'delete', label: 'Delete card', title: 'Delete', icon: 'X' },
+        ],
+      },
+    })
+    const editButton = wrapper.get('[aria-label="Edit card"]')
+    const icon = editButton.get('icon-stub')
+
+    expect(icon.attributes('name')).toBe('edit-icon')
+    expect(icon.attributes('class-name')).toBe('card-icon-svg')
+    expect(icon.attributes('is-icon')).toBe('false')
+    expect(editButton.text()).toBe('')
+    expect(wrapper.get('[aria-label="Delete card"]').text()).toBe('X')
+    await editButton.trigger('click')
+    expect(wrapper.emitted('icon-click')).toEqual([['edit']])
+  })
 })

@@ -9,6 +9,13 @@
   -moz-osx-font-smoothing: grayscale;
 
   box-sizing: border-box;
+
+  /* Shared motion, matching the side panel: one symmetric ease so every
+     transition starts and settles gently. Fast suits colour/opacity changes;
+     the default suits movement, shadows and entrances. */
+  --motion-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --motion-duration-fast: 250ms;
+  --motion-duration: 350ms;
 }
 
 body {
@@ -169,11 +176,12 @@ button {
   background-color: transparent;
   color: var(--color-action);
   transition:
-    background-color 200ms ease-in-out,
-    border-color 200ms ease-in-out,
-    color 200ms ease-in-out,
-    box-shadow 200ms ease-in-out,
-    transform 200ms ease-in-out;
+    background-color var(--motion-duration-fast) var(--motion-ease),
+    border-color var(--motion-duration-fast) var(--motion-ease),
+    color var(--motion-duration-fast) var(--motion-ease),
+    opacity var(--motion-duration-fast) var(--motion-ease),
+    box-shadow var(--motion-duration) var(--motion-ease),
+    transform var(--motion-duration) var(--motion-ease);
   min-height: 44px;
   max-height: 44px;
   min-width: min(120px, 100%);

@@ -93,18 +93,10 @@
     overflow-y: auto;
   }
 
-  .retro-column-wrapper {
-    --retro-card-gap: 10px;
-    --retro-card-size: calc((100% - (2 * var(--retro-card-gap))) / 3);
-
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-width: 0;
-    min-height: 0;
-  }
-
   .retro-column {
+    --retro-card-gap: 8px;
+
+    position: relative;
     background-color: var(--color-surface-raised);
     color: var(--color-on-surface-raised);
     border-radius: var(--radius-panel);
@@ -112,7 +104,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    flex: 1 1 auto;
+    min-width: 0;
     min-height: 0;
   }
 
@@ -139,60 +131,159 @@
   }
 
   .cards-list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    gap: var(--retro-card-gap);
     flex: 1 1 auto;
     min-height: 40px;
     overflow-y: auto;
+    /* Room for card focus outlines inside the scroll area. */
+    padding: 2px;
   }
 
-  /* Full width so the card keeps sizing against the column, and positioned so
-     the absolutely placed form never shifts the toggle button. */
-  .write-card-control {
+  /* Cards stack as rows; once they no longer fit the height they flow down
+     the first column and then the second, scrolling beyond that. */
+  .cards-stack {
     position: relative;
-    align-self: flex-end;
     display: flex;
-    justify-content: flex-end;
-    width: 100%;
+    flex-direction: column;
+    gap: var(--retro-card-gap);
+
+    &.two-columns {
+      display: block;
+      columns: 2;
+      column-gap: var(--retro-card-gap);
+
+      > .retro-card {
+        break-inside: avoid;
+        margin-bottom: var(--retro-card-gap);
+      }
+    }
   }
 
-  .add-card-toggle,
-  .add-card-btn {
-    min-width: fit-content;
-    align-self: flex-end;
+  /* Cards fade and slide in when added, fade and shrink away when removed or
+     cleared, and the rest glide into their new places. */
+  .retro-card-enter-active,
+  .retro-card-leave-active,
+  .retro-card-move {
+    transition:
+      opacity var(--motion-duration) var(--motion-ease),
+      transform var(--motion-duration) var(--motion-ease);
   }
 
-  /* Sits on the light column surface, so use the darker green */
+  .retro-card-leave-active {
+    pointer-events: none;
+  }
+
+  .retro-card-enter-from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  .retro-card-leave-to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .retro-card-enter-active,
+    .retro-card-leave-active,
+    .retro-card-move {
+      transition: none;
+    }
+  }
+
+  /* Matches the round icon-only buttons used for closing the side panel and
+     adding or removing wheel names, in the brand green. */
   .add-card-toggle {
+    align-self: flex-end;
+    flex: 0 0 auto;
+    width: 28px;
+    min-width: 28px;
+    height: 28px;
+    min-height: 28px;
+    max-height: 28px;
+    /* Outline-only: the dark brand green reads on this light surface, and a
+       matching ring appears on hover instead of a fill. */
+    box-sizing: border-box;
+    padding: 0;
+    border: 1.5px solid transparent;
     color: var(--color-action-strong);
-    border-color: var(--color-action-strong);
+    transition: border-color var(--motion-duration-fast) var(--motion-ease);
 
-    &:hover:not(:disabled) {
-      color: var(--color-on-action);
-      background-color: var(--color-action);
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+
+    &:hover:not(:disabled),
+    &[aria-expanded='true'] {
+      background-color: transparent;
+      border-color: currentColor;
+      color: var(--color-action-strong);
     }
   }
 
-  .add-card-form {
-    position: absolute;
-    top: 0;
-    right: calc(var(--write-card-button-width, 0px) + 8px);
-    z-index: 5;
+  .add-card-icon {
+    display: block;
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.25;
+    stroke-linecap: round;
+  }
 
-    &.open-up {
-      top: auto;
-      bottom: 0;
-    }
+  .card-overlay-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background-color: color-mix(in srgb, black 25%, transparent);
+  }
+
+  .card-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 21;
+    width: min(320px, calc(100% - 40px));
+    height: 220px;
+    transform: translate(-50%, -50%);
+    box-shadow: var(--shadow-control, var(--shadow-small));
 
     textarea {
-      width: 100%;
       flex: 1;
-      resize: none;
-      overflow: hidden;
-      height: 100%;
+    }
+  }
+
+  /* The composer rises gently into place over a fading backdrop. The centring
+     translate is kept in every state so the card never jumps. */
+  .card-overlay-enter-active,
+  .card-overlay-leave-active {
+    transition:
+      opacity var(--motion-duration) var(--motion-ease),
+      transform var(--motion-duration) var(--motion-ease);
+    will-change: opacity, transform;
+  }
+
+  .card-overlay-enter-from,
+  .card-overlay-leave-to {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 12px)) scale(0.96);
+  }
+
+  .card-overlay-backdrop-enter-active,
+  .card-overlay-backdrop-leave-active {
+    transition: opacity var(--motion-duration) var(--motion-ease);
+  }
+
+  .card-overlay-backdrop-enter-from,
+  .card-overlay-backdrop-leave-to {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-overlay-enter-active,
+    .card-overlay-leave-active,
+    .card-overlay-backdrop-enter-active,
+    .card-overlay-backdrop-leave-active {
+      transition: none;
     }
   }
 }

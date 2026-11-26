@@ -22,7 +22,8 @@ export const ensureRetroState = (roomId) => {
 // Cards are private to their author until the board is revealed. Each connected
 // socket in the room gets its own filtered view: its own cards are visible
 // during drafting, and everyone else's cards are hidden until reveal. After a
-// board has been revealed, hiding it masks cards for their authors as well.
+// board has been revealed, hiding it masks cards for their authors as well, but
+// authors still receive their own text so they can expand, edit, or delete them.
 const boardForRecipient = (roomId, recipientSocketId) => {
   const board = retroBoards[roomId]
   if (!board) return null
@@ -55,8 +56,8 @@ const boardForRecipient = (roomId, recipientSocketId) => {
     return {
       id: card.id,
       columnId: card.columnId,
-      text: null,
-      isOwn: false,
+      text: isOwn ? card.text : null,
+      isOwn,
       hidden: true,
       color: authorColor,
       likes: likeTally,

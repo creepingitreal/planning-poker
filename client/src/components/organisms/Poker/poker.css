@@ -50,9 +50,9 @@
     box-shadow: var(--shadow-vote);
     font-size: 0.925rem;
     transition:
-      filter 200ms ease-in-out,
-      transform 200ms ease-in-out,
-      box-shadow 200ms ease-in-out;
+      filter var(--motion-duration-fast) var(--motion-ease),
+      transform var(--motion-duration) var(--motion-ease),
+      box-shadow var(--motion-duration) var(--motion-ease);
 
     &:hover {
       filter: brightness(1.08);
