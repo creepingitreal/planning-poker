@@ -1,6 +1,8 @@
 <template>
   <div class="side-panel-wrapper">
-    <div class="side-panel-backdrop" v-if="showPanel" @click="closePanel"></div>
+    <Transition name="side-panel-backdrop">
+      <div class="side-panel-backdrop" v-if="showPanel" @click="closePanel"></div>
+    </Transition>
     <aside
       class="side-panel"
       :class="{ open: showPanel }"
@@ -15,22 +17,27 @@
           :aria-label="`${brand.name}: ${showPanel ? 'Close' : 'Open'} side panel`"
           :aria-expanded="showPanel"
         >
-          <img
-            class="brand-logo"
-            :src="showPanel ? brand.logoUrl : brand.logoMarkUrl"
-            :alt="brand.logoAlt"
-            :class="{ 'brand-logo-mark': !showPanel }"
-          />
+          <Transition name="side-panel-logo" mode="out-in">
+            <img
+              :key="showPanel ? 'full' : 'mark'"
+              class="brand-logo"
+              :src="showPanel ? brand.logoUrl : brand.logoMarkUrl"
+              :alt="brand.logoAlt"
+              :class="{ 'brand-logo-mark': !showPanel }"
+            />
+          </Transition>
         </button>
-        <button
-          v-if="showPanel"
-          class="icon-only side-panel-close"
-          type="button"
-          aria-label="Close side panel"
-          @click="closePanel"
-        >
-          ✕
-        </button>
+        <Transition name="side-panel-fade">
+          <button
+            v-if="showPanel"
+            class="icon-only side-panel-close"
+            type="button"
+            aria-label="Close side panel"
+            @click="closePanel"
+          >
+            ✕
+          </button>
+        </Transition>
       </div>
 
       <div class="side-panel-content">
@@ -43,7 +50,9 @@
         >
           <span class="content-title">
             <Icon name="dashboard-icon" class-name="icon small" />
-            <span v-if="showPanel" class="title">Dashboard</span>
+            <Transition name="side-panel-fade">
+              <span v-if="showPanel" class="title">Dashboard</span>
+            </Transition>
           </span>
         </RouterLink>
         <SidePanelContent

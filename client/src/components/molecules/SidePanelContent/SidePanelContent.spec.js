@@ -39,4 +39,36 @@ describe('SidePanelContent', () => {
 
     expect(wrapper.get('.content-item').classes()).toContain('active')
   })
+
+  it('animates the body height between 0 and its content height', () => {
+    const transitions = []
+    const TransitionStub = {
+      inheritAttrs: false,
+      setup(_, { attrs, slots }) {
+        transitions.push(attrs)
+        return () => slots.default?.()
+      },
+    }
+    mount(SidePanelContent, {
+      props: { showPanel: false, iconName: 'tools-icon', title: 'Tools' },
+      slots: { default: '<p>Panel content</p>' },
+      global: {
+        stubs: { transition: TransitionStub },
+      },
+    })
+    const hooks = transitions.find((attrs) => attrs.name === 'side-panel-expand')
+    const el = document.createElement('div')
+    Object.defineProperty(el, 'scrollHeight', { value: 120 })
+
+    hooks.onBeforeEnter(el)
+    expect(el.style.height).toBe('0px')
+    hooks.onEnter(el)
+    expect(el.style.height).toBe('120px')
+    hooks.onAfterEnter(el)
+    expect(el.style.height).toBe('')
+    hooks.onLeave(el)
+    expect(el.style.height).toBe('0px')
+    hooks.onAfterLeave(el)
+    expect(el.style.height).toBe('')
+  })
 })
