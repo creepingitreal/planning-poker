@@ -31,8 +31,8 @@ const DEFAULT_RETRO_COLUMNS = () => [
   { id: 'action-items', title: 'Action Items' },
 ]
 
-// roomId -> { columns: [{id, title}], cards: [{id, columnId, authorId: participantId, text, likes: Set<participantId>}], revealed: bool, hasBeenRevealed: bool }
-// The client receives `likes` as a count, not the server-side Set.
+// roomId -> { columns: [{id, title}], cards: [{id, columnId, authorId: participantId, text, likes: { [participantId]: count }}], revealed: bool, hasBeenRevealed: bool }
+// The client receives `likes` as the total tally and `myLikes` as its own count.
 export const retroBoards = {}
 
 export const DEFAULT_TIMER_DURATION = 5 * 60 // 5 minutes, in seconds

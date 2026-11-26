@@ -34,6 +34,8 @@ const boardForRecipient = (roomId, recipientSocketId) => {
   const cards = board.cards.map((card) => {
     const likes = normalizeLikes(card.likes)
     card.likes = likes
+    const likeTally = totalLikes(likes)
+    const myLikes = likes[recipientId] ?? 0
     const isOwn = card.authorId === recipientId
     const authorColor =
       card.color ?? rooms[roomId]?.[card.authorId]?.color ?? null
@@ -45,8 +47,8 @@ const boardForRecipient = (roomId, recipientSocketId) => {
         text: card.text,
         isOwn,
         color: authorColor,
-        likes: likes.size,
-        likedByMe: likes.has(recipientId),
+        likes: likeTally,
+        myLikes,
       }
     }
 
@@ -57,19 +59,26 @@ const boardForRecipient = (roomId, recipientSocketId) => {
       isOwn: false,
       hidden: true,
       color: authorColor,
-      likes: likes.size,
-      likedByMe: likes.has(recipientId),
+      likes: likeTally,
+      myLikes,
     }
   })
 
   return { columns: board.columns, cards, revealed: board.revealed }
 }
 
+// Likes are stored as { participantId: count } so a participant can like a
+// card more than once and each person's contribution is tallied.
 const normalizeLikes = (likes) => {
-  if (likes instanceof Set) return likes
-  if (Array.isArray(likes)) return new Set(likes)
-  return new Set()
+  if (likes instanceof Set || Array.isArray(likes)) {
+    return Object.fromEntries([...likes].map((id) => [id, 1]))
+  }
+  if (likes && typeof likes === 'object') return likes
+  return {}
 }
+
+const totalLikes = (likes) =>
+  Object.values(likes).reduce((total, count) => total + count, 0)
 
 export const broadcastBoard = (io, roomId) => {
   if (!retroBoards[roomId]) return
@@ -105,7 +114,7 @@ export const registerRetroHandlers = (io, socket) => {
       text: text.trim(),
       authorId: participant.participantId,
       color: participant.color ?? null,
-      likes: new Set(),
+      likes: {},
     })
 
     broadcastBoard(io, roomId)
@@ -132,23 +141,37 @@ export const registerRetroHandlers = (io, socket) => {
     broadcastBoard(io, roomId)
   })
 
-  socket.on('toggleCardLike', ({ roomId, cardId }) => {
+  const likedCardForParticipant = (roomId, cardId) => {
     const participant = participantForSocket(roomId, socket.id)
-    if (!participant) return
-
     const board = retroBoards[roomId]
-    if (!board?.revealed) return
+    if (!participant || !board?.revealed) return null
 
     const card = board.cards.find((candidate) => candidate.id === cardId)
-    if (!card) return
+    if (!card) return null
 
     card.likes = normalizeLikes(card.likes)
+    return { card, participantId: participant.participantId }
+  }
 
-    if (card.likes.has(participant.participantId)) {
-      card.likes.delete(participant.participantId)
-    } else {
-      card.likes.add(participant.participantId)
-    }
+  socket.on('likeCard', ({ roomId, cardId }) => {
+    const target = likedCardForParticipant(roomId, cardId)
+    if (!target) return
+
+    const { card, participantId } = target
+    card.likes[participantId] = (card.likes[participantId] ?? 0) + 1
+    broadcastBoard(io, roomId)
+  })
+
+  socket.on('unlikeCard', ({ roomId, cardId }) => {
+    const target = likedCardForParticipant(roomId, cardId)
+    if (!target) return
+
+    const { card, participantId } = target
+    const count = card.likes[participantId] ?? 0
+    if (count <= 0) return
+
+    if (count === 1) delete card.likes[participantId]
+    else card.likes[participantId] = count - 1
     broadcastBoard(io, roomId)
   })
 

@@ -98,9 +98,10 @@
               :color="card.color"
               :icon-buttons="cardIconButtons(card)"
               :likes="card.likes"
-              :liked="card.likedByMe"
-              :show-like="board.revealed"
-              @like="toggleCardLike(card.id)"
+              :my-likes="card.myLikes"
+              :show-like="board.revealed && !card.hidden"
+              @like="likeCard(card.id)"
+              @unlike="unlikeCard(card.id)"
               @icon-click="(action) => handleCardAction(action, card)"
             >
               <template v-if="card.hidden">
@@ -403,8 +404,12 @@ const addColumn = () => {
   socket.emit('addColumn', { roomId: props.room.roomId })
 }
 
-const toggleCardLike = (cardId) => {
-  socket.emit('toggleCardLike', { roomId: props.room.roomId, cardId })
+const likeCard = (cardId) => {
+  socket.emit('likeCard', { roomId: props.room.roomId, cardId })
+}
+
+const unlikeCard = (cardId) => {
+  socket.emit('unlikeCard', { roomId: props.room.roomId, cardId })
 }
 
 const addCard = (columnId) => {

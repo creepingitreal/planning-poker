@@ -23,18 +23,29 @@
 
     <slot />
 
-    <button
-      v-if="showLike"
-      type="button"
-      class="card-like-button"
-      :class="{ liked }"
-      :aria-label="liked ? 'Unlike card' : 'Like card'"
-      :title="liked ? 'Unlike' : 'Like'"
-      @click="toggleLike"
-    >
-      <span aria-hidden="true">♥</span>
-      <span>{{ likes }}</span>
-    </button>
+    <div v-if="showLike" class="card-like-controls">
+      <button
+        v-if="myLikes > 0"
+        type="button"
+        class="card-unlike-button"
+        aria-label="Remove one of your likes"
+        title="Remove one of your likes"
+        @click="unlikeCard"
+      >
+        −
+      </button>
+      <button
+        type="button"
+        class="card-like-button"
+        :class="{ liked: myLikes > 0 }"
+        :aria-label="likeLabel"
+        :title="likeLabel"
+        @click="likeCard"
+      >
+        <span aria-hidden="true">{{ myLikes > 0 ? '♥' : '♡' }}</span>
+        <span>{{ likes }}</span>
+      </button>
+    </div>
   </component>
 </template>
 
@@ -64,9 +75,9 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-  liked: {
-    type: Boolean,
-    default: false,
+  myLikes: {
+    type: Number,
+    default: 0,
   },
   showLike: {
     type: Boolean,
@@ -74,7 +85,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['icon-click', 'like'])
+const emit = defineEmits(['icon-click', 'like', 'unlike'])
 
 const cardElement = ref(null)
 
@@ -82,10 +93,20 @@ const handleIconClick = (buttonName) => {
   emit('icon-click', buttonName)
 }
 
-const toggleLike = () => {
+const likeCard = () => {
   if (!props.showLike || props.hidden) return
   emit('like')
 }
+
+const unlikeCard = () => {
+  if (!props.showLike || props.hidden || props.myLikes <= 0) return
+  emit('unlike')
+}
+
+const likeLabel = computed(() => {
+  if (!props.myLikes) return 'Like card'
+  return `Like card again (you liked ${props.myLikes} ${props.myLikes === 1 ? 'time' : 'times'})`
+})
 
 const retroCardStyle = computed(() => {
   if (!props.color) return {}

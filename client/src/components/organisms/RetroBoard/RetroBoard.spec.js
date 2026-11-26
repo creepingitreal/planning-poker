@@ -10,7 +10,16 @@ const ownCard = {
   isOwn: true,
   color: '#123456',
   likes: 2,
-  likedByMe: false,
+  myLikes: 0,
+}
+const otherCard = {
+  id: 'card-two',
+  columnId: 'well',
+  text: 'Clear goals',
+  isOwn: false,
+  color: '#abcdef',
+  likes: 3,
+  myLikes: 1,
 }
 const mountBoard = (props = {}) =>
   mount(RetroBoard, {
@@ -115,15 +124,32 @@ describe('RetroBoard', () => {
     const wrapper = mountBoard({
       board: {
         columns: [{ id: 'well', title: 'Well' }],
-        cards: [ownCard],
+        cards: [ownCard, otherCard],
         revealed: true,
       },
     })
+    const [ownLike, otherLike] = wrapper.findAll('.card-like-button')
 
-    await wrapper.get('.card-like-button').trigger('click')
-    expect(socket.emit).toHaveBeenLastCalledWith('toggleCardLike', {
+    expect(ownLike.text()).toContain('2')
+    await ownLike.trigger('click')
+    expect(socket.emit).toHaveBeenLastCalledWith('likeCard', {
       roomId: 'room-one',
       cardId: 'card-one',
+    })
+
+    expect(otherLike.text()).toContain('3')
+    expect(otherLike.classes()).toContain('liked')
+    await otherLike.trigger('click')
+    await otherLike.trigger('click')
+    expect(socket.emit).toHaveBeenCalledTimes(3)
+    expect(socket.emit).toHaveBeenLastCalledWith('likeCard', {
+      roomId: 'room-one',
+      cardId: 'card-two',
+    })
+    await wrapper.get('.card-unlike-button').trigger('click')
+    expect(socket.emit).toHaveBeenLastCalledWith('unlikeCard', {
+      roomId: 'room-one',
+      cardId: 'card-two',
     })
     await wrapper.get('.reveal-btn').trigger('click')
     expect(socket.emit).toHaveBeenLastCalledWith('revealCards', {
