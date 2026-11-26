@@ -24,8 +24,9 @@
     border-bottom: 2px solid transparent;
     margin-bottom: -1px;
     transition:
-      color 300ms ease-in-out,
-      background-color 300ms ease-in-out;
+      color var(--motion-duration-fast) var(--motion-ease),
+      background-color var(--motion-duration-fast) var(--motion-ease),
+      border-color var(--motion-duration-fast) var(--motion-ease);
 
     @media (prefers-reduced-motion: reduce) {
       transition: none;

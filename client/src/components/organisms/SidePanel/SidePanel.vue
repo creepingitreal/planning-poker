@@ -35,7 +35,7 @@
             aria-label="Close side panel"
             @click="closePanel"
           >
-            ✕
+            ×
           </button>
         </Transition>
       </div>

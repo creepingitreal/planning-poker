@@ -15,6 +15,7 @@
         @start-timer="startTimer"
         @pause-timer="pauseTimer"
         @reset-timer="resetTimer"
+        @set-timer="setTimer"
       />
       <GameBoard
         v-show="activeTool === 'poker'"
@@ -125,6 +126,10 @@ const pauseTimer = () => {
 
 const resetTimer = () => {
   socket.emit('resetTimer', { roomId: room.value.roomId })
+}
+
+const setTimer = (duration) => {
+  socket.emit('resetTimer', { roomId: room.value.roomId, duration })
 }
 
 const handleRoomJoined = ({ roomId, roomName }) => {

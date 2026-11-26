@@ -1,23 +1,25 @@
 <template>
-  <component
-    :is="selectable ? 'button' : 'div'"
-    v-if="vote !== null"
-    :type="selectable ? 'button' : undefined"
-    :class="cardClass"
-    :style="cardStyle"
-    @click="selectVote"
-  >
-    <template v-if="isVisible">
-      <Icon
-        v-if="vote === COFFEE_VOTE"
-        name="coffee-icon"
-        class="icon"
-        role="img"
-        aria-label="Coffee break"
-      />
-      <span v-else>{{ vote }}</span>
-    </template>
-  </component>
+  <Transition name="vote">
+    <component
+      :is="selectable ? 'button' : 'div'"
+      v-if="vote !== null"
+      :type="selectable ? 'button' : undefined"
+      :class="cardClass"
+      :style="cardStyle"
+      @click="selectVote"
+    >
+      <template v-if="isVisible">
+        <Icon
+          v-if="vote === COFFEE_VOTE"
+          name="coffee-icon"
+          class="icon"
+          role="img"
+          aria-label="Coffee break"
+        />
+        <span v-else>{{ vote }}</span>
+      </template>
+    </component>
+  </Transition>
 </template>
 
 <script setup>

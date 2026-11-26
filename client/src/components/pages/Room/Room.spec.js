@@ -177,6 +177,12 @@ describe('Room', () => {
         roomId: 'room-one',
       })
     }
+
+    retro.vm.$emit('set-timer', 600)
+    expect(socket.emit).toHaveBeenLastCalledWith('resetTimer', {
+      roomId: 'room-one',
+      duration: 600,
+    })
   })
 
   it('clears a rejected session and preserves the tool when redirecting to join', async () => {

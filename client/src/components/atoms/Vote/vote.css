@@ -23,8 +23,8 @@
   border-radius: var(--radius-control);
   color: var(--color-action-subtle);
   transition:
-    background-color 300ms ease-in-out,
-    color 300ms ease-in-out;
+    background-color var(--motion-duration) var(--motion-ease),
+    color var(--motion-duration) var(--motion-ease);
 
   &.visible {
     background-color: var(--color-accent);
@@ -36,5 +36,44 @@
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
+  }
+}
+
+/* Votes pop in when cast and fade away when the round is cleared. */
+.vote-enter-active,
+.vote-leave-active {
+  transition:
+    opacity var(--motion-duration) var(--motion-ease),
+    transform var(--motion-duration) var(--motion-ease),
+    background-color var(--motion-duration) var(--motion-ease),
+    color var(--motion-duration) var(--motion-ease);
+}
+
+.vote-enter-from,
+.vote-leave-to {
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vote-enter-active,
+  .vote-leave-active {
+    transition: none;
+  }
+}
+
+/* Revealed votes fade up into view as the card changes colour. */
+.vote.visible > * {
+  animation: vote-content-in var(--motion-duration) var(--motion-ease);
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes vote-content-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
   }
 }

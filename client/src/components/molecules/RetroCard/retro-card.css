@@ -43,75 +43,227 @@
     height: 100%;
   }
 
-  .card-like-button {
+  .card-like-controls {
     position: absolute;
     right: 10px;
     bottom: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .card-like-button,
+  .card-unlike-button {
     display: inline-flex;
     align-items: center;
     gap: 4px;
     min-width: 0;
     min-height: 0;
     width: auto;
-    padding: 2px 5px;
+    padding: 3px 2px;
     border: 0;
+    outline: none;
     border-radius: var(--radius-control);
     background: transparent;
     box-shadow: none;
-    color: var(--color-text-muted);
-    font-size: 0.75rem;
+    color: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
     line-height: 1;
+    transition:
+      color var(--motion-duration-fast) var(--motion-ease),
+      opacity var(--motion-duration-fast) var(--motion-ease);
 
-    &:hover,
-    &.liked {
+    &:hover {
       background-color: transparent;
-      color: var(--color-danger);
+      opacity: 0.7;
     }
+
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 1px;
+    }
+  }
+
+  .card-like-button,
+  .card-unlike-button {
+    color: var(--color-like);
+  }
+
+  .card-like-button {
+    gap: 1px;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &:hover .card-like-heart {
+      transform: scale(1.2);
+    }
+  }
+
+  .card-like-heart {
+    display: inline-block;
+    transition: transform var(--motion-duration-fast) var(--motion-ease);
+  }
+
+  /* A smaller outline heart removes one of your own likes. */
+  .card-unlike-button {
+    padding-right: 0;
+    font-size: 0.65rem;
+    transition: transform var(--motion-duration-fast) var(--motion-ease);
+
+    &:hover {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+  }
+
+  .card-icon-svg {
+    display: block;
+    width: 18px;
+    height: 18px;
   }
 
   .card-actions {
     display: flex;
     flex-direction: row;
     align-self: flex-end;
-    gap: 2px;
-    max-height: 1rem;
+    align-items: center;
+    gap: 6px;
 
+    /* Every tool is the same 18px square so icons line up on one centre. */
     button.icon-only {
-      line-height: 1;
-      min-height: unset;
-      height: fit-content;
-      min-width: unset;
-      width: fit-content;
-      padding: 2px;
-      align-self: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      min-width: 18px;
+      height: 18px;
+      min-height: 18px;
+      max-height: 18px;
+      padding: 0;
+      line-height: 18px;
     }
   }
 
   .icon-btn-add,
   .icon-btn-edit,
   .icon-btn-delete {
-    color: var(--card-action-color, var(--color-accent));
+    color: white;
+    font-size: 18px;
+    line-height: 18px;
     font-weight: 800;
+    /* Start from a zero-size transparent ring so the active ring and fill
+       animate together; ease-out keeps the change from lagging. */
+    background-color: transparent;
+    box-shadow: 0 0 0 0 rgb(255 255 255 / 0);
+    transition:
+      background-color var(--motion-duration-fast) ease-out,
+      box-shadow var(--motion-duration-fast) ease-out,
+      color var(--motion-duration-fast) ease-out;
 
     &:hover:not(:disabled) {
-      background-color: color-mix(
-        in srgb,
-        var(--card-action-color, var(--color-accent)) 15%,
-        transparent
-      );
+      background-color: transparent;
+      color: var(--color-accent);
+      opacity: 1;
     }
   }
 
-  .icon-btn-add,
-  .icon-btn-edit {
-    font-size: 1rem;
+  /* The ring adds space around the active pencil without changing its
+     18px box, so it stays aligned with the other tools. */
+  .icon-btn-edit.is-editing,
+  .icon-btn-edit.is-editing:hover:not(:disabled) {
+    background-color: white;
+    box-shadow: 0 0 0 5px white;
+    color: var(--color-accent);
+    opacity: 1;
   }
 
-  .icon-btn-add {
-    --card-action-color: var(--color-success);
+  @media (prefers-reduced-motion: reduce) {
+    .card-like-heart,
+    .card-like-button,
+    .card-unlike-button,
+    .icon-btn-add,
+    .icon-btn-edit,
+    .icon-btn-delete {
+      transition: none;
+    }
+  }
+}
+
+/* Compact single-line layout used when cards are listed as board rows. */
+.retro-card.retro-card-row {
+  flex: 0 0 auto;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  column-gap: 8px;
+  row-gap: 2px;
+  width: 100%;
+  height: auto;
+  min-height: var(--retro-card-row-height, 44px);
+  padding: 8px 12px;
+  font-size: 0.8125rem;
+
+  .card-text {
+    display: block;
+    flex: 1 1 0;
+    min-width: 0;
+    height: auto;
+    align-self: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
-  .icon-btn-delete {
-    --card-action-color: var(--color-danger);
+  .retro-card-placeholder {
+    display: block;
+    flex: 1 1 0;
+    height: auto;
+  }
+
+  /* Tools sit on their own line above the card content. */
+  .card-actions {
+    flex: 1 0 100%;
+    justify-content: flex-end;
+    align-self: auto;
+  }
+
+  /* Likes sit on their own line below the card content. */
+  .card-like-controls {
+    position: static;
+    display: flex;
+    flex: 1 0 100%;
+    justify-content: flex-end;
+  }
+
+  /* Expanded rows grow to show the full text. */
+  &.retro-card-expanded {
+    align-items: flex-start;
+    padding: 12px;
+
+    .card-text {
+      white-space: normal;
+      overflow-wrap: anywhere;
+      text-overflow: clip;
+      line-height: 1.35;
+    }
+
+    /* Revealed text and likes fade in as the row grows. */
+    .card-text,
+    .card-like-controls {
+      animation: retro-card-content-in var(--motion-duration) var(--motion-ease);
+
+      @media (prefers-reduced-motion: reduce) {
+        animation: none;
+      }
+    }
+  }
+}
+
+@keyframes retro-card-content-in {
+  from {
+    opacity: 0;
   }
 }

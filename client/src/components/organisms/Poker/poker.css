@@ -1,7 +1,6 @@
 .game-board {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   height: 100%;
 
   .button-section {
@@ -51,12 +50,14 @@
     box-shadow: var(--shadow-vote);
     font-size: 0.925rem;
     transition:
-      background-color 300ms ease-in-out,
-      color 300ms ease-in-out;
+      filter var(--motion-duration-fast) var(--motion-ease),
+      transform var(--motion-duration) var(--motion-ease),
+      box-shadow var(--motion-duration) var(--motion-ease);
 
     &:hover {
-      background-color: var(--color-action-strong);
-      color: var(--color-action-subtle);
+      filter: brightness(1.08);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card-hover);
     }
 
     &:focus,
@@ -68,6 +69,10 @@
 
     @media (prefers-reduced-motion: reduce) {
       transition: none;
+
+      &:hover {
+        transform: none;
+      }
     }
   }
 }

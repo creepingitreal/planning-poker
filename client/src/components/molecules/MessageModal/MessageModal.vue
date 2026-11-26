@@ -14,14 +14,19 @@
     >
       <h2 :id="`${id}-title`" class="message-modal-title">{{ heading }}</h2>
       <p :id="`${id}-message`" class="message-modal-message">{{ message }}</p>
-      <div class="message-modal-actions">
-        <button ref="closeButton" type="button" @click="dismiss">
+      <div class="message-modal-actions button-section">
+        <button
+          ref="closeButton"
+          type="button"
+          class="outline small"
+          @click="dismiss"
+        >
           {{ closeLabel }}
         </button>
         <button
           v-if="confirmLabel"
           type="button"
-          class="accent message-modal-confirm"
+          class="accent small message-modal-confirm"
           @click="confirm"
         >
           {{ confirmLabel }}

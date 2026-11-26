@@ -20,7 +20,7 @@
 
   .spin-button {
     background-color: transparent;
-    transition: transform 300ms ease-in-out;
+    transition: transform var(--motion-duration) var(--motion-ease);
 
     .spinner-arrow {
       width: 80px;
